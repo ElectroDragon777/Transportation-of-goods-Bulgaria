@@ -14,4 +14,24 @@ class Load extends Model{
         array('name' => 'description', 'type' => 'varchar(255)', 'default' => ''),
         array('name' => 'weight', 'type' => 'int', 'default' => '')
     );
+    
+    // Create new load
+    public function createLoad($data) {
+        return $this->create($data);
+    }
+
+    // Read load (by ID)
+    public function getLoadById($id) {
+        return $this->find($id);
+    }
+
+    // Update load (by ID)
+    public function updateLoad($id, $data) {
+        return $this->update($id, $data);
+    }
+
+    // Delete load (by ID)
+    public function deleteLoad($id) {
+        return $this->delete($id);
+    }
 }

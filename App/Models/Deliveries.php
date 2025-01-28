@@ -15,4 +15,24 @@ class Deliveries extends Model{
         array('name' => 'estimated_delivery_datetime', 'type' => 'datetime', 'default' => ''),
         array('name' => 'is_express', 'type' => 'boolean', 'default' => '')
     );
+    
+    // Create new delivery
+    public function createDelivery($data) {
+        return $this->create($data);
+    }
+
+    // Read delivery (by ID)
+    public function getDeliveryById($id) {
+        return $this->find($id);
+    }
+
+    // Update delivery (by ID)
+    public function updateDelivery($id, $data) {
+        return $this->update($id, $data);
+    }
+
+    // Delete delivery (by ID)
+    public function deleteDelivery($id) {
+        return $this->delete($id);
+    }
 }

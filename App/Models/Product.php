@@ -13,4 +13,24 @@ class Product extends Model{
         array('name' => 'product_name', 'type' => 'varchar', 'default' => ''),
         array('name' => 'product_description', 'type' => 'varchar', 'default' => '')
     );
+    
+    // Create new product
+    public function createProduct($data) {
+        return $this->create($data);
+    }
+
+    // Read product (by ID)
+    public function getProductById($id) {
+        return $this->find($id);
+    }
+
+    // Update product (by ID)
+    public function updateProduct($id, $data) {
+        return $this->update($id, $data);
+    }
+
+    // Delete product (by ID)
+    public function deleteProduct($id) {
+        return $this->delete($id);
+    }
 }
