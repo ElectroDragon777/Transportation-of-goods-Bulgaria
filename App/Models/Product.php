@@ -3,34 +3,18 @@
 namespace App\Models;
 use Core\Model;
 
-class Product extends Model{
+class Product extends Model {
 
     var $primaryKey = 'id';
-    var $table = 'product';
-    
+    var $table = 'products';
+
     var $schema = array(
         array('name' => 'id', 'type' => 'int', 'default' => ':NULL'),
-        array('name' => 'product_name', 'type' => 'varchar', 'default' => ''),
-        array('name' => 'product_description', 'type' => 'varchar', 'default' => '')
+        array('name' => 'name', 'type' => 'varchar', 'default' => ''),
+        array('name' => 'description', 'type' => 'text', 'default' => ':NULL'),
+        array('name' => 'price', 'type' => 'decimal', 'default' => ':NULL'),
+        array('name' => 'stock', 'type' => 'int', 'default' => 0),
+        array('name' => 'created_at', 'type' => 'timestamp', 'default' => 'CURRENT_TIMESTAMP')
     );
-    
-    // Create new product
-    public function createProduct($data) {
-        return $this->create($data);
-    }
-
-    // Read product (by ID)
-    public function getProductById($id) {
-        return $this->find($id);
-    }
-
-    // Update product (by ID)
-    public function updateProduct($id, $data) {
-        return $this->update($id, $data);
-    }
-
-    // Delete product (by ID)
-    public function deleteProduct($id) {
-        return $this->delete($id);
-    }
 }
+?>

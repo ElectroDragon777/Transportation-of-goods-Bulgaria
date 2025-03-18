@@ -4,7 +4,6 @@ namespace Core;
 class Router {
 
     public function resolve(): void {
-        // $_REQUEST = marge($_GET, $_POST),;
         $controllerName = $_REQUEST['controller'] ?? null;
         $actionName = $_REQUEST['action'] ?? null;
 

@@ -1,8 +1,7 @@
 <?php
 
 if (!headers_sent()) {
-    @session_name('12Z');
-    @session_start();
+    session_start();
 }
 
 header("Content-type: text/html; charset=utf-8");
@@ -26,18 +25,30 @@ if (!defined("INSTALL_URL")) {
     $path = dirname($_SERVER['PHP_SELF']);
 
 // Combine the protocol, domain, and path
-    $fullUrl = $protocol . "://" . $domain . $path;
+    $fullUrl = $protocol . "://" . $domain . $path . '/index.php';
     define("INSTALL_URL", $fullUrl);
 }
 
-require_once 'config/config.php';
+require_once 'config/constant.php';
+require_once 'config/function.php';
 
-if (empty($_REQUEST['controller'])) {
-    $_REQUEST['controller'] = 'Home';
-}
+if (!INSTALLED) {
+    // Пренасочване към инсталационната страница
+    if (empty($_REQUEST['controller'])) {
+        $_REQUEST['controller'] = 'Install';
+    }
 
-if (empty($_REQUEST['action'])) {
-    $_REQUEST['action'] = 'index';
+    if (empty($_REQUEST['action'])) {
+        $_REQUEST['action'] = 'step0';
+    }
+} else {
+    if (empty($_REQUEST['controller'])) {
+        $_REQUEST['controller'] = 'Home';
+    }
+
+    if (empty($_REQUEST['action'])) {
+        $_REQUEST['action'] = 'index';
+    }
 }
 
 spl_autoload_register(function ($class) {

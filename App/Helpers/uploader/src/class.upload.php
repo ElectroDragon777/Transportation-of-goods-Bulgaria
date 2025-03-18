@@ -408,7 +408,7 @@ class Upload {
      * The list of blacklisted extensions is in {@link dangerous}
      *
      * Note that this check happens before checking for forbidden MIME types or extensions
-     * If you want to forbid uploads rather than turning scripts into text files, 
+     * If you want to forbid uploads rather than turning scripts into text files,
      * set {@link no_script} to false and use {@link forbidden} instead
      *
      * @access public
@@ -499,6 +499,14 @@ class Upload {
      * @var double
      */
     var $file_max_size;
+
+    /**
+     * Max file size, from php.ini
+     *
+     * @access private
+     * @var double
+     */
+    var $file_max_size_raw;
 
     /**
      * Set this variable to true to resize the file if it is an image
@@ -1884,13 +1892,15 @@ class Upload {
             'bat',
             'phar',
             'wsdl',
+            'html',
+            'htm',
         );
-        
+
         $this->forbidden = array_merge($this->dangerous, array(
             'exe',
             'dll',
         ));
-        
+
         $this->allowed = array(
             'application/arj',
             'application/excel',
@@ -2022,6 +2032,7 @@ class Upload {
             'mpg' => 'video/mpeg',
             'mpe' => 'video/mpeg',
             'mp3' => 'audio/mpeg3',
+            'mp4' => 'video/mp4',
             'wav' => 'audio/wav',
             'aiff' => 'audio/aiff',
             'aif' => 'audio/aiff',
@@ -2109,7 +2120,7 @@ class Upload {
      */
     function upload($file, $lang = 'en_GB') {
 
-        $this->version            = '13/06/2022';
+        $this->version            = '10/09/2024';
 
         $this->file_src_name      = '';
         $this->file_src_name_body = '';
@@ -3142,7 +3153,7 @@ class Upload {
                 }
                 // if the file is text based, or has a dangerous extension, we rename it as .txt
                 if ((((substr($this->file_src_mime, 0, 5) == 'text/' && $this->file_src_mime != 'text/rtf') || strpos($this->file_src_mime, 'javascript') !== false)  && (substr($file_src_name, -4) != '.txt'))
-                    || preg_match('/\.(' . implode('|', $this->dangerous) . ')$/i', $this->file_src_name)
+                    || preg_match('/\.(' . implode('|', $this->dangerous) . ')/i', $this->file_src_name)
                     || $this->file_force_extension && empty($file_src_name_ext)) {
                     $this->file_src_mime = 'text/plain';
                     if ($this->file_src_name_ext) $file_src_name_body = $file_src_name_body . '.' . $this->file_src_name_ext;
@@ -3164,7 +3175,7 @@ class Upload {
                     if (strpos($v, '/') == false) {
                         if ($v == '*' || strtolower($v) == strtolower($file_src_name_ext)) {
                             $allowed = true;
-                            break;                        
+                            break;
                         }
                     } else {
                         list($v1, $v2) = explode('/', $v);
@@ -3182,7 +3193,7 @@ class Upload {
                         if ($v == '*' || strtolower($v) == strtolower($file_src_name_ext)) {
                             $allowed = false;
                             $this->log .= '- extension ' . $v . ' is forbidden !<br />';
-                            break;                        
+                            break;
                         }
                     } else {
                         list($v1, $v2) = explode('/', $v);
@@ -4607,8 +4618,8 @@ class Upload {
                                 $maxX = max(array($rect[0],$rect[2],$rect[4],$rect[6]));
                                 $minY = min(array($rect[1],$rect[3],$rect[5],$rect[7]));
                                 $maxY = max(array($rect[1],$rect[3],$rect[5],$rect[7]));
-                                $text_offset_x = abs($minX) - 1;
-                                $text_offset_y = abs($minY) - 1;
+                                $text_offset_x = abs($minX);
+                                $text_offset_y = abs($minY);
                                 $text_width = $maxX - $minX + (2 * $this->image_text_padding_x);
                                 $text_height = $maxY - $minY + (2 * $this->image_text_padding_y);
                             }
@@ -5230,5 +5241,3 @@ class Upload {
         return true;
     }
 }
-
-?>
