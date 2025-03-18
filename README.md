@@ -1,1 +1,2 @@
-For all custom folders for the project - make folders in Controllers and move CRUDs there.
+Base is here!
+Time to modify this, hard.
