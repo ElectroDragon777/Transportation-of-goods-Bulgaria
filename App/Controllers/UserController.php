@@ -161,12 +161,18 @@ class UserController extends Controller {
 
         $id = isset($_POST['id']) ? $_POST['id'] : (isset($_GET['id']) ? $_GET['id'] : null);
         $arr = $userModel->get($id);
-
+        
+        $referer = $_SERVER["HTTP_REFERER"];
         // Check if the form has been submitted
         if (!empty($_POST['id'])) {
             if ($userModel->update($_POST)) {
                 // Redirect to the list of users on successful creation
-                header("Location: " . INSTALL_URL . "?controller=User&action=list", true, 301);
+
+                // Redirect testing
+                echo($referer); die(); 
+                
+                // Link
+                header("Location: " . $referer, true, 301);
                 exit;
             }
 
