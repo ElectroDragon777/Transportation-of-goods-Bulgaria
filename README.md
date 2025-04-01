@@ -1,4 +1,6 @@
 https://stackoverflow.com/questions/22038036/uploading-images-using-php-but-without-page-refresh
+https://stackoverflow.com/questions/51264422/how-to-refresh-a-div-every-x-seconds/51264964
+^-- Forgot to add the second link.
 
 
 ~/~/~ What to work on: ~/~/~
