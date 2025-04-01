@@ -1,3 +1,9 @@
+<?php
+$unread_count = 0;
+if (!empty($tpl['notifications'])) {
+    $unread_count = count(array_filter($tpl['notifications'], fn($n) => !$n['is_seen']));
+}
+?>
 <nav class="navbar default-layout col-lg-12 col-12 p-0 d-flex align-items-top flex-row fixed-top">
     <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
         <div class="me-3">
@@ -116,50 +122,56 @@
                         </a>
                     </div>
                 </li>
-                <li class="nav-item dropdown"> 
+                <li class="nav-item dropdown">
                     <a class="nav-link count-indicator" id="countDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="icon-bell"></i>
-                        <span class="count"></span>
+                        <?php if ($unread_count > 0): ?>
+                            <span class="count"><?= $unread_count ?></span> <!-- Show count of unread -->
+                        <?php endif; ?>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0" aria-labelledby="countDropdown">
-                        <a class="dropdown-item py-3">
-                            <p class="mb-0 font-weight-medium float-left">You have 7 unread mails </p>
+                        <a class="dropdown-item py-3" href="<?php echo INSTALL_URL; ?>?controller=Notification&action=index">
+                            <p class="mb-0 font-weight-medium float-left">
+                                You have <?= $unread_count ?> unread notifications
+                            </p>
                             <span class="badge badge-pill badge-primary float-right">View all</span>
                         </a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item preview-item">
-                            <div class="preview-thumbnail">
-                                <img src="web/assets/images/faces/face10.jpg" alt="image" class="img-sm profile-pic">
-                            </div>
-                            <div class="preview-item-content flex-grow py-2">
-                                <p class="preview-subject ellipsis font-weight-medium text-dark">Marian Garner </p>
-                                <p class="fw-light small-text mb-0"> The meeting is cancelled </p>
-                            </div>
-                        </a>
-                        <a class="dropdown-item preview-item">
-                            <div class="preview-thumbnail">
-                                <img src="web/assets/images/faces/face12.jpg" alt="image" class="img-sm profile-pic">
-                            </div>
-                            <div class="preview-item-content flex-grow py-2">
-                                <p class="preview-subject ellipsis font-weight-medium text-dark">David Grey </p>
-                                <p class="fw-light small-text mb-0"> The meeting is cancelled </p>
-                            </div>
-                        </a>
-                        <a class="dropdown-item preview-item">
-                            <div class="preview-thumbnail">
-                                <img src="web/assets/images/faces/face1.jpg" alt="image" class="img-sm profile-pic">
-                            </div>
-                            <div class="preview-item-content flex-grow py-2">
-                                <p class="preview-subject ellipsis font-weight-medium text-dark">Travis Jenkins </p>
-                                <p class="fw-light small-text mb-0"> The meeting is cancelled </p>
-                            </div>
-                        </a>
+
+                        <?php
+                        // Limit the notifications to 5
+                        $notificationsToDisplay = array_slice($tpl['notifications'], 0, 5);
+                        ?>
+
+                        <?php if (count($notificationsToDisplay) > 0): ?>
+                            <?php foreach ($notificationsToDisplay as $notif): ?>
+                                <a class="dropdown-item preview-item notification-item <?php echo $notif['is_seen'] == 0 ? 'unseen' : ''; ?>" 
+                                   data-id="<?= $notif['id'] ?>" 
+                                   href="<?= $notif['link'] ?? '#' ?>">
+                                    <div class="preview-thumbnail">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#333333" style="width: 16px; height: 16px; max-width: 16px; max-height: 16px; border-radius: 0;" viewBox="0 0 16 16">
+                                        <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="preview-item-content flex-grow py-2">
+                                        <p class="preview-subject ellipsis font-weight-medium text-dark">
+                                            <?= htmlspecialchars($notif['message']) ?>
+                                        </p>
+                                        <p class="fw-light small-text mb-0">
+                                            <?= date($tpl['date_format'], $notif['created_at']) ?>
+                                        </p>
+                                    </div>
+                                </a>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <p class="dropdown-item text-center text-muted">No new notifications</p>
+                        <?php endif; ?>
                     </div>
                 </li>
                 <li class="nav-item dropdown d-none d-lg-block user-dropdown">
                     <a class="nav-link" id="UserDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-                        <?php if (!empty($tpl['user']['photo_path'])): ?>
-                            <img id="profileImage" src="<?php echo htmlspecialchars($tpl['user']['photo_path']); ?>" 
+                        <?php if (!empty($_SESSION['user']['photo_path'])): ?>
+                            <img id="profileImage" src="<?php echo htmlspecialchars($_SESSION['user']['photo_path']); ?>" 
                                  alt="Profile Photo" class="img-xs rounded-circle">
                              <?php else: ?>
                             <div class="img-xs rounded-circle d-flex align-items-center justify-content-center bg-light" 
@@ -171,8 +183,8 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
                         <div class="dropdown-header text-center d-flex flex-column align-items-center">
-                            <?php if (!empty($tpl['user']['photo_path'])): ?>
-                                <img id="profileImage" src="<?php echo htmlspecialchars($tpl['user']['photo_path']); ?>" 
+                            <?php if (!empty($_SESSION['user']['photo_path'])): ?>
+                                <img id="profileImage" src="<?php echo htmlspecialchars($_SESSION['user']['photo_path']); ?>" 
                                      alt="Profile Photo" class="rounded-circle" style="width: 80px; height: 80px; object-fit: cover;">
                                  <?php else: ?>
                                 <div class="d-flex align-items-center justify-content-center bg-light rounded-circle" 

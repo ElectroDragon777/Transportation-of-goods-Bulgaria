@@ -1,0 +1,9 @@
+<svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background Circle -->
+    <circle cx="15" cy="15" r="14" fill="#1F3BB3"/>
+    
+    <!-- Centered "DMS" Text -->
+    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white" dy=".3em">
+        DMS
+    </text>
+</svg>

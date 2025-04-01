@@ -16,10 +16,10 @@ class UserController extends Controller {
             header("Location: " . INSTALL_URL . "?controller=Auth&action=login", true, 301);
             exit;
         }
-        if ($_SESSION['user']['role'] == 'user') {
-            header("Location: " . INSTALL_URL, true, 301);
-            exit;
-        }
+        // if ($_SESSION['user']['role'] == 'user') {
+        //     header("Location: " . INSTALL_URL, true, 301);
+        //     exit;
+        // }
     }
 
     function list($layout = 'admin') {
@@ -30,14 +30,15 @@ class UserController extends Controller {
             if (!empty($_POST['name'])) {
                 $opts["name LIKE '%" . $_POST['name'] . "%' AND 1 "] = "1";
             }
-            if (!empty($_POST['phone_number'])) {
-                $opts["phone_number LIKE '%" . $_POST['phone_number'] . "%' AND 1 "] = "1";
+            if (!empty($_POST['phone'])) {
+                $opts["phone_number LIKE '%" . $_POST['phone'] . "%' AND 1 "] = "1";
             }
             if (!empty($_POST['email'])) {
                 $opts["email LIKE '%" . $_POST['email'] . "%' AND 1 "] = "1";
             }
-            if (!empty($_POST['role'])) {
-                $opts["role LIKE '%" . $_POST['role'] . "%' AND 1 "] = "1";
+            if (!empty($_POST['roles']) && is_array($_POST['roles'])) {
+                $roles = "'" . implode("','", $_POST['roles']) . "'";
+                $opts["role IN (" . $roles . ") AND 1 "] = "1";
             }
             if (!empty($_POST['address'])) {
                 $opts["address LIKE '%" . $_POST['address'] . "%' AND 1 "] = "1";
@@ -217,6 +218,7 @@ class UserController extends Controller {
 
                     // ✅ Update user photo in database
                     $userModel->update(['id' => $user_id, 'photo_path' => $photoPath]);
+                    $_SESSION['user']['photo_path'] = $photoPath;
 
                     echo json_encode([
                         'status' => 'success',

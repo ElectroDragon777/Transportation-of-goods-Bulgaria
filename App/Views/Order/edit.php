@@ -10,12 +10,6 @@
                         <a class="nav-link active ps-0" href="#">Edit Order</a>
                     </li>
                 </ul>
-                <div>
-                    <div class="btn-wrapper">
-                        <a href="#" class="btn btn-otline-dark align-items-center"><i class="icon-share"></i> Share</a>
-                        <a href="#" class="btn btn-otline-dark"><i class="icon-printer"></i> Print</a>
-                    </div>
-                </div>
             </div>
 
             <div class="card card-rounded mt-3">
@@ -82,14 +76,14 @@
                                     <label for="tax" class="form-label">Tax</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><?php echo $tpl['currency']; ?></span>
-                                        <input type="number" step="0.01" min="0" class="form-control" id="tax" name="tax" value="<?php echo $order['tax']; ?>" required>
+                                        <input type="text" class="form-control" id="tax" name="tax" value="<?php echo $order['tax']; ?>" required readonly>
                                     </div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="shippingPrice" class="form-label">Shipping Price</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><?php echo $tpl['currency']; ?></span>
-                                        <input type="number" step="0.01" min="0" class="form-control" id="shippingPrice"  name="shipping_price" value="<?php echo $order['shipping_price']; ?>" required>
+                                        <input type="теьт" class="form-control" id="shippingPrice"  name="shipping_price" value="<?php echo $order['shipping_price']; ?>" required readonly>
                                     </div>
                                 </div> 
                                 <div class="mb-3">
@@ -146,7 +140,7 @@
                             <div class="col-12">
                                 <button type="submit" class="btn btn-primary text-white me-0" name="send">Save Changes</button>
                                 <a href="javascript:" id="calculate-price-btn-id" class="btn btn-primary text-white me-0">Calculate Price</a>
-                                <a href="<?php echo INSTALL_URL; ?>?controller=Order&action=list" class="btn btn-outline-dark">Cancel</a>
+                                <a href="<?php echo $_SERVER['HTTP_REFERER']; ?>" class="btn btn-outline-dark">Cancel</a>
                             </div>
                         </div>
                     </form>

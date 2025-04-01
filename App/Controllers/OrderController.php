@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\Order;
 use Core\Controller;
 
 class OrderController extends Controller {
@@ -26,7 +27,6 @@ class OrderController extends Controller {
     function list($layout = 'admin') {
         $orderModel = new \App\Models\Order();
         $userModel = new \App\Models\User();
-        $courierModel = new \App\Models\Courier();
 
         $opts = array();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -67,13 +67,18 @@ class OrderController extends Controller {
             $opts['user_id'] = $_GET['user_id'];
         }
 
+        // Retrieve all orders from the database
+        if (!empty($_GET['courier_id']) && $_GET['courier_id'] == $_SESSION['user']['id']) { //User role checking orders
+            $opts['courier_id'] = $_GET['courier_id'];
+        }
+        
         $orders = $orderModel->getAll($opts);
 
         // Format orders for display
         foreach ($orders as &$order) {
             $order['customer_name'] = $userModel->get($order['user_id'])['name'] ?? 'Unknown';
-            $order['courier_name'] = $courierModel->get($order['courier_id'])['name'] ?? 'Unknown';
-            $order['delivery_date'] = date('m/d/Y', $order['delivery_date']);
+            $order['courier_name'] = $userModel->get($order['courier_id'])['name'] ?? 'Unknown';
+            $order['delivery_date'] = date($this->settings['date_format'], $order['delivery_date']);
         }
 
         // Pass the data to the view
@@ -103,7 +108,7 @@ class OrderController extends Controller {
         $orderProductsModel = new \App\Models\OrderProducts();
         $productModel = new \App\Models\Product();
         $userModel = new \App\Models\User();
-        $courierModel = new \App\Models\Courier();
+        $notificationModel = new \App\Models\Notification();
         $mailer = new \App\Helpers\mailer\Mailer();
         $currency = $this->settings['currency_code'];
 
@@ -169,10 +174,16 @@ class OrderController extends Controller {
                     }
 
                     if (!isset($error_message)) {
+                        $notificationModel->save([
+                            'user_id' => $_POST['user_id'],
+                            'message' => "Your order #$orderId has been created successfully!",
+                            'link' => INSTALL_URL . "?controller=Order&action=details&id=$orderId",
+                            'created_at' => time()
+                        ]);
                         if ($this->settings['email_sending'] == 'enabled') {
                             $order = $orderModel->get($orderId);
                             $customer = $userModel->get($order['user_id']);
-                            $courier = $courierModel->get($order['courier_id']);
+                            $courier = $userModel->get($order['courier_id']);
                             $orderProducts = $orderProductsModel->getAll(['order_id' => $orderId]);
 
                             foreach ($orderProducts as &$product) {
@@ -196,7 +207,7 @@ class OrderController extends Controller {
         $arr = [
             'users' => $userModel->getAll(),
             'products' => $productModel->getAll(),
-            'couriers' => $courierModel->getAll(),
+            'couriers' => $userModel->getAll(['role' => 'courier']),
             'currency' => $currency,
             'error_message' => $error_message ?? null
         ];
@@ -208,7 +219,6 @@ class OrderController extends Controller {
         $orderProductsModel = new \App\Models\OrderProducts();
         $productModel = new \App\Models\Product();
         $userModel = new \App\Models\User();
-        $courierModel = new \App\Models\Courier();
 
         if (empty($_SESSION['user'])) {
             header("Location: " . INSTALL_URL . "?controller=Auth&action=login", true, 301);
@@ -238,7 +248,7 @@ class OrderController extends Controller {
         }
 
         $customerData = $userModel->get($orderData['user_id']);
-        $courierData = $courierModel->get($orderData['courier_id']);
+        $courierData = $userModel->get($orderData['courier_id']);
 
         $opts = array();
         $opts['order_id'] = $orderId;
@@ -270,17 +280,21 @@ class OrderController extends Controller {
             exit;
         }
 
+        $productModel = new \App\Models\Product();
         $orderModel = new \App\Models\Order();
         $orderProductsModel = new \App\Models\OrderProducts();
         $userModel = new \App\Models\User();
-        $courierModel = new \App\Models\Courier();
 
         if (!empty($_POST['id'])) {
             $orderId = $_POST['id'];
 
-            $opts = array();
-            $opts['order_id'] = $orderId;
-            $orderProductsModel->deleteBy($opts);
+            $orderProducts = $orderProductsModel->getAll(['order_id' => $orderId]);
+            foreach ($orderProducts as $orderProduct) {
+                $product = $productModel->getFirstBy(['id' => $orderProduct['product_id']]);
+                $product['stock'] += $orderProduct['quantity'];
+                $productModel->update($product);
+            }
+            $orderProductsModel->deleteBy(['order_id' => $orderId]);
 
             $orderModel->delete($orderId);
         }
@@ -291,11 +305,120 @@ class OrderController extends Controller {
         // Format orders for display
         foreach ($orders as &$order) {
             $order['customer_name'] = $userModel->get($order['user_id'])['name'] ?? 'Unknown';
-            $order['name'] = $courierModel->get($order['courier_id'])['name'] ?? 'Unknown';
-            $order['delivery_date'] = date('Y-m-d', strtotime($order['delivery_date']));
+            $order['name'] = $userModel->get($order['courier_id'])['name'] ?? 'Unknown';
+            $order['delivery_date'] = date($this->settings['date_format'], $order['delivery_date']);
         }
 
         $this->view('ajax', ['orders' => $orders, 'currency' => $this->settings['currency_code']]);
+    }
+
+    function pay() {
+        if (!empty($_GET['order_id'])) {
+            $orderId = $_GET['order_id'];
+            $orderModel = new \App\Models\Order();
+            $userModel = new \App\Models\User();
+            $orderProductsModel = new \App\Models\OrderProducts();
+
+            $order = $orderModel->get($orderId);
+            $user = $userModel->get($order['user_id']);
+            $orderProducts = $orderProductsModel->getAll(['order_id' => $orderId]);
+
+            $this->view($this->layout, [
+                'currency_code' => $this->settings['currency_code'],
+                'order' => $order,
+                'user' => $user,
+                'order_products' => $orderProducts
+            ]);
+        }
+    }
+
+    // Controller method to handle the return from PayPal
+    public function pay_success() {
+        // Get the order ID from the URL parameter
+        $orderId = $_GET['order_id'];
+
+        $orderModel = new \App\Models\Order();
+        $userModel = new \App\Models\User();
+        // Load the order from the database
+        $order = $orderModel->get($orderId);
+        $user = $userModel->getFirstBy(['id' => $order['user_id']]);
+
+        // If the order exists and the payment was successful, mark it as paid
+        if ($order) {
+            // Show a success message or redirect to a success page
+            $this->view($this->layout, ['order' => $order, 'user' => $user]);
+        }
+    }
+
+    // Controller method to handle the cancellation from PayPal
+    public function pay_cancel() {
+        // Get the order ID from the URL parameter
+        $orderId = $_GET['order_id'];
+
+        $orderModel = new \App\Models\Order();
+        $userModel = new \App\Models\User();
+        // Load the order from the database
+        $order = $orderModel->get($orderId);
+        $user = $userModel->getFirstBy(['id' => $order['user_id']]);
+
+        if ($order) {
+            // Show a cancellation message or redirect to a cancellation page
+            $this->view($this->layout, ['order' => $order, 'user' => $user]);
+        }
+    }
+
+    function paypal_ipn() {
+        // PayPal verifies the IPN message
+        $orderModel = new \App\Models\Order();
+        $notificationModel = new \App\Models\Notification();
+        $userModel = new \App\Models\User();
+        $orderId = $_POST['custom']; // Get the order ID from PayPal's "custom" field
+        $order = $orderModel->get($orderId);
+        $user = $userModel->getFirstBy(['id' => $order['user_id']]);
+
+        // Step 1: Verify IPN message with PayPal (to avoid fraud)
+        $url = 'https://www.paypal.com/cgi-bin/webscr';
+        $data = array(
+            'cmd' => '_notify-validate',
+            'tx' => $_POST['txn_id'], // PayPal transaction ID
+            'amt' => $_POST['mc_gross'], // Total amount paid
+            'currency_code' => $_POST['mc_currency'], // Currency code
+        );
+
+        // Send the IPN data back to PayPal for validation
+        $response = file_get_contents($url . '?' . http_build_query($data));
+
+        // Step 2: If PayPal confirms the payment is valid
+        if ($response == "VERIFIED") {
+            // Update the order status based on payment confirmation
+            if ($_POST['payment_status'] == 'Completed') {
+                // Payment is successful, update order status
+                $order['status'] = 'shipped';
+                $orderModel->update($order);
+                $notificationModel->save([
+                    'user_id' => $user['id'],
+                    'message' => "Your order #$orderId has been paid successfully!",
+                    'link' => INSTALL_URL . "?controller=Order&action=pay_success&order_id=$orderId",
+                    'created_at' => time()
+                ]);
+            }
+        } else {
+            // Payment not verified, handle the error (perhaps log it)
+            error_log("Invalid IPN message: " . json_encode($_POST));
+        }
+
+        // Step 3: Handle canceled or failed payment (if needed)
+        if ($_POST['payment_status'] == 'Failed' || $_POST['payment_status'] == 'Canceled') {
+            // Update the order status as canceled
+            $order['status'] = 'cancelled';
+            $orderModel->update($order);
+            $notificationModel->save([
+                'user_id' => $user['id'],
+                'message' => "Your order #$orderId has been cancelled!",
+                'link' => INSTALL_URL . "?controller=Order&action=pay_cancel&order_id=$orderId",
+                'created_at' => time()
+            ]);
+        }
     }
 
     function bulkDelete() {
@@ -311,7 +434,6 @@ class OrderController extends Controller {
         $orderModel = new \App\Models\Order();
         $orderProductsModel = new \App\Models\OrderProducts();
         $userModel = new \App\Models\User();
-        $courierModel = new \App\Models\Courier();
 
         if (!empty($_POST['ids']) && is_array($_POST['ids'])) {
             $orderIds = $_POST['ids'];
@@ -323,14 +445,14 @@ class OrderController extends Controller {
             $orderModel->deleteBy($optsForOrder);
         }
 
-        // Retrieve all orders from the database
+// Retrieve all orders from the database
         $orders = $orderModel->getAll();
 
-        // Format orders for display
+// Format orders for display
         foreach ($orders as &$order) {
             $order['customer_name'] = $userModel->get($order['user_id'])['name'] ?? 'Unknown';
-            $order['name'] = $courierModel->get($order['courier_id'])['name'] ?? 'Unknown';
-            $order['delivery_date'] = date('Y-m-d', strtotime($order['delivery_date']));
+            $order['name'] = $userModel->get($order['courier_id'])['name'] ?? 'Unknown';
+            $order['delivery_date'] = date($this->settings['date_format'], $order['delivery_date']);
         }
 
         $this->view('ajax', ['orders' => $orders, 'currency' => $this->settings['currency_code']]);
@@ -364,7 +486,7 @@ class OrderController extends Controller {
         $orderProductsModel = new \App\Models\OrderProducts();
         $productModel = new \App\Models\Product();
         $userModel = new \App\Models\User();
-        $courierModel = new \App\Models\Courier();
+        $notificationModel = new \App\Models\Notification();
         $mailer = new \App\Helpers\mailer\Mailer();
         $currency = $this->settings['currency_code'];
 
@@ -450,10 +572,16 @@ class OrderController extends Controller {
             }
 
             if (!isset($error_message)) {
+                $notificationModel->save([
+                    'user_id' => $_POST['user_id'],
+                    'message' => "Your order #$orderId has been edited successfully!",
+                    'link' => INSTALL_URL . "?controller=Order&action=details&id=$orderId",
+                    'created_at' => time()
+                ]);
                 if ($this->settings['email_sending'] == 'enabled') {
                     $order = $orderModel->get($orderId);
                     $customer = $userModel->get($order['user_id']);
-                    $courier = $courierModel->get($order['courier_id']);
+                    $courier = $userModel->get($order['courier_id']);
 
                     $orderProducts = $orderProductsModel->getAll(['order_id' => $orderId]);
                     foreach ($orderProducts as &$orderProduct) {
@@ -487,7 +615,7 @@ class OrderController extends Controller {
             'orderProducts' => $orderProducts,
             'users' => $userModel->getAll(),
             'products' => $productModel->getAll(),
-            'couriers' => $courierModel->getAll(),
+            'couriers' => $userModel->getAll(['role' => 'courier']),
             'productQuantities' => $productQuantities,
             'currency' => $currency,
             'error_message' => $error_message ?? null
@@ -525,7 +653,7 @@ class OrderController extends Controller {
     }
 
     function export() {
-        // Check if orderData is provided
+// Check if orderData is provided
         if (isset($_POST['orderData'])) {
             // Decode the JSON data
             $orders = json_decode($_POST['orderData'], true);
@@ -538,7 +666,7 @@ class OrderController extends Controller {
 
         $format = isset($_POST['format']) ? $_POST['format'] : 'pdf';
 
-        // Export based on format
+// Export based on format
         switch ($format) {
             case 'pdf':
                 $this->exportAsPDF($orders);
@@ -565,30 +693,30 @@ class OrderController extends Controller {
         $pdf->SetCreator('Your App');
         $pdf->SetTitle('Orders Export');
         $pdf->SetHeaderData('', 0, 'Orders List', '');
-        $pdf->setHeaderFont(Array('helvetica', '', 12));
-        $pdf->setFooterFont(Array('helvetica', '', 10));
+        $pdf->setHeaderFont(array('helvetica', '', 12));
+        $pdf->setFooterFont(array('helvetica', '', 10));
         $pdf->SetDefaultMonospacedFont('courier');
         $pdf->SetMargins(15, 15, 15);
         $pdf->SetAutoPageBreak(TRUE, 15);
 
         $pdf->AddPage();
 
-        // Generate HTML table with dynamic headers
+// Generate HTML table with dynamic headers
         $html = $this->generateDynamicOrderTable($orders);
         $pdf->writeHTML($html, true, false, true, false, '');
 
-        // Output PDF
+// Output PDF
         $pdf->Output('orders_export.pdf', 'D');
         exit;
     }
 
     private function generateDynamicOrderTable($orders) {
-        // Start HTML table
+// Start HTML table
         $html = '<table border="1" cellpadding="5">
 <thead>
     <tr>';
 
-        // Define preferred header names
+// Define preferred header names
         $preferredHeaders = [
             'id' => 'Order ID',
             'tracking_number' => 'Tracking Number',
@@ -688,6 +816,7 @@ class OrderController extends Controller {
         ?>
         <!DOCTYPE html>
         <html>
+
             <head>
                 <meta charset="utf-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -699,6 +828,7 @@ class OrderController extends Controller {
                         margin: 0;
                         padding: 0;
                     }
+
                     .email-container {
                         max-width: 600px;
                         margin: 20px auto;
@@ -707,6 +837,7 @@ class OrderController extends Controller {
                         overflow: hidden;
                         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
                     }
+
                     .header {
                         background: #0073e6;
                         color: #ffffff;
@@ -714,37 +845,46 @@ class OrderController extends Controller {
                         padding: 20px;
                         font-size: 24px;
                     }
+
                     .content {
                         padding: 20px;
                     }
+
                     .order-details {
                         display: flex;
                         flex-wrap: wrap;
                         gap: 20px;
                         margin-bottom: 20px;
                     }
+
                     .detail-column {
                         flex: 1 1 45%;
                     }
+
                     .detail-column p {
                         margin: 5px 0;
                         font-size: 14px;
                     }
+
                     .products-table {
                         width: 100%;
                         border-collapse: collapse;
                         margin-top: 20px;
                     }
-                    .products-table th, .products-table td {
+
+                    .products-table th,
+                    .products-table td {
                         padding: 12px;
                         border: 1px solid #ddd;
                         text-align: left;
                     }
+
                     .products-table th {
                         background: #0073e6;
                         color: white;
                         font-weight: bold;
                     }
+
                     .footer {
                         text-align: center;
                         padding: 15px;
@@ -752,16 +892,19 @@ class OrderController extends Controller {
                         font-size: 12px;
                         color: #666;
                     }
+
                     @media screen and (max-width: 600px) {
                         .order-details {
                             flex-direction: column;
                         }
+
                         .detail-column {
                             width: 100%;
                         }
                     }
                 </style>
             </head>
+
             <body>
                 <div class="email-container">
                     <div class="header">
@@ -771,18 +914,38 @@ class OrderController extends Controller {
                         <p style="font-size: 16px; color: #333;">Thank you for your order! Below are the details:</p>
                         <div class="order-details">
                             <div class="detail-column">
-                                <p><strong>Order ID:</strong> <?= htmlspecialchars($order['id']) ?></p>
-                                <p><strong>Customer:</strong> <?= htmlspecialchars($customer['name']) ?></p>
-                                <p><strong>Address:</strong> <?= htmlspecialchars($order['address']) ?></p>
-                                <p><strong>Country:</strong> <?= htmlspecialchars($order['country']) ?></p>
-                                <p><strong>Region:</strong> <?= htmlspecialchars($order['region']) ?></p>
+                                <p><strong>Order ID:</strong>
+                                    <?= htmlspecialchars($order['id']) ?>
+                                </p>
+                                <p><strong>Customer:</strong>
+                                    <?= htmlspecialchars($customer['name']) ?>
+                                </p>
+                                <p><strong>Address:</strong>
+                                    <?= htmlspecialchars($order['address']) ?>
+                                </p>
+                                <p><strong>Country:</strong>
+                                    <?= htmlspecialchars($order['country']) ?>
+                                </p>
+                                <p><strong>Region:</strong>
+                                    <?= htmlspecialchars($order['region']) ?>
+                                </p>
                             </div>
                             <div class="detail-column">
-                                <p><strong>Tracking Number:</strong> <?php echo htmlspecialchars($order['tracking_number']); ?></p>
-                                <p><strong>Courier:</strong> <?= htmlspecialchars($courier['name']) ?></p>
-                                <p><strong>Delivery Date:</strong> <?= date('Y-m-d', strtotime($order['delivery_date'])) ?></p>
-                                <p><strong>Status:</strong> <?= \Utility::$order_status[$order['status']] ?? 'Unknown' ?></p>
-                                <p><strong>Total Price:</strong> <?= \Utility::getDisplayableAmount(htmlspecialchars(number_format($order['total_amount'], 2))) ?></p>
+                                <p><strong>Tracking Number:</strong>
+                                    <?php echo htmlspecialchars($order['tracking_number']); ?>
+                                </p>
+                                <p><strong>Courier:</strong>
+                                    <?= htmlspecialchars($courier['name']) ?>
+                                </p>
+                                <p><strong>Delivery Date:</strong>
+                                    <?= date($this->settings['date_format'], $order['delivery_date']) ?>
+                                </p>
+                                <p><strong>Status:</strong>
+                                    <?= \Utility::$order_status[$order['status']] ?? 'Unknown' ?>
+                                </p>
+                                <p><strong>Total Price:</strong>
+                                    <?= \Utility::getDisplayableAmount(htmlspecialchars(number_format($order['total_amount'], 2))) ?>
+                                </p>
                             </div>
                         </div>
                         <h3 style="color: #0073e6; margin-top: 20px;">Order Summary</h3>
@@ -798,10 +961,18 @@ class OrderController extends Controller {
                             <tbody>
                                 <?php foreach ($products as $product) { ?>
                                     <tr>
-                                        <td><?= htmlspecialchars($product['name']) ?></td>
-                                        <td><?= htmlspecialchars($product['quantity']) ?></td>
-                                        <td><?= \Utility::getDisplayableAmount(htmlspecialchars(number_format($product['price'], 2))) ?></td>
-                                        <td><?= \Utility::getDisplayableAmount(htmlspecialchars(number_format($product['subtotal'], 2))) ?></td>
+                                        <td>
+                                            <?= htmlspecialchars($product['name']) ?>
+                                        </td>
+                                        <td>
+                                            <?= htmlspecialchars($product['quantity']) ?>
+                                        </td>
+                                        <td>
+                                            <?= \Utility::getDisplayableAmount(htmlspecialchars(number_format($product['price'], 2))) ?>
+                                        </td>
+                                        <td>
+                                            <?= \Utility::getDisplayableAmount(htmlspecialchars(number_format($product['subtotal'], 2))) ?>
+                                        </td>
                                     </tr>
                                 <?php } ?>
                             </tbody>
@@ -813,6 +984,7 @@ class OrderController extends Controller {
                     </div>
                 </div>
             </body>
+
         </html>
         <?php
         return ob_get_clean();

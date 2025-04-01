@@ -7,6 +7,14 @@
                     <span class="menu-title">Dashboard</span>
                 </a>
             </li>
+
+            <li class="nav-item nav-category">Personal</li>
+            <li class="nav-item">
+                <a class="nav-link" href="<?php INSTALL_URL; ?>?controller=Order&action=list&user_id=<?php echo $_SESSION['user']['id']; ?>">
+                    <i class="menu-icon mdi mdi-clipboard-list"></i>
+                    <span class="menu-title">My Orders</span>
+                </a>
+            </li>
             <?php if (in_array($_SESSION['user']['role'], ['admin', 'root'])): ?>
                 <li class="nav-item nav-category">Forms and Data</li>
                 <li class="nav-item">
@@ -68,12 +76,12 @@
                         <span class="menu-title">Settings</span>
                     </a>
                 </li>
-            <?php else: ?>
-                <li class="nav-item nav-category">Orders</li>
+            <?php elseif ($_SESSION['user']['role'] === 'courier'): ?>
+                <li class="nav-item nav-category">Deliveries</li>
                 <li class="nav-item">
-                    <a class="nav-link" href="<?php INSTALL_URL; ?>?controller=Order&action=list&user_id=<?php echo $_SESSION['user']['id']; ?>">
-                        <i class="menu-icon mdi mdi-clipboard-list"></i>
-                        <span class="menu-title">My Orders</span>
+                    <a class="nav-link" href="<?php INSTALL_URL; ?>?controller=Order&action=list&courier_id=<?php echo $_SESSION['user']['id']; ?>">
+                        <i class="menu-icon mdi mdi-truck-delivery"></i>
+                        <span class="menu-title">Orders to Deliver</span>
                     </a>
                 </li>
             <?php endif; ?>
