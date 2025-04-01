@@ -1,3 +1,5 @@
+https://stackoverflow.com/questions/22038036/uploading-images-using-php-but-without-page-refresh
+
 
 ~/~/~ What to work on: ~/~/~
 W-1. favicon.ico and .png; logo => Must make logo for mine and use it for both, as well for the (A) for when minimising/Tablet view. [Done with DMS, to change with my own later]
