@@ -13,7 +13,7 @@ W-2. Remove Products and replace with Paletes, to generate code for tracking and
 We have finally received our diploma thesises' requirements, and boy, I am so off at places. Got to edit it all in like a month and a half to have a week for the 30-page documentation! .w.
 
 ==== March 18th, 2025 ====
-Base was lost, but later recovered, thanks to @Veselin_Nikolaev, my classmate for helping me and lending me his (since they have similar functionality).
+Base was lost, but later recovered, thanks to @veselinnikolaev, my classmate for helping me and lending me his (since they have similar functionality).
 Time to remaster it fully to fit my own stuff in!
 
 ==== April 1st, 2025 ====
