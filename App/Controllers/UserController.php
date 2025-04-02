@@ -7,11 +7,13 @@ use Core;
 use Core\View;
 use Core\Controller;
 
-class UserController extends Controller {
+class UserController extends Controller
+{
 
     var $layout = 'admin';
 
-    public function __construct() {
+    public function __construct()
+    {
         if (empty($_SESSION['user'])) {
             header("Location: " . INSTALL_URL . "?controller=Auth&action=login", true, 301);
             exit;
@@ -22,7 +24,8 @@ class UserController extends Controller {
         // }
     }
 
-    function list($layout = 'admin') {
+    function list($layout = 'admin')
+    {
         $userModel = new \App\Models\User();
 
         $opts = array();
@@ -58,11 +61,13 @@ class UserController extends Controller {
         $this->view($layout, ['users' => $users]);
     }
 
-    function filter() {
+    function filter()
+    {
         $this->list('ajax');
     }
 
-    function print() {
+    function print()
+    {
         if (isset($_POST['userData'])) {
             // Decode the JSON data
             $users = json_decode($_POST['userData'], true);
@@ -76,7 +81,8 @@ class UserController extends Controller {
         $this->view('ajax', ['users' => $users]);
     }
 
-    public function changeRole() {
+    public function changeRole()
+    {
         $userModel = new \App\Models\User();
 
         if (!empty($_POST['id']) && !empty($_POST['role'])) {
@@ -92,7 +98,8 @@ class UserController extends Controller {
         $this->view('ajax', ['users' => $users]);
     }
 
-    function create() {
+    function create()
+    {
         // Create an instance of the User model
         $userModel = new \App\Models\User();
 
@@ -125,7 +132,8 @@ class UserController extends Controller {
         $this->view($this->layout, $arr);
     }
 
-    function delete() {
+    function delete()
+    {
         $userModel = new \App\Models\User();
 
         if (!empty($_POST['id'])) {
@@ -139,7 +147,8 @@ class UserController extends Controller {
         $this->view('ajax', ['users' => $users]);
     }
 
-    function bulkDelete() {
+    function bulkDelete()
+    {
         $userModel = new \App\Models\User();
 
         if (!empty($_POST['ids']) && is_array($_POST['ids'])) {
@@ -156,12 +165,13 @@ class UserController extends Controller {
         $this->view('ajax', ['users' => $users]);
     }
 
-    function edit() {
+    function edit()
+    {
         $userModel = new \App\Models\User();
 
         $id = isset($_POST['id']) ? $_POST['id'] : (isset($_GET['id']) ? $_GET['id'] : null);
         $arr = $userModel->get($id);
-        
+
         $referer = $_SERVER["HTTP_REFERER"];
         // Check if the form has been submitted
         if (!empty($_POST['id'])) {
@@ -169,8 +179,9 @@ class UserController extends Controller {
                 // Redirect to the list of users on successful creation
 
                 // Redirect testing
-                echo($referer); die(); 
-                
+                echo ($referer);
+                die();
+
                 // Link
                 header("Location: " . $referer, true, 301);
                 exit;
@@ -184,7 +195,8 @@ class UserController extends Controller {
         $this->view($this->layout, $arr);
     }
 
-    function profile() {
+    function profile()
+    {
         $userModel = new \App\Models\User();
 
         $user = $userModel->get($_GET['id']);
@@ -192,7 +204,8 @@ class UserController extends Controller {
         $this->view($this->layout, ['user' => $user]);
     }
 
-    function uploadProfilePicture() {
+    function uploadProfilePicture()
+    {
         header('Content-Type: application/json');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['profile_picture'])) {
@@ -241,7 +254,8 @@ class UserController extends Controller {
         }
     }
 
-    function editPassword() {
+    function editPassword()
+    {
         $userModel = new \App\Models\User();
         $id = isset($_POST['id']) ? $_POST['id'] : (isset($_GET['id']) ? $_GET['id'] : null);
 
@@ -265,7 +279,8 @@ class UserController extends Controller {
         $this->view($this->layout, ['id' => $id, 'error_message' => $errorMessage ?? null]);
     }
 
-    function export() {
+    function export()
+    {
         // Check if userData is provided
         if (isset($_POST['userData'])) {
             // Decode the JSON data
@@ -296,7 +311,8 @@ class UserController extends Controller {
         }
     }
 
-    private function exportAsPDF($users) {
+    private function exportAsPDF($users)
+    {
         if (ob_get_level()) {
             ob_end_clean();
         }
@@ -306,8 +322,8 @@ class UserController extends Controller {
         $pdf->SetCreator('Your App');
         $pdf->SetTitle('Users Export');
         $pdf->SetHeaderData('', 0, 'Users List', '');
-        $pdf->setHeaderFont(Array('helvetica', '', 12));
-        $pdf->setFooterFont(Array('helvetica', '', 10));
+        $pdf->setHeaderFont(array('helvetica', '', 12));
+        $pdf->setFooterFont(array('helvetica', '', 10));
         $pdf->SetDefaultMonospacedFont('courier');
         $pdf->SetMargins(15, 15, 15);
         $pdf->SetAutoPageBreak(TRUE, 15);
@@ -323,7 +339,8 @@ class UserController extends Controller {
         exit;
     }
 
-    private function generateDynamicUserTable($users) {
+    private function generateDynamicUserTable($users)
+    {
         // Start HTML table
         $html = '<table border="1" cellpadding="5">
 <thead>
@@ -366,7 +383,8 @@ class UserController extends Controller {
         return $html;
     }
 
-    private function exportAsExcel($users) {
+    private function exportAsExcel($users)
+    {
         // Include SimpleXLSXGen
         require(__DIR__ . '/../Helpers/export/simplexlsxgen/src/SimpleXLSXGen.php');
 
@@ -406,7 +424,8 @@ class UserController extends Controller {
         exit;
     }
 
-    private function exportAsCSV($users) {
+    private function exportAsCSV($users)
+    {
         // Set headers for CSV download
         header('Content-Type: text/csv');
         header('Content-Disposition: attachment; filename="users_export.csv"');
