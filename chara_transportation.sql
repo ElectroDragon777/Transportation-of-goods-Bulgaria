@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:8111
--- Generation Time: Apr 03, 2025 at 05:33 AM
+-- Generation Time: Apr 03, 2025 at 12:31 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -141,7 +141,9 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `name`, `email`, `phone_number`, `password_hash`, `created_at`, `role`, `address`, `country`, `region`, `photo_path`) VALUES
 (1, 'Chara Dreemurr', 'chara@abv.bg', '', '$2y$10$SzepIhkBjgGu7USFhcIajOf6INf1T9tFMvKxgrCkBzZRIt0IUWUWy', 1743619906, 'root', '', '', '', 'web/upload/profile_1_67ed879ca62ff.jpg'),
 (2, 'Hakane', 'hakane.hoshino@yahoo.com', NULL, '$2y$10$ziUyifPVgfFHNBiN/hT5MOOzOsAbsFO400vRw0u2d2qmW1OJw/cfW', 1743620055, 'user', NULL, NULL, NULL, 'web/upload/profile_2_67ed885239962.png'),
-(3, 'Monika', 'monika@gmail.com', NULL, '$2y$10$Xl7uKdPNbXLRbDgJQeTxCuO532QZLoPcCU5LzIFje/fMef9qSn/aK', 1743620068, 'courier', NULL, NULL, NULL, 'web/upload/profile_3_67ed8803c86f5.jpg');
+(3, 'Monika', 'monika@gmail.com', NULL, '$2y$10$Xl7uKdPNbXLRbDgJQeTxCuO532QZLoPcCU5LzIFje/fMef9qSn/aK', 1743620068, 'courier', NULL, NULL, NULL, 'web/upload/profile_3_67ed8803c86f5.jpg'),
+(5, 'Tester_User', 'test@user.com', NULL, '$2y$10$aiV3E314MKhsxk2OlX5JIuFEK4SFD/9boXIvuxdcXZBTPD45Lxt.W', 1743672152, 'user', NULL, NULL, NULL, 'web/upload/profile_5_67ee58a823ec2.png'),
+(6, 'Tester_2', 'test2@user.com', '', '$2y$10$IQW9a2.ydd0.zsNm329JTeSwFL45woUXSvZnZN/TDDPZkV9TbNZ.m', 1743673552, 'user', '', '', '', 'web/upload/profile_6_67ee5c25aac0f.png');
 
 --
 -- Indexes for dumped tables
@@ -221,7 +223,7 @@ ALTER TABLE `settings`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
