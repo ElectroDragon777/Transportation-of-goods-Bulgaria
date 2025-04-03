@@ -145,6 +145,25 @@
     </div>
 </div>
 
+<?php if ($message) 
+{ ?>
+   <!-- <div id="notification" class="alert alert-success" style="position: bottom; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1000; transition: opacity 0.5s ease;"> -->
+    <div id="notification-popup" style="position: fixed; top: 20%; left: 50%; transform: translate(-50%, -50%); background-color: white; border: 1px solid #ccc; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1001;">       
+         <?php echo $message; ?>
+</div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            setTimeout(function() {
+                $("#notification-popup").fadeOut(500, function() {
+                    $(this).hide();
+                });
+            }, 3000);
+        });
+    </script>
+<?php 
+} ?>
+
 <!-- Delete Account Confirmation Modal -->
 <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
     <div class="modal-dialog">

@@ -173,22 +173,26 @@ class UserController extends Controller
         $arr = $userModel->get($id);
 
         $referer = $_SERVER["HTTP_REFERER"];
-        // Check if the form has been submitted
-        if (!empty($_POST['id'])) {
-            if ($userModel->update($_POST)) {
-                // Redirect to the list of users on successful creation
+         // Check if the form has been submitted
+        if (!empty($_POST['id'])) 
+        {
+            if ($userModel->update($_POST)) 
+            {
 
-                // Redirect testing
-                echo ($referer);
-                die();
+                // Store notification message in session
+                session_start();
+                $_SESSION['profile_update_message'] = "Profile updated!";
 
-                // Link
-                header("Location: " . $referer, true, 301);
+                // Redirect to the profile page on successful update
+
+                //Construct the profile page url.
+                // $profileUrl = "/your_project_directory/profile?id=" . $id; //Replace /your_project_directory with the correct path.
+                $profileUrl = "/Transportation-of-goods-Bulgaria/index.php?controller=User&action=profile&id=" . $id; //Replace /your_project_directory with the correct path.
+                header("Location: " . $profileUrl, true, 301);
                 exit;
             }
-
             // If saving fails, set an error message
-            $arr['error_message'] = "Failed to create the courier. Please try again.";
+            $arr['error_message'] = "Failed to update the user. Please try again.";
         }
 
         // Load the view and pass the data to it
@@ -197,30 +201,44 @@ class UserController extends Controller
 
     function profile()
     {
+        // Ensuring session is up
+        if(session_id() == '') {
+            session_start();
+        }
+
         $userModel = new \App\Models\User();
-
         $user = $userModel->get($_GET['id']);
+        // OLD: // $this->view($this->layout, ['user' => $user]);
+         // Pass the message to the view
+        $message = isset($_SESSION['profile_update_message']) ? $_SESSION['profile_update_message'] : null;
+        unset($_SESSION['profile_update_message']);
 
-        $this->view($this->layout, ['user' => $user]);
+        $this->view($this->layout, ['user' => $user, 'message' => $message]);
     }
 
     function uploadProfilePicture()
     {
         header('Content-Type: application/json');
+        session_start(); // Ensure session is started!
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['profile_picture'])) {
             $user_id = $_POST['user_id']; // Get user ID
             $userModel = new \App\Models\User();
-            $fileName = basename($_FILES["profile_picture"]["name"]);
-            $fileExt = pathinfo($fileName, PATHINFO_EXTENSION);
-            $allowedTypes = ["jpg", "jpeg", "png", "gif"];
 
-            if (!in_array(strtolower($fileExt), $allowedTypes)) {
-                echo json_encode(['status' => 'error', 'message' => 'Invalid file format!']);
+            // Validate user ID
+            if (!$userModel->get($user_id)) {
+                echo json_encode(['status' => 'error', 'message' => 'Invalid user ID.']);
                 exit;
             }
 
-            require 'App\Helpers\uploader\src\class.upload.php';
+            $fileName = basename($_FILES["profile_picture"]["name"]);
+            $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+            $allowedTypes = ["jpg", "jpeg", "png", "gif"];
+
+            if (!in_array($fileExt, $allowedTypes)) {
+                echo json_encode(['status' => 'error', 'message' => 'Invalid file format!']);
+                exit;
+            }
 
             $handle = new \Verot\Upload\Upload($_FILES['profile_picture']);
             if ($handle->uploaded) {
@@ -228,21 +246,31 @@ class UserController extends Controller
                 $handle->image_resize = true;
                 $handle->image_x = 300;
                 $handle->image_ratio_y = true;
-                $upload_path = 'web/upload/';
+
+                $upload_path = __DIR__ . '/../../web/upload/'; // Use absolute path
+
+                if (!is_dir($upload_path) && !mkdir($upload_path, 0755, true)) {
+                    echo json_encode(['status' => 'error', 'message' => 'Failed to create upload directory.']);
+                    exit;
+                }
+
                 $handle->process($upload_path);
 
                 if ($handle->processed) {
                     $photoPath = $upload_path . $handle->file_dst_name;
                     $handle->clean();
 
-                    // ✅ Update user photo in database
-                    $userModel->update(['id' => $user_id, 'photo_path' => $photoPath]);
-                    $_SESSION['user']['photo_path'] = $photoPath;
+                    // Update user photo in database
+                    if ($userModel->update(['id' => $user_id, 'photo_path' => $photoPath])) {
+                        $_SESSION['user']['photo_path'] = $photoPath;
 
-                    echo json_encode([
-                        'status' => 'success',
-                        'photo_path' => $photoPath
-                    ]);
+                        echo json_encode([
+                            'status' => 'success',
+                            'photo_path' => $photoPath
+                        ]);
+                    } else {
+                        echo json_encode(['status' => 'error', 'message' => 'Database update failed.']);
+                    }
                 } else {
                     echo json_encode(['status' => 'error', 'message' => $handle->error]);
                 }
