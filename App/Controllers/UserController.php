@@ -173,10 +173,10 @@ class UserController extends Controller
         $arr = $userModel->get($id);
 
         $referer = $_SERVER["HTTP_REFERER"];
+
         // Check if the form has been submitted
         if (!empty($_POST['id'])) {
             if ($userModel->update($_POST)) {
-
                 // Store notification message in session
                 session_start();
                 $_SESSION['profile_update_message'] = "Profile updated!";
