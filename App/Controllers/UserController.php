@@ -176,19 +176,21 @@ class UserController extends Controller
         // Check if the form has been submitted
         if (!empty($_POST['id'])) {
             if ($userModel->update($_POST)) {
-                // Redirect to the list of users on successful creation
 
-                // Redirect testing
-                echo ($referer);
-                die();
+                // Store notification message in session
+                session_start();
+                $_SESSION['profile_update_message'] = "Profile updated!";
 
-                // Link
-                header("Location: " . $referer, true, 301);
+                // Redirect to the profile page on successful update
+
+                //Construct the profile page url.
+                // $profileUrl = "/your_project_directory/profile?id=" . $id; //Replace /your_project_directory with the correct path.
+                $profileUrl = "/Transportation-of-goods-Bulgaria/index.php?controller=User&action=profile&id=" . $id; //Replace /your_project_directory with the correct path.
+                header("Location: " . $profileUrl, true, 301);
                 exit;
             }
-
             // If saving fails, set an error message
-            $arr['error_message'] = "Failed to create the courier. Please try again.";
+            $arr['error_message'] = "Failed to update the user. Please try again.";
         }
 
         // Load the view and pass the data to it
