@@ -21,23 +21,25 @@ if (!empty($tpl['notifications'])) {
         </div>
     </div>
 
-    <div class="navbar-menu-wrapper d-flex align-items-top"> 
+    <div class="navbar-menu-wrapper d-flex align-items-top">
         <ul class="navbar-nav ms-auto">
             <?php if (!isset($_SESSION['user'])): ?>
                 <li class="nav-item d-flex align-items-center me-2">
-                    <a href="<?php echo INSTALL_URL; ?>?controller=Auth&action=login" class="btn btn-primary d-flex align-items-center">
+                    <a href="<?php echo INSTALL_URL; ?>?controller=Auth&action=login"
+                        class="btn btn-primary d-flex align-items-center">
                         <i class="mdi mdi-login me-2"></i>
                         Login
                     </a>
                 </li>
                 <li class="nav-item d-flex align-items-center">
-                    <a href="<?php echo INSTALL_URL; ?>?controller=Auth&action=register" class="btn btn-outline-primary d-flex align-items-center">
+                    <a href="<?php echo INSTALL_URL; ?>?controller=Auth&action=register"
+                        class="btn btn-outline-primary d-flex align-items-center">
                         <i class="mdi mdi-account-plus me-2"></i>
                         Register
                     </a>
                 </li>
             <?php else: ?>
-                <li class="nav-item dropdown d-none d-lg-block">
+                <!-- <li class="nav-item dropdown d-none d-lg-block">
                     <a class="nav-link dropdown-bordered dropdown-toggle dropdown-toggle-split" id="messageDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false"> Select Category </a>
                     <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0" aria-labelledby="messageDropdown">
                         <a class="dropdown-item py-3">
@@ -69,7 +71,7 @@ if (!empty($tpl['notifications'])) {
                             </div>
                         </a>
                     </div>
-                </li>
+                </li> -->
                 <li class="nav-item d-none d-lg-block">
                     <div id="datepicker-popup" class="input-group date datepicker navbar-date-picker">
                         <span class="input-group-addon input-group-prepend border-right">
@@ -78,17 +80,18 @@ if (!empty($tpl['notifications'])) {
                         <input type="text" class="form-control">
                     </div>
                 </li>
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <form class="search-form" action="#">
                         <i class="icon-search"></i>
                         <input type="search" class="form-control" placeholder="Search Here" title="Search here">
                     </form>
-                </li>
+                </li> -->
                 <li class="nav-item dropdown">
                     <a class="nav-link count-indicator" id="notificationDropdown" href="#" data-bs-toggle="dropdown">
                         <i class="icon-mail icon-lg"></i>
                     </a>
-                    <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0" aria-labelledby="notificationDropdown">
+                    <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0"
+                        aria-labelledby="notificationDropdown">
                         <a class="dropdown-item py-3 border-bottom">
                             <p class="mb-0 font-weight-medium float-left">You have 4 new notifications </p>
                             <span class="badge badge-pill badge-primary float-right">View all</span>
@@ -123,14 +126,17 @@ if (!empty($tpl['notifications'])) {
                     </div>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link count-indicator" id="countDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link count-indicator" id="countDropdown" href="#" data-bs-toggle="dropdown"
+                        aria-expanded="false">
                         <i class="icon-bell"></i>
                         <?php if ($unread_count > 0): ?>
                             <span class="count"><?= $unread_count ?></span> <!-- Show count of unread -->
                         <?php endif; ?>
                     </a>
-                    <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0" aria-labelledby="countDropdown">
-                        <a class="dropdown-item py-3" href="<?php echo INSTALL_URL; ?>?controller=Notification&action=index">
+                    <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0"
+                        aria-labelledby="countDropdown">
+                        <a class="dropdown-item py-3"
+                            href="<?php echo INSTALL_URL; ?>?controller=Notification&action=index">
                             <p class="mb-0 font-weight-medium float-left">
                                 You have <?= $unread_count ?> unread notifications
                             </p>
@@ -145,12 +151,14 @@ if (!empty($tpl['notifications'])) {
 
                         <?php if (count($notificationsToDisplay) > 0): ?>
                             <?php foreach ($notificationsToDisplay as $notif): ?>
-                                <a class="dropdown-item preview-item notification-item <?php echo $notif['is_seen'] == 0 ? 'unseen' : ''; ?>" 
-                                   data-id="<?= $notif['id'] ?>" 
-                                   href="<?= $notif['link'] ?? '#' ?>">
+                                <a class="dropdown-item preview-item notification-item <?php echo $notif['is_seen'] == 0 ? 'unseen' : ''; ?>"
+                                    data-id="<?= $notif['id'] ?>" href="<?= $notif['link'] ?? '#' ?>">
                                     <div class="preview-thumbnail">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#333333" style="width: 16px; height: 16px; max-width: 16px; max-height: 16px; border-radius: 0;" viewBox="0 0 16 16">
-                                        <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#333333"
+                                            style="width: 16px; height: 16px; max-width: 16px; max-height: 16px; border-radius: 0;"
+                                            viewBox="0 0 16 16">
+                                            <path
+                                                d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
                                         </svg>
                                     </div>
                                     <div class="preview-item-content flex-grow py-2">
@@ -171,11 +179,11 @@ if (!empty($tpl['notifications'])) {
                 <li class="nav-item dropdown d-none d-lg-block user-dropdown">
                     <a class="nav-link" id="UserDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
                         <?php if (!empty($_SESSION['user']['photo_path'])): ?>
-                            <img id="profileImage" src="<?php echo htmlspecialchars($_SESSION['user']['photo_path']); ?>" 
-                                 alt="Profile Photo" class="img-xs rounded-circle">
-                             <?php else: ?>
-                            <div class="img-xs rounded-circle d-flex align-items-center justify-content-center bg-light" 
-                                 style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                            <img id="profileImage" src="<?php echo htmlspecialchars($_SESSION['user']['photo_path']); ?>"
+                                alt="Profile Photo" class="img-xs rounded-circle">
+                        <?php else: ?>
+                            <div class="img-xs rounded-circle d-flex align-items-center justify-content-center bg-light"
+                                style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
                                 <i class="mdi mdi-account" style="font-size: 16px; color: #6c757d;"></i>
                             </div>
                         <?php endif; ?>
@@ -184,11 +192,12 @@ if (!empty($tpl['notifications'])) {
                     <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
                         <div class="dropdown-header text-center d-flex flex-column align-items-center">
                             <?php if (!empty($_SESSION['user']['photo_path'])): ?>
-                                <img id="profileImage" src="<?php echo htmlspecialchars($_SESSION['user']['photo_path']); ?>" 
-                                     alt="Profile Photo" class="rounded-circle" style="width: 80px; height: 80px; object-fit: cover;">
-                                 <?php else: ?>
-                                <div class="d-flex align-items-center justify-content-center bg-light rounded-circle" 
-                                     style="width: 64px; height: 64px;">
+                                <img id="profileImage" src="<?php echo htmlspecialchars($_SESSION['user']['photo_path']); ?>"
+                                    alt="Profile Photo" class="rounded-circle"
+                                    style="width: 80px; height: 80px; object-fit: cover;">
+                            <?php else: ?>
+                                <div class="d-flex align-items-center justify-content-center bg-light rounded-circle"
+                                    style="width: 64px; height: 64px;">
                                     <i class="mdi mdi-account" style="font-size: 32px; color: #6c757d;"></i>
                                 </div>
                             <?php endif; ?>
@@ -196,15 +205,23 @@ if (!empty($tpl['notifications'])) {
                             <p class="fw-light text-muted mb-0"><?php echo $_SESSION['user']['email']; ?></p>
                         </div>
 
-                        <a class="dropdown-item" href="<?php echo INSTALL_URL; ?>?controller=User&action=profile&id=<?php echo $_SESSION['user']['id']; ?>"><i class="dropdown-item-icon mdi mdi-account-outline text-primary me-2"></i> My Profile</a>
-                        <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-message-text-outline text-primary me-2"></i> Messages</a>
-                        <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-calendar-check-outline text-primary me-2"></i> Activity</a>
-                        <a class="dropdown-item"><i class="dropdown-item-icon mdi mdi-help-circle-outline text-primary me-2"></i> FAQ</a>
-                        <a class="dropdown-item" href="<?php echo INSTALL_URL; ?>?controller=Auth&action=logout"><i class="dropdown-item-icon mdi mdi-power text-primary me-2"></i>Sign Out</a>
+                        <a class="dropdown-item"
+                            href="<?php echo INSTALL_URL; ?>?controller=User&action=profile&id=<?php echo $_SESSION['user']['id']; ?>"><i
+                                class="dropdown-item-icon mdi mdi-account-outline text-primary me-2"></i> My Profile</a>
+                        <a class="dropdown-item"><i
+                                class="dropdown-item-icon mdi mdi-message-text-outline text-primary me-2"></i> Messages</a>
+                        <a class="dropdown-item"><i
+                                class="dropdown-item-icon mdi mdi-calendar-check-outline text-primary me-2"></i>
+                            Activity</a>
+                        <!-- <a class="dropdown-item"><i
+                                class="dropdown-item-icon mdi mdi-help-circle-outline text-primary me-2"></i> FAQ</a> -->
+                        <a class="dropdown-item" href="<?php echo INSTALL_URL; ?>?controller=Auth&action=logout"><i
+                                class="dropdown-item-icon mdi mdi-power text-primary me-2"></i>Sign Out</a>
                     </div>
                 </li>
             </ul>
-            <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-bs-toggle="offcanvas">
+            <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
+                data-bs-toggle="offcanvas">
                 <span class="mdi mdi-menu"></span>
             </button>
         <?php endif; ?>
