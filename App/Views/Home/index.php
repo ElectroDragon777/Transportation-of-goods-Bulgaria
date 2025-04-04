@@ -8,19 +8,19 @@
                             aria-controls="overview" aria-selected="true">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="profile-tab" data-bs-toggle="tab" href="#audiences" role="tab"
+                        <a class="nav-link" id="about-tab" data-bs-toggle="tab" href="#about" role="tab"
                             aria-selected="false">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="contact-tab" data-bs-toggle="tab" href="#demographics" role="tab"
-                            aria-selected="false">Price-making</a>
+                        <a class="nav-link" id="price_decision-tab" data-bs-toggle="tab" href="#price_decision"
+                            role="tab" aria-selected="false">Price-decision</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link border-0" id="more-tab" data-bs-toggle="tab" href="#more" role="tab"
+                        <a class="nav-link border-0" id="faqs-tab" data-bs-toggle="tab" href="#faqs" role="tab"
                             aria-selected="false">FAQs</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link border-0" id="more-tab" data-bs-toggle="tab" href="#more" role="tab"
+                        <a class="nav-link border-0" id="contact-tab" data-bs-toggle="tab" href="#contacts" role="tab"
                             aria-selected="false">Contacts</a>
                     </li>
                 </ul>
@@ -33,9 +33,10 @@
                 </div>
             </div>
 
-            <!-- Statistics, can be useful later :3 -->
             <div class="tab-content tab-content-basic">
+                <!-- Home -->
                 <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview">
+                    <!-- Statistics, can be useful later :3 -->
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="statistics-details d-flex align-items-center justify-content-between">
@@ -669,10 +670,9 @@
                                 </div> -->
 
                         <!-- Reports  -->
-
                         <div class="col-md-6 col-lg-6 grid-margin stretch-card">
                             <div class="card card-rounded">
-                                <div class="card-body">
+                                <div class="card-body d-flex flex-column">
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <div class="d-flex justify-content-between align-items-center mb-3">
@@ -685,29 +685,36 @@
                                                             class="btn btn-secondary dropdown-toggle toggle-dark btn-lg mb-0 me-0"
                                                             type="button" id="dropdownMenuButton3"
                                                             data-bs-toggle="dropdown" aria-haspopup="true"
-                                                            aria-expanded="false"> Month Wise </button>
+                                                            aria-expanded="false">
+                                                            Month Wise
+                                                        </button>
                                                         <div class="dropdown-menu"
                                                             aria-labelledby="dropdownMenuButton3">
-                                                            <h6 class="dropdown-header">week Wise</h6>
+                                                            <h6 class="dropdown-header">Week Wise</h6>
                                                             <a class="dropdown-item" href="#">Year Wise</a>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="mt-3">
-                                                <div class="chartjs-size-monitor">
-                                                    <div class="chartjs-size-monitor-expand">
-                                                        <div class=""></div>
-                                                    </div>
-                                                    <div class="chartjs-size-monitor-shrink">
-                                                        <div class=""></div>
-                                                    </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3 flex-grow-1 d-flex align-items-end">
+                                        <div class="chartjs-size-monitor"
+                                            style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+                                            <div class="chartjs-size-monitor-expand"
+                                                style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                                                <div
+                                                    style="position:absolute;width:1000000px;height:1000000px;left:0;top:0">
                                                 </div>
-                                                <canvas id="leaveReport"
-                                                    style="display: block; width: 249px; height: 150px;" width="249"
-                                                    height="150" class="chartjs-render-monitor"></canvas>
+                                            </div>
+                                            <div class="chartjs-size-monitor-shrink"
+                                                style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                                                <div style="position:absolute;width:100%;height:100%;left:0; top:0">
+                                                </div>
                                             </div>
                                         </div>
+                                        <canvas id="leaveReport" style="display: block; width: 100%; height: auto;"
+                                            width="249%" height="100%" class="chartjs-render-monitor"></canvas>
                                     </div>
                                 </div>
                             </div>
@@ -805,10 +812,41 @@
                         </div> -->
                     </div>
                 </div>
+
+
+                <!-- About Page :: Also, keep in mind, show active is for HOME only. Do not add to "tab-pane fade" the "show active" unless it is HOME-->
+                <div class="tab-pane fade" id="about" role="tabpanel" aria-labelledby="about">
+                    <div class="row flex-grow">
+                        <div class="col-12 grid-margin stretch-card">
+                            <div class="card card-rounded">
+                                <div class="card-body">
+                                    <h3 class="card-title card-title-dash">About Us</h3>
+                                    <p class="card-description"><br>Welcome to Elec-transport! We are a team of
+                                        couriers,
+                                        ready to deliver everything you want! No matter when, your palletes will arrive
+                                        in the office in
+                                        due time. We make everything easier, not pressuring with paperwork, just sign
+                                        you have gotten your pallete and you are free to go! We will take care of the
+                                        paperwork for you.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Price-setting Page -->
+                <div class="tab-pane fade" id="price_decision" role="tabpanel" aria-labelledby="price_decision">
+                    <div class="row flex-grow">
+                        <div class="col-12 grid-margin stretch-card">
+                            <div class="card card-rounded">
+                                <div class="card-body">
+                                    <h3 class="card-title card-title-dash">How do we price?</h3>
+                                    <p>Hoi~</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
-</div>
-</div>
 </div>

@@ -10,7 +10,8 @@
 
             <li class="nav-item nav-category">Personal</li>
             <li class="nav-item">
-                <a class="nav-link" href="<?php INSTALL_URL; ?>?controller=Order&action=list&user_id=<?php echo $_SESSION['user']['id']; ?>">
+                <a class="nav-link"
+                    href="<?php INSTALL_URL; ?>?controller=Order&action=list&user_id=<?php echo $_SESSION['user']['id']; ?>">
                     <i class="menu-icon mdi mdi-clipboard-list"></i>
                     <span class="menu-title">My Orders</span>
                 </a>
@@ -25,21 +26,26 @@
                     </a>
                     <div class="collapse" id="orders">
                         <ul class="nav flex-column sub-menu">
-                            <li class="nav-item"><a class="nav-link" href="<?php INSTALL_URL; ?>?controller=Order&action=list">List Orders</a></li>
-                            <li class="nav-item"><a class="nav-link" href="<?php INSTALL_URL; ?>?controller=Order&action=create">Create Order</a></li>
+                            <li class="nav-item"><a class="nav-link"
+                                    href="<?php INSTALL_URL; ?>?controller=Order&action=list">List Orders</a></li>
+                            <li class="nav-item"><a class="nav-link"
+                                    href="<?php INSTALL_URL; ?>?controller=Order&action=create">Create Order</a></li>
                         </ul>
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="collapse" href="#products" aria-expanded="false" aria-controls="products">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#palletes" aria-expanded="false"
+                        aria-controls="palletes">
                         <i class="menu-icon mdi mdi-cube-outline"></i>
-                        <span class="menu-title">Products</span>
+                        <span class="menu-title">Palletes</span>
                         <i class="menu-arrow"></i>
                     </a>
-                    <div class="collapse" id="products">
+                    <div class="collapse" id="palletes">
                         <ul class="nav flex-column sub-menu">
-                            <li class="nav-item"> <a class="nav-link" href="<?php INSTALL_URL; ?>?controller=Product&action=list">List Products</a></li>
-                            <li class="nav-item"> <a class="nav-link" href="<?php INSTALL_URL; ?>?controller=Product&action=create">Create Product</a></li>
+                            <li class="nav-item"> <a class="nav-link"
+                                    href="<?php INSTALL_URL; ?>?controller=Product&action=list">List Palletes</a></li>
+                            <li class="nav-item"> <a class="nav-link"
+                                    href="<?php INSTALL_URL; ?>?controller=Product&action=create">Create Pallete</a></li>
                         </ul>
                     </div>
                 </li>
@@ -51,21 +57,26 @@
                     </a>
                     <div class="collapse" id="users">
                         <ul class="nav flex-column sub-menu">
-                            <li class="nav-item"> <a class="nav-link" href="<?php INSTALL_URL; ?>?controller=User&action=list">List Users</a></li>
-                            <li class="nav-item"> <a class="nav-link" href="<?php INSTALL_URL; ?>?controller=User&action=create">Create User</a></li>
+                            <li class="nav-item"> <a class="nav-link"
+                                    href="<?php INSTALL_URL; ?>?controller=User&action=list">List Users</a></li>
+                            <li class="nav-item"> <a class="nav-link"
+                                    href="<?php INSTALL_URL; ?>?controller=User&action=create">Create User</a></li>
                         </ul>
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="collapse" href="#couriers" aria-expanded="false" aria-controls="couriers">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#couriers" aria-expanded="false"
+                        aria-controls="couriers">
                         <i class="menu-icon mdi mdi-truck"></i>
                         <span class="menu-title">Couriers</span>
                         <i class="menu-arrow"></i>
                     </a>
                     <div class="collapse" id="couriers">
                         <ul class="nav flex-column sub-menu">
-                            <li class="nav-item"> <a class="nav-link" href="<?php INSTALL_URL; ?>?controller=Courier&action=list">List Couriers</a></li>
-                            <li class="nav-item"> <a class="nav-link" href="<?php INSTALL_URL; ?>?controller=Courier&action=create">Create Courier</a></li>
+                            <li class="nav-item"> <a class="nav-link"
+                                    href="<?php INSTALL_URL; ?>?controller=Courier&action=list">List Couriers</a></li>
+                            <li class="nav-item"> <a class="nav-link"
+                                    href="<?php INSTALL_URL; ?>?controller=Courier&action=create">Create Courier</a></li>
                         </ul>
                     </div>
                 </li>
@@ -79,7 +90,8 @@
             <?php elseif ($_SESSION['user']['role'] === 'courier'): ?>
                 <li class="nav-item nav-category">Deliveries</li>
                 <li class="nav-item">
-                    <a class="nav-link" href="<?php INSTALL_URL; ?>?controller=Order&action=list&courier_id=<?php echo $_SESSION['user']['id']; ?>">
+                    <a class="nav-link"
+                        href="<?php INSTALL_URL; ?>?controller=Order&action=list&courier_id=<?php echo $_SESSION['user']['id']; ?>">
                         <i class="menu-icon mdi mdi-truck-delivery"></i>
                         <span class="menu-title">Orders to Deliver</span>
                     </a>
