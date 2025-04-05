@@ -206,64 +206,59 @@ class UserController extends Controller
         $message = isset($_SESSION['profile_update_message']) ? $_SESSION['profile_update_message'] : null;
         unset($_SESSION['profile_update_message']);
 
+
         $this->view($this->layout, ['user' => $user, 'message' => $message]);
     }
 
     function uploadProfilePicture()
     {
         header('Content-Type: application/json');
-        session_start(); // Ensure session is started!
-
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['profile_picture'])) {
             $user_id = $_POST['user_id']; // Get user ID
             $userModel = new \App\Models\User();
 
-            // Validate user ID
-            if (!$userModel->get($user_id)) {
-                echo json_encode(['status' => 'error', 'message' => 'Invalid user ID.']);
-                exit;
-            }
+            // Get current user data to check for existing photo
+            $currentUser = $userModel->get($user_id);
+            $oldPhotoPath = isset($currentUser['photo_path']) ? $currentUser['photo_path'] : null;
 
             $fileName = basename($_FILES["profile_picture"]["name"]);
-            $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+            $fileExt = pathinfo($fileName, PATHINFO_EXTENSION);
             $allowedTypes = ["jpg", "jpeg", "png", "gif"];
-
-            if (!in_array($fileExt, $allowedTypes)) {
+            if (!in_array(strtolower($fileExt), $allowedTypes)) {
                 echo json_encode(['status' => 'error', 'message' => 'Invalid file format!']);
                 exit;
             }
 
+            require 'App\Helpers\uploader\src\class.upload.php';
             $handle = new \Verot\Upload\Upload($_FILES['profile_picture']);
             if ($handle->uploaded) {
                 $handle->file_new_name_body = 'profile_' . $user_id . '_' . uniqid();
                 $handle->image_resize = true;
                 $handle->image_x = 300;
                 $handle->image_ratio_y = true;
-
-                $upload_path = __DIR__ . '/../../web/upload/'; // Use absolute path
-
-                if (!is_dir($upload_path) && !mkdir($upload_path, 0755, true)) {
-                    echo json_encode(['status' => 'error', 'message' => 'Failed to create upload directory.']);
-                    exit;
-                }
-
+                $upload_path = 'web/upload/';
                 $handle->process($upload_path);
-
                 if ($handle->processed) {
                     $photoPath = $upload_path . $handle->file_dst_name;
                     $handle->clean();
 
                     // Update user photo in database
-                    if ($userModel->update(['id' => $user_id, 'photo_path' => $photoPath])) {
-                        $_SESSION['user']['photo_path'] = $photoPath;
+                    $userModel->update(['id' => $user_id, 'photo_path' => $photoPath]);
+                    $_SESSION['user']['photo_path'] = $photoPath;
 
-                        echo json_encode([
-                            'status' => 'success',
-                            'photo_path' => $photoPath
-                        ]);
-                    } else {
-                        echo json_encode(['status' => 'error', 'message' => 'Database update failed.']);
+                    // Delete old photo if it exists and isn't a default photo
+                    if ($oldPhotoPath && file_exists($oldPhotoPath) && strpos($oldPhotoPath, 'profile_') !== false) {
+                        unlink($oldPhotoPath);
                     }
+
+                    // Set notification message in session
+                    $_SESSION['photo_update_message'] = "Profile picture updated successfully!";
+
+                    echo json_encode([
+                        'status' => 'success',
+                        'photo_path' => $photoPath,
+                        'message' => $_SESSION['photo_update_message'],
+                    ]);
                 } else {
                     echo json_encode(['status' => 'error', 'message' => $handle->error]);
                 }
