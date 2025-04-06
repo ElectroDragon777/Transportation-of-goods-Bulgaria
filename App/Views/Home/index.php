@@ -878,7 +878,7 @@
                             <div class="card card-rounded">
                                 <div class="card-body">
                                     <h3 class="card-title card-title-dash">About Us</h3>
-                                    <p class="card-description"><br>Welcome to Elec-transport! We are a team of
+                                    <p class="card-description"><br>Welcome to Elec-Transport! We are a team of
                                         couriers,
                                         ready to deliver everything you want! No matter when, your palletes will arrive
                                         in the office in
@@ -1020,7 +1020,98 @@
                             <div class="card card-rounded">
                                 <div class="card-body">
                                     <h3 class="card-title card-title-dash">How do we price?</h3>
-                                    <p>Hoi~</p>
+                                    <p class="card-description">Our pricing is based on the weight and dimensions of
+                                        your shipment to ensure fair and transparent costs. Below is a breakdown of our
+                                        pricing structure:</p>
+
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover table-bordered price-table">
+                                            <thead class="thead-light">
+                                                <tr>
+                                                    <th scope="col" data-sortable="true">
+                                                        Weight/Dimensions
+                                                        <span class="sort-icon sort-asc">&#9650;</span>
+                                                        <span class="sort-icon sort-desc">&#9660;</span>
+                                                    </th>
+                                                    <th scope="col" data-sortable="true">
+                                                        Price (BGN)
+                                                        <span class="sort-icon sort-asc">&#9650;</span>
+                                                        <span class="sort-icon sort-desc">&#9660;</span>
+                                                    </th>
+                                                    <th scope="col" data-sortable="false">Details</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Up to 3 kg</td>
+                                                    <td>10</td>
+                                                    <td>Base price for very light packages.</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Up to 6 kg</td>
+                                                    <td>15</td>
+                                                    <td>Price for slightly heavier packages.</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Up to 10 kg</td>
+                                                    <td>20</td>
+                                                    <td>Pricing for medium-weight shipments.</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Up to 20 kg</td>
+                                                    <td>35</td>
+                                                    <td>Standard price for packages up to 20 kg.</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>20 kg - 50 kg</td>
+                                                    <td>35 + 1 per kg over 20</td>
+                                                    <td>Base price of 35 BGN plus 1 BGN for each kilogram exceeding 20
+                                                        kg, up to 50 kg.</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Over 50 kg (max 80/120/90 cm)</td>
+                                                    <td>30 + 0.9 per kg</td>
+                                                    <td>Base price of 30 BGN plus 0.9 BGN for each kilogram over 50 kg,
+                                                        up to 1000 kg, with maximum dimensions of 80x120x90 cm.</td>
+                                                </tr>
+                                                <tr class="table-info">
+                                                    <th scope="row" colspan="3" class="text-center">Packages with
+                                                        Dimensions Larger Than 80/120/90 cm</th>
+                                                </tr>
+                                                <tr>
+                                                    <td>Up to 15 kg (large dimensions)</td>
+                                                    <td>K * 150</td>
+                                                    <td>Price is calculated using the coefficient K, where K = (longest
+                                                        dimension in meters * shortest dimension in meters) / 0.96.</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Over 15 kg (large dimensions)</td>
+                                                    <td>2 * K * 150</td>
+                                                    <td>Price is calculated as twice the value using the coefficient K,
+                                                        where K = (longest dimension in meters * shortest dimension in
+                                                        meters) / 0.96.</td>
+                                                </tr>
+                                                <tr class="table-warning">
+                                                    <th scope="row" colspan="3" class="text-center">Additional Fees</th>
+                                                </tr>
+                                                <tr>
+                                                    <td>Cash on Delivery</td>
+                                                    <td>+ 1.5% of the total amount</td>
+                                                    <td>A fee of 1.5% is applied to the total amount for cash on
+                                                        delivery service.</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <!-- <p class="mt-3"><strong>Please note:</strong> For shipments exceeding 1000 kg or
+                                        with significantly larger dimensions, please <a
+                                            href="index.php#contacts">contact us</a>
+                                        for a custom quote.</p> -->
+
+                                    <p class="mt-3"><strong>Please note:</strong> For shipments exceeding 1000 kg or
+                                        with significantly larger dimensions, please contact us
+                                        for a custom quote.</p>
                                 </div>
                             </div>
                         </div>
@@ -1029,6 +1120,8 @@
             </div>
         </div>
     </div>
+
+    <!-- For About's Counters animation -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const counters = document.querySelectorAll('.display-4');
@@ -1072,5 +1165,172 @@
             }, { threshold: 0.5 });
 
             observer.observe(aboutSection);
+        });
+    </script>
+
+    <!-- Header Styles -->
+    <style>
+        .price-table thead th {
+            background-color: #aaa;
+            /* Replace with your desired color */
+            color: white;
+            /* Optional: change text color for better contrast */
+            border: 1px solid #ddd;
+            /* Optional: add borders to header cells */
+        }
+
+        .price-table,
+        .price-table th,
+        .price-table td {
+            border: 1px solid #ddd;
+            /* Add borders to the entire table and its cells */
+            border-collapse: collapse;
+            /* Optional: collapse borders into a single line */
+        }
+    </style>
+    <!-- For the table in Price-decision -->
+    <style>
+        .sort-icon {
+            display: inline-block;
+            margin-left: 5px;
+            vertical-align: middle;
+            opacity: 0.5;
+            /* Slightly faded initially */
+        }
+
+        .sort-icon.sort-asc {
+            font-size: 0.8em;
+            color: #212529;
+        }
+
+        .sort-icon.sort-desc {
+            font-size: 0.8em;
+            color: #212529;
+        }
+
+        /* Initially show both arrows, but slightly faded */
+        thead th[data-sortable="true"] .sort-asc,
+        thead th[data-sortable="true"] .sort-desc {
+            display: inline-block;
+        }
+
+        /* Highlight the active sort direction and dim the other */
+        thead th[data-sort="asc"] .sort-asc {
+            opacity: 1;
+            font-weight: bold;
+            /* Make the active arrow more prominent */
+        }
+
+        thead th[data-sort="asc"] .sort-desc {
+            opacity: 0.2;
+            /* Dim the inactive arrow */
+            font-weight: normal;
+        }
+
+        thead th[data-sort="desc"] .sort-desc {
+            opacity: 1;
+            font-weight: bold;
+            /* Make the active arrow more prominent */
+        }
+
+        thead th[data-sort="desc"] .sort-asc {
+            opacity: 0.2;
+            /* Dim the inactive arrow */
+            font-weight: normal;
+        }
+
+        /* Style the header to indicate it's sortable */
+        thead th[data-sortable="true"] {
+            cursor: pointer;
+        }
+    </style>
+
+    <script>
+        function sortTableEnhanced(table, columnIndex, ascending = true) {
+            const tbody = table.tBodies[0];
+            const rows = Array.from(tbody.querySelectorAll("tr"));
+            const headerCells = table.querySelectorAll("thead th");
+
+            const compare = (rowA, rowB) => {
+                const cellsA = rowA.querySelectorAll("td");
+                const cellsB = rowB.querySelectorAll("td");
+
+                if (cellsA.length === 0 || cellsB.length === 0) {
+                    return 0;
+                }
+
+                const cellA = cellsA[columnIndex] ? cellsA[columnIndex].textContent.trim() : '';
+                const cellB = cellsB[columnIndex] ? cellsB[columnIndex].textContent.trim() : '';
+
+                let valueA, valueB;
+
+                const numA = parseFloat(cellA.replace(/[^0-9.,]/g, '').replace(',', '.')); // Handle commas as decimal separators
+                const numB = parseFloat(cellB.replace(/[^0-9.,]/g, '').replace(',', '.'));
+
+                if (!isNaN(numA) && !isNaN(numB)) {
+                    valueA = numA;
+                    valueB = numB;
+                } else {
+                    valueA = cellA.toLowerCase();
+                    valueB = cellB.toLowerCase();
+                }
+
+                // Console logging for "Price (BGN)" column (index 1)
+                if (columnIndex === 1) {
+                    console.log("Comparing Price:", cellA, cellB, numA, numB, ascending);
+                }
+
+                if (ascending) {
+                    return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
+                } else {
+                    return valueA < valueB ? 1 : valueA > valueB ? -1 : 0;
+                }
+            };
+
+            console.log("Before sort:", rows);
+            rows.sort(compare);
+            console.log("After sort:", rows);
+
+            while (tbody.firstChild) {
+                tbody.removeChild(tbody.firstChild);
+            }
+
+            rows.forEach(row => tbody.appendChild(row));
+
+            // Update sort icons and data-sort attribute
+            headerCells.forEach((th, index) => {
+                if (th.getAttribute("data-sortable") === "true") {
+                    if (index === columnIndex) {
+                        th.setAttribute("data-sort", ascending ? "asc" : "desc");
+                    } else {
+                        th.removeAttribute("data-sort");
+                    }
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const priceTable = document.querySelector("#price_decision .table");
+            if (priceTable) {
+                const sortableHeaders = priceTable.querySelectorAll("thead th[data-sortable='true']");
+                sortableHeaders.forEach((th, index) => {
+                    th.addEventListener("click", () => {
+                        const currentSort = th.getAttribute("data-sort");
+                        let ascending = true;
+
+                        if (currentSort === "asc") {
+                            ascending = false;
+                        } else {
+                            ascending = true;
+                        }
+                        sortTableEnhanced(priceTable, index, ascending);
+                    });
+                });
+
+                // Initial sort (by the first sortable column, ascending)
+                if (sortableHeaders.length > 0) {
+                    sortTableEnhanced(priceTable, 0, true); // Sort by the first column (index 0), ascending
+                }
+            }
         });
     </script>
