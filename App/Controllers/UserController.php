@@ -251,13 +251,9 @@ class UserController extends Controller
                         unlink($oldPhotoPath);
                     }
 
-                    // Set notification message in session
-                    $_SESSION['photo_update_message'] = "Profile picture updated successfully!";
-
                     echo json_encode([
                         'status' => 'success',
                         'photo_path' => $photoPath,
-                        'message' => $_SESSION['photo_update_message'],
                     ]);
                 } else {
                     echo json_encode(['status' => 'error', 'message' => $handle->error]);

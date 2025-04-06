@@ -3,12 +3,12 @@
         <div class="col-sm-12">
             <div class="home-tab">
                 <div class="d-sm-flex align-items-center justify-content-between border-bottom">
-                    <ul class="nav nav-tabs" role="tablist">
+                    <ul class="nav nav-tabs width" role="tablist">
                         <li class="nav-item">
                             <a class="nav-link" href="<?php echo INSTALL_URL; ?>">Dashboard</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active ps-0" href="#">My Profile</a>
+                            <a class="nav-link active ps-3" href="#">My Profile</a>
                         </li>
                     </ul>
                 </div>
@@ -115,7 +115,7 @@
                                     </div>
                                 </div>
 
-                                <div class="card shadow-sm mt-4">
+                                <!-- <div class="card shadow-sm mt-4">
                                     <div class="card-body">
                                         <h5 class="card-title mb-4">Address Information</h5>
 
@@ -152,7 +152,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                     </div>
@@ -162,6 +162,7 @@
     </div>
 </div>
 
+<!-- Notification Popup -->
 <?php if ($message) { ?>
     <div id="notification-popup" class="notification-toast">
         <?php echo $message; ?>

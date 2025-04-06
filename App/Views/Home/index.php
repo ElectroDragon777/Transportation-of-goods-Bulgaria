@@ -16,7 +16,7 @@
                             role="tab" aria-selected="false">Price-decision</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link border-0" id="faqs-tab" data-bs-toggle="tab" href="#faqs" role="tab"
+                        <a class="nav-link" id="faqs-tab" data-bs-toggle="tab" href="#faqs" role="tab"
                             aria-selected="false">FAQs</a>
                     </li>
                     <li class="nav-item">
@@ -25,11 +25,11 @@
                     </li>
                 </ul>
                 <div>
-                    <div class="btn-wrapper">
+                    <!-- <div class="btn-wrapper">
                         <a href="#" class="btn btn-otline-dark align-items-center"><i class="icon-share"></i> Share</a>
                         <a href="#" class="btn btn-otline-dark"><i class="icon-printer"></i> Print</a>
                         <a href="#" class="btn btn-primary text-white me-0"><i class="icon-download"></i> Export</a>
-                    </div>
+                    </div> -->
                 </div>
             </div>
 
