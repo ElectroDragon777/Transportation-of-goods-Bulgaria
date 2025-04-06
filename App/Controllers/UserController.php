@@ -251,6 +251,7 @@ class UserController extends Controller
                         unlink($oldPhotoPath);
                     }
 
+                    // Return success message - we'll handle notification in JavaScript
                     echo json_encode([
                         'status' => 'success',
                         'photo_path' => $photoPath,

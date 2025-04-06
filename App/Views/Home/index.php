@@ -149,7 +149,64 @@
                             </div> -->
 
                     <!-- Orders progress -->
+
+                    <!-- The version it should be, coded  -->
+                    <!-- <?php
+                    $userModel = new \App\Models\User();
+                    require_once 'D:\XAMPP\htdocs\Transportation-of-goods-Bulgaria\App\Views\User\component\table.php';
+                    // Fetch users
+                    $users = $userModel->getAll([]); // Empty array means no filters
+                    
+                    // // Debugging (optional)
+                    // echo '<pre>';
+                    // var_dump($users);
+                    // echo '</pre>';
+                    ?>
                     <div class="row flex-grow">
+                        <div class="col-12 grid-margin stretch-card">
+                            <div class="card card-rounded">
+                                <div class="card-body">
+                                    <div class="d-sm-flex justify-content-between align-items-start">
+                                        <div>
+                                            <h4 class="card-title card-title-dash">Users' Active Orders</h4>
+                                        </div>
+                                    </div>
+                                    <div class="table-responsive mt-1">
+                                        <table class="table select-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Username</th>
+                                                    <th>Email</th>
+                                                    <th>Order Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>                                                
+                                                <?php if (empty($users)): ?>
+                                                    <tr>
+                                                        <td colspan="4" class="text-center">No users found.</td>
+                                                    </tr>
+                                                <?php endif; ?>
+                                                <?php foreach ($users as $index => $user): ?>
+                                                    <tr>
+                                                        <td><?= $index + 1 ?></td>
+                                                        <td><?= htmlspecialchars($user['name']) ?></td>
+                                                        <td><?= htmlspecialchars($user['email']) ?></td>
+                                                        <td>
+                                                            <div class="badge badge-opacity-success">Active</div>
+                                                        </td>
+                                                    </tr>
+                                                <?php endforeach; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
+
+                    <!-- This is the BootStrap's -->
+                    <!-- <div class="row flex-grow">
                         <div class="col-12 grid-margin stretch-card">
                             <div class="card card-rounded">
                                 <div class="card-body">
@@ -165,7 +222,7 @@
                                                 member</button>
                                         </div>
                                     </div>
-                                    <div class="table-responsive  mt-1">
+                                    <div class="table-responsive mt-1">
                                         <table class="table select-table">
                                             <thead>
                                                 <tr>
@@ -393,7 +450,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
 
                     <!-- Events -->
                     <div class="row flex-grow">
@@ -828,6 +885,129 @@
                                         due time. We make everything easier, not pressuring with paperwork, just sign
                                         you have gotten your pallete and you are free to go! We will take care of the
                                         paperwork for you.</p>
+                                    <p class="card-description">* This company is with made for educational
+                                        purposes/diploma thesis and
+                                        is not real, so please, do not spend money on it.</p>
+                                    <div class="row">
+                                        <div class="col-md-4 grid-margin stretch-card">
+                                            <div class="card card-rounded border-primary">
+                                                <div class="card-body text-center">
+                                                    <img src="/../../For DashBoard/About/page2-img1.jpg"
+                                                        alt="Reliability" class="img-fluid mb-3"
+                                                        style="max-height: 100px;">
+                                                    <h4 class="card-title">Reliability</h4>
+                                                    <p class="card-text">
+                                                        Your requests are our priority. We ensure timely and secure
+                                                        delivery, every time.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 grid-margin stretch-card">
+                                            <div class="card card-rounded border-success">
+                                                <div class="card-body text-center">
+                                                    <img src="/Important DB Pictures and PFPs and More Images/For DashBoard/About/page2-img2.jpg"
+                                                        alt="Safety" class="img-fluid mb-3" style="max-height: 100px;">
+                                                    <h4 class="card-title">Safety</h4>
+                                                    <p class="card-text">
+                                                        We handle your goods with utmost care, ensuring they reach their
+                                                        destination safely.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 grid-margin stretch-card">
+                                            <div class="card card-rounded border-info">
+                                                <div class="card-body text-center">
+                                                    <img src="/Important DB Pictures and PFPs and More Images/For DashBoard/About/page2-img3.jpg"
+                                                        alt="Transparency" class="img-fluid mb-3"
+                                                        style="max-height: 100px;">
+                                                    <h4 class="card-title">Transparency</h4>
+                                                    <p class="card-text">
+                                                        We keep you informed every step of the way with clear
+                                                        communication and tracking.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <h3 class="card-title card-title-dash mt-5">Our Solutions</h3>
+                                    <p class="card-description">We offer a wide range of logistics solutions to meet
+                                        your needs.</p>
+
+                                    <!-- Lists -->
+                                    <div class="row">
+                                        <div class="col-md-6 grid-margin stretch-card">
+                                            <div class="card card-rounded bg-light">
+                                                <div class="card-body">
+                                                    <h4 class="card-title"><i
+                                                            class="mdi mdi-truck-delivery text-primary me-2"></i>
+                                                        Logistics Consulting</h4>
+                                                    <p class="card-text">
+                                                        Our logistics experts assist you in finding the best and most
+                                                        cost-effective transport solutions.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 grid-margin stretch-card">
+                                            <div class="card card-rounded bg-light">
+                                                <div class="card-body">
+                                                    <h4 class="card-title"><i
+                                                            class="mdi mdi-rocket text-warning me-2"></i> Quick Services
+                                                    </h4>
+                                                    <p class="card-text">
+                                                        Fast and time-bound deliveries across all major locations with
+                                                        flexible and optimal routing.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 grid-margin stretch-card">
+                                            <div class="card card-rounded bg-light">
+                                                <div class="card-body">
+                                                    <h4 class="card-title"><i
+                                                            class="mdi mdi-shield-check text-success me-2"></i> Safe &
+                                                        Secure</h4>
+                                                    <p class="card-text">
+                                                        No matter what the destination is, your cargo will reach it on
+                                                        time and intact.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 grid-margin stretch-card">
+                                            <div class="card card-rounded bg-light">
+                                                <div class="card-body">
+                                                    <h4 class="card-title"><i
+                                                            class="mdi mdi-home-import-outline text-secondary me-2"></i>
+                                                        Door Delivery & Pick Up</h4>
+                                                    <p class="card-text">
+                                                        Comprehensive delivery services with pick-up at your door and
+                                                        last-mile delivery.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3 text-center">
+                                                <div id="offices-BG" class="display-4">0</div>
+                                                <p class="text-muted">Offices in Bulgaria</p>
+                                            </div>
+                                            <div class="col-md-3 text-center">
+                                                <div id="kilometers-covered" class="display-4">0</div>
+                                                <p class="text-muted">Kilometers covered</p>
+                                            </div>
+                                            <div class="col-md-3 text-center">
+                                                <div id="people-team" class="display-4">0</div>
+                                                <p class="text-muted">People in Team</p>
+                                            </div>
+                                            <div class="col-md-3 text-center">
+                                                <div id="clients" class="display-4">0</div>
+                                                <p class="text-muted">Clients</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -849,4 +1029,48 @@
             </div>
         </div>
     </div>
-</div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const counters = document.querySelectorAll('.display-4');
+            const aboutSection = document.getElementById('about');
+            const targets = {
+                'offices-BG': 26,
+                'kilometers-covered': 1928,
+                'people-team': 6,
+                'clients': 9
+            };
+            const animationDuration = 2000; // Total animation time in milliseconds
+            const frameRate = 60; // Updates per second (higher for smoother animation)
+            const totalFrames = Math.ceil(animationDuration / (1000 / frameRate)); // Total number of animation frames
+
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        counters.forEach(counter => {
+                            const targetId = counter.id;
+                            if (targets.hasOwnProperty(targetId)) {
+                                const targetValue = targets[targetId];
+                                const increment = targetValue / totalFrames; // Calculate increment per frame
+                                let currentValue = 0;
+                                let frameCount = 0;
+
+                                const interval = setInterval(() => {
+                                    frameCount++;
+                                    currentValue += increment;
+                                    counter.textContent = Math.ceil(currentValue); // Display rounded value
+
+                                    if (frameCount >= totalFrames) {
+                                        counter.textContent = targetValue; // Ensure final value is exact
+                                        clearInterval(interval);
+                                    }
+                                }, 1000 / frameRate);
+                            }
+                        });
+                        observer.unobserve(aboutSection);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            observer.observe(aboutSection);
+        });
+    </script>
