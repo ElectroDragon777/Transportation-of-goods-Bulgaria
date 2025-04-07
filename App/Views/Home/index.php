@@ -892,7 +892,7 @@
                                         <div class="col-md-4 grid-margin stretch-card">
                                             <div class="card card-rounded border-primary">
                                                 <div class="card-body text-center">
-                                                    <img src="/../../For DashBoard/About/page2-img1.jpg"
+                                                    <img src="D:\XAMPP\htdocs\Transportation-of-goods-Bulgaria\Important DB Pictures and PFPs and More Images\For DashBoard\About\page2-img1.jpg"
                                                         alt="Reliability" class="img-fluid mb-3"
                                                         style="max-height: 100px;">
                                                     <h4 class="card-title">Reliability</h4>
@@ -1117,6 +1117,294 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- FAQs  -->
+                <div class="tab-pane fade" id="faqs" role="tabpanel" aria-labelledby="faqs-tab">
+                    <div class="row flex-grow">
+                        <div class="col-12 grid-margin stretch-card">
+                            <div class="card card-rounded">
+                                <div class="card-body">
+                                    <h3 class="card-title card-title-dash">FAQs (Frequently Asked Questions)</h3>
+                                    <p class="card-description">Find answers to common questions about our local
+                                        transportation services in Bulgaria.</p>
+
+                                    <div class="accordion" id="faqAccordion">
+                                        <div class="card card-rounded mb-2">
+                                            <div class="card-header" id="headingOne">
+                                                <h5 class="mb-0">
+                                                    <button class="btn btn-link btn-block text-left" type="button"
+                                                        data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                                                        aria-expanded="true" aria-controls="collapseOne">
+                                                        <i class="mdi mdi-help-circle-outline mr-2"></i> What types of
+                                                        goods do you transport?
+                                                    </button>
+                                                </h5>
+                                            </div>
+
+                                            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                                                data-parent="#faqAccordion">
+                                                <div class="card-body">
+                                                    We transport a wide range of goods, including [mention specific
+                                                    types of goods you handle, e.g., documents, parcels, furniture,
+                                                    equipment]. Please note that due to our local focus within Bulgaria,
+                                                    we do not handle international shipping.
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="card card-rounded mb-2">
+                                            <div class="card-header" id="headingTwo">
+                                                <h5 class="mb-0">
+                                                    <button class="btn btn-link btn-block text-left" type="button"
+                                                        data-bs-toggle="collapse" data-bs-target="#collapseTwo"
+                                                        aria-expanded="true" aria-controls="collapseTwo">
+                                                        <i class="mdi mdi-help-circle-outline mr-2"></i> How do I
+                                                        request a transportation service?
+                                                    </button>
+                                                </h5>
+                                            </div>
+                                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
+                                                data-parent="#faqAccordion">
+                                                <div class="card-body">
+                                                    You can request a service by [mention the ways to request, e.g.,
+                                                    filling out the contact form on our website, calling us directly at
+                                                    [your phone number], or emailing us at [your email address]]. Please
+                                                    provide details about the goods, pickup and delivery locations
+                                                    within Bulgaria, and any specific requirements.
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="card card-rounded mb-2">
+                                            <div class="card-header" id="headingThree">
+                                                <h5 class="mb-0">
+                                                    <button class="btn btn-link btn-block text-left" type="button"
+                                                        data-bs-toggle="collapse" data-bs-target="#collapseThree"
+                                                        aria-expanded="true" aria-controls="collapseThree">
+                                                        <i class="mdi mdi-help-circle-outline mr-2"></i> What is your
+                                                        pricing structure?
+                                                    </button>
+                                                </h5>
+                                            </div>
+                                            <div id="collapseThree" class="collapse" aria-labelledby="headingThree"
+                                                data-parent="#faqAccordion">
+                                                <div class="card-body">
+                                                    Our pricing is based on several factors, including [mention factors,
+                                                    e.g., the size and weight of the goods, the distance of
+                                                    transportation within Bulgaria, and any special handling
+                                                    requirements]. For a detailed quote, please contact us with the
+                                                    specifics of your needs. You can also refer to our <a
+                                                        href="#pricing">Price-setting Page</a> for general pricing
+                                                    guidelines.
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="card card-rounded mb-2">
+                                            <div class="card-header" id="headingFour">
+                                                <h5 class="mb-0">
+                                                    <button class="btn btn-link btn-block text-left" type="button"
+                                                        data-bs-toggle="collapse" data-bs-target="#collapseFour"
+                                                        aria-expanded="true" aria-controls="collapseFour">
+                                                        <i class="mdi mdi-help-circle-outline mr-2"></i> What are your
+                                                        operating hours?
+                                                    </button>
+                                                </h5>
+                                            </div>
+                                            <div id="collapseFour" class="collapse" aria-labelledby="headingFour"
+                                                data-parent="#faqAccordion">
+                                                <div class="card-body">
+                                                    Our standard operating hours for pickups and deliveries within
+                                                    Bulgaria are [mention your operating hours, e.g., Monday to Friday,
+                                                    9:00 AM to 6:00 PM]. We may offer services outside these hours by
+                                                    prior arrangement.
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="card card-rounded mb-2">
+                                            <div class="card-header" id="headingFive">
+                                                <h5 class="mb-0">
+                                                    <button class="btn btn-link btn-block text-left collapsed"
+                                                        type="button" data-toggle="collapse" data-target="#collapseFive"
+                                                        aria-expanded="false" aria-controls="collapseFive">
+                                                        <i class="mdi mdi-help-circle-outline mr-2"></i> What areas in
+                                                        Bulgaria do you serve?
+                                                    </button>
+                                                </h5>
+                                            </div>
+                                            <div id="collapseFive" class="collapse" aria-labelledby="headingFive"
+                                                data-parent="#faqAccordion">
+                                                <div class="card-body">
+                                                    We provide local transportation services throughout Bulgaria,
+                                                    covering [mention specific regions or a general statement like "all
+                                                    major cities and towns in Bulgaria"]. Please contact us to confirm
+                                                    service availability for your specific locations.
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Contacts -->
+                <div class="tab-pane fade" id="contacts" role="tabpanel" aria-labelledby="contacts">
+                    <div class="row flex-grow">
+                        <div class="col-12 grid-margin stretch-card">
+                            <div class="card card-rounded">
+                                <div class="card-body">
+                                    <h3 class="card-title card-title-dash">Contact Us</h3>
+
+                                    <?php
+                                    // Assuming you have a way to check if the user is logged in and get their username/role
+                                    // Replace these placeholders with your actual PHP logic
+                                    $isLoggedIn = isset($_SESSION['user_id']); // Example: Check if user ID session exists
+                                    $username = $isLoggedIn ? $_SESSION['username'] : ''; // Example: Get username from session
+                                    $userRole = $isLoggedIn ? $_SESSION['role'] : ''; // Example: Get user role from session
+                                    
+                                    // Replace with your database connection details
+                                    $servername = "localhost";
+                                    $db_username = "your_db_username";
+                                    $password = "your_db_password";
+                                    $dbname = "your_db_name";
+
+                                    try {
+                                        $conn = new PDO("mysql:host=$servername;dbname=$dbname;charset=utf8mb4", $db_username, $password);
+                                        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+                                        // Assuming you have a table named 'admin_contacts' with columns like:
+                                        // address, phone, email
+                                        $stmt = $conn->prepare("SELECT address, phone, email FROM admin_contacts LIMIT 1");
+                                        $stmt->execute();
+                                        $adminInfo = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                                    } catch (PDOException $e) {
+                                        echo "<p class='text-danger'>Error retrieving admin contact information: " . $e->getMessage() . "</p>";
+                                        $adminInfo = null;
+                                    }
+                                    ?>
+
+                                    <?php if ($isLoggedIn && $userRole !== 'admin' && $userRole !== 'root'): ?>
+                                        <p>Writing as <strong><?php echo htmlspecialchars($username); ?></strong></p>
+                                        <p class="text-muted">Admins cannot use this contact form.</p>
+                                        <form id="contactForm">
+                                            <div class="form-group">
+                                                <label for="message">Message</label>
+                                                <textarea class="form-control" id="message" rows="5" required></textarea>
+                                            </div>
+                                            <button type="button" class="btn btn-primary mr-2"
+                                                onclick="sendMessage()">Send</button>
+                                            <button type="reset" class="btn btn-light">Clear</button>
+                                            <div id="messageSentAlert" class="alert alert-success mt-3"
+                                                style="display:none;">Message sent!</div>
+                                        </form>
+                                    <?php else: ?>
+                                        <p class="card-description">Feel free to reach out to us using the contact
+                                            information below or by sending us a message.</p>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <h4>Contact Information:</h4>
+                                                <?php if ($adminInfo && $adminInfo['name']): ?>
+                                                    <h5><?php echo htmlspecialchars($adminInfo['name']); ?></h5>
+                                                <?php endif; ?>
+                                                <?php if ($adminInfo && $adminInfo['profile_picture']): ?>
+                                                    <div class="mb-3">
+                                                        <img src="web/upload/<?php echo htmlspecialchars($adminInfo['profile_picture']); ?>"
+                                                            alt="Admin Profile Picture" class="img-thumbnail rounded-circle"
+                                                            style="width: 80px; height: 80px; object-fit: cover;">
+                                                    </div>
+                                                <?php endif; ?>
+                                                <?php if ($adminInfo && $adminInfo['address']): ?>
+                                                    <p><i class="mdi mdi-home-outline"></i> Address:
+                                                        <?php echo htmlspecialchars($adminInfo['address']); ?>
+                                                    </p>
+                                                <?php endif; ?>
+                                                <?php if ($adminInfo && $adminInfo['phone']): ?>
+                                                    <p><i class="mdi mdi-phone-outline"></i> Phone:
+                                                        <?php echo htmlspecialchars($adminInfo['phone']); ?>
+                                                    </p>
+                                                <?php endif; ?>
+                                                <?php if ($adminInfo && $adminInfo['email']): ?>
+                                                    <p><i class="mdi mdi-email-outline"></i> E-mail: <a
+                                                            href="mailto:<?php echo htmlspecialchars($adminInfo['email']); ?>"><?php echo htmlspecialchars($adminInfo['email']); ?></a>
+                                                    </p>
+                                                <?php endif; ?>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <h4>Send us a Message:</h4>
+                                                <form id="guestContactForm">
+                                                    <div class="form-group">
+                                                        <label for="name">Name</label>
+                                                        <input type="text" class="form-control" id="name" required>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="email">Email</label>
+                                                        <input type="email" class="form-control" id="email" required>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="phone">Phone</label>
+                                                        <input type="tel" class="form-control" id="phone">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="guestMessage">Message</label>
+                                                        <textarea class="form-control" id="guestMessage" rows="5"
+                                                            required></textarea>
+                                                    </div>
+                                                    <button type="button" class="btn btn-primary mr-2"
+                                                        onclick="sendGuestMessage()">Send</button>
+                                                    <button type="reset" class="btn btn-light">Clear</button>
+                                                    <div id="guestMessageSentAlert" class="alert alert-success mt-3"
+                                                        style="display:none;">Message sent!</div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    function sendMessage() {
+                        const message = document.getElementById('message').value;
+                        if (message.trim() !== '') {
+                            // In a real application, you would send this message to the server (e.g., via AJAX)
+                            console.log("Message from registered user:", message);
+                            document.getElementById('messageSentAlert').style.display = 'block';
+                            document.getElementById('contactForm').reset();
+                            setTimeout(() => {
+                                document.getElementById('messageSentAlert').style.display = 'none';
+                            }, 3000); // Hide alert after 3 seconds
+                        } else {
+                            alert('Please enter your message.');
+                        }
+                    }
+
+                    function sendGuestMessage() {
+                        const name = document.getElementById('name').value;
+                        const email = document.getElementById('email').value;
+                        const phone = document.getElementById('phone').value;
+                        const message = document.getElementById('guestMessage').value;
+
+                        if (name.trim() !== '' && email.trim() !== '' && message.trim() !== '') {
+                            // In a real application, you would send this message to the server (e.g., via AJAX)
+                            console.log("Message from guest:", { name, email, phone, message });
+                            document.getElementById('guestMessageSentAlert').style.display = 'block';
+                            document.getElementById('guestContactForm').reset();
+                            setTimeout(() => {
+                                document.getElementById('guestMessageSentAlert').style.display = 'none';
+                            }, 3000); // Hide alert after 3 seconds
+                        } else {
+                            alert('Please fill in the required fields (Name, Email, Message).');
+                        }
+                    }
+                </script>
             </div>
         </div>
     </div>
@@ -1251,6 +1539,18 @@
             const rows = Array.from(tbody.querySelectorAll("tr"));
             const headerCells = table.querySelectorAll("thead th");
 
+            // Separate normal rows from header rows
+            const normalRows = rows.filter(row => row.querySelector("td"));
+            const headerRows = rows.filter(row => !row.querySelector("td"));
+
+            // Find header row indices to preserve their positions
+            const headerRowIndices = [];
+            rows.forEach((row, index) => {
+                if (!row.querySelector("td")) {
+                    headerRowIndices.push({ row, originalIndex: index });
+                }
+            });
+
             const compare = (rowA, rowB) => {
                 const cellsA = rowA.querySelectorAll("td");
                 const cellsB = rowB.querySelectorAll("td");
@@ -1262,9 +1562,53 @@
                 const cellA = cellsA[columnIndex] ? cellsA[columnIndex].textContent.trim() : '';
                 const cellB = cellsB[columnIndex] ? cellsB[columnIndex].textContent.trim() : '';
 
-                let valueA, valueB;
+                // Special handling for price column
+                if (columnIndex === 1) { // Price column
+                    // Check for "K * 150" or "2 * K * 150" patterns and give them higher values
+                    const isFormulaA = cellA.includes("K *") || cellA.includes("* K");
+                    const isFormulaB = cellB.includes("K *") || cellB.includes("* K");
 
-                const numA = parseFloat(cellA.replace(/[^0-9.,]/g, '').replace(',', '.')); // Handle commas as decimal separators
+                    if (isFormulaA && !isFormulaB) {
+                        return ascending ? 1 : -1; // Formula values at the end when ascending
+                    } else if (!isFormulaA && isFormulaB) {
+                        return ascending ? -1 : 1;
+                    } else if (isFormulaA && isFormulaB) {
+                        // Both are formulas, compare by prefix number if exists
+                        const prefixA = cellA.match(/^(\d+)\s*\*/);
+                        const prefixB = cellB.match(/^(\d+)\s*\*/);
+                        if (prefixA && prefixB) {
+                            return ascending ?
+                                parseInt(prefixA[1]) - parseInt(prefixB[1]) :
+                                parseInt(prefixB[1]) - parseInt(prefixA[1]);
+                        } else {
+                            return 0;
+                        }
+                    }
+
+                    // Handle "base + per kg" format (like "35 + 1 per kg")
+                    const baseRateA = parseFloat(cellA.split('+')[0]);
+                    const baseRateB = parseFloat(cellB.split('+')[0]);
+
+                    if (!isNaN(baseRateA) && !isNaN(baseRateB)) {
+                        if (baseRateA !== baseRateB) {
+                            return ascending ? baseRateA - baseRateB : baseRateB - baseRateA;
+                        }
+
+                        // If base rates are the same, compare the additional rate
+                        const additionalRateA = cellA.includes('+') ?
+                            parseFloat(cellA.split('+')[1].replace(/[^0-9.,]/g, '').replace(',', '.')) : 0;
+                        const additionalRateB = cellB.includes('+') ?
+                            parseFloat(cellB.split('+')[1].replace(/[^0-9.,]/g, '').replace(',', '.')) : 0;
+
+                        if (!isNaN(additionalRateA) && !isNaN(additionalRateB)) {
+                            return ascending ? additionalRateA - additionalRateB : additionalRateB - additionalRateA;
+                        }
+                    }
+                }
+
+                // Default handling for other columns and simple numeric values
+                let valueA, valueB;
+                const numA = parseFloat(cellA.replace(/[^0-9.,]/g, '').replace(',', '.'));
                 const numB = parseFloat(cellB.replace(/[^0-9.,]/g, '').replace(',', '.'));
 
                 if (!isNaN(numA) && !isNaN(numB)) {
@@ -1275,11 +1619,6 @@
                     valueB = cellB.toLowerCase();
                 }
 
-                // Console logging for "Price (BGN)" column (index 1)
-                if (columnIndex === 1) {
-                    console.log("Comparing Price:", cellA, cellB, numA, numB, ascending);
-                }
-
                 if (ascending) {
                     return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
                 } else {
@@ -1287,15 +1626,40 @@
                 }
             };
 
-            console.log("Before sort:", rows);
-            rows.sort(compare);
-            console.log("After sort:", rows);
+            // Sort only normal rows
+            normalRows.sort(compare);
 
+            // Clear table body
             while (tbody.firstChild) {
                 tbody.removeChild(tbody.firstChild);
             }
 
-            rows.forEach(row => tbody.appendChild(row));
+            // Reconstruct table with header rows in their original positions
+            let normalRowIndex = 0;
+            let headerRowIndex = 0;
+
+            for (let i = 0; i < rows.length; i++) {
+                if (headerRowIndex < headerRowIndices.length && headerRowIndices[headerRowIndex].originalIndex === i) {
+                    // Insert a header row
+                    tbody.appendChild(headerRowIndices[headerRowIndex].row);
+                    headerRowIndex++;
+                } else if (normalRowIndex < normalRows.length) {
+                    // Insert a normal row
+                    tbody.appendChild(normalRows[normalRowIndex]);
+                    normalRowIndex++;
+                }
+            }
+
+            // Append any remaining rows
+            while (normalRowIndex < normalRows.length) {
+                tbody.appendChild(normalRows[normalRowIndex]);
+                normalRowIndex++;
+            }
+
+            while (headerRowIndex < headerRowIndices.length) {
+                tbody.appendChild(headerRowIndices[headerRowIndex].row);
+                headerRowIndex++;
+            }
 
             // Update sort icons and data-sort attribute
             headerCells.forEach((th, index) => {
@@ -1316,13 +1680,7 @@
                 sortableHeaders.forEach((th, index) => {
                     th.addEventListener("click", () => {
                         const currentSort = th.getAttribute("data-sort");
-                        let ascending = true;
-
-                        if (currentSort === "asc") {
-                            ascending = false;
-                        } else {
-                            ascending = true;
-                        }
+                        const ascending = currentSort !== "asc";
                         sortTableEnhanced(priceTable, index, ascending);
                     });
                 });
