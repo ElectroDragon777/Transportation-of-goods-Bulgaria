@@ -1539,18 +1539,36 @@
             const rows = Array.from(tbody.querySelectorAll("tr"));
             const headerCells = table.querySelectorAll("thead th");
 
-            // Separate normal rows from header rows
-            const normalRows = rows.filter(row => row.querySelector("td"));
-            const headerRows = rows.filter(row => !row.querySelector("td"));
+            // Identify section headers and group rows
+            const sections = [];
+            let currentSection = { headerRow: null, contentRows: [] };
+            let normalRows = [];
 
-            // Find header row indices to preserve their positions
-            const headerRowIndices = [];
-            rows.forEach((row, index) => {
-                if (!row.querySelector("td")) {
-                    headerRowIndices.push({ row, originalIndex: index });
+            rows.forEach(row => {
+                // Check if this is a section header row (has colspan or th elements)
+                const hasTh = row.querySelector("th");
+                const hasColspan = Array.from(row.querySelectorAll("td, th")).some(cell =>
+                    cell.hasAttribute("colspan") && parseInt(cell.getAttribute("colspan")) > 1);
+
+                if (hasTh || hasColspan) {
+                    // This is a section header
+                    if (currentSection.contentRows.length > 0 || currentSection.headerRow) {
+                        sections.push({ ...currentSection });
+                    }
+                    currentSection = { headerRow: row, contentRows: [] };
+                } else {
+                    // This is a content row
+                    currentSection.contentRows.push(row);
+                    normalRows.push(row);
                 }
             });
 
+            // Add the last section
+            if (currentSection.contentRows.length > 0 || currentSection.headerRow) {
+                sections.push(currentSection);
+            }
+
+            // Sort function for comparing row values
             const compare = (rowA, rowB) => {
                 const cellsA = rowA.querySelectorAll("td");
                 const cellsB = rowB.querySelectorAll("td");
@@ -1562,103 +1580,115 @@
                 const cellA = cellsA[columnIndex] ? cellsA[columnIndex].textContent.trim() : '';
                 const cellB = cellsB[columnIndex] ? cellsB[columnIndex].textContent.trim() : '';
 
-                // Special handling for price column
-                if (columnIndex === 1) { // Price column
-                    // Check for "K * 150" or "2 * K * 150" patterns and give them higher values
+                // Special handling for weight column (column 0)
+                if (columnIndex === 0) {
+                    // Extract numeric value from weight strings like "Up to 10 kg" or "20 kg - 50 kg"
+                    const extractWeight = (text) => {
+                        if (text.includes("Up to")) {
+                            const match = text.match(/Up to (\d+)/);
+                            return match ? parseInt(match[1]) : 0;
+                        } else if (text.includes("Over")) {
+                            const match = text.match(/Over (\d+)/);
+                            return match ? parseInt(match[1]) + 1000 : 2000; // Add 1000 to push "Over" items to the end
+                        } else if (text.includes("-")) {
+                            const match = text.match(/(\d+) kg - (\d+)/);
+                            return match ? parseInt(match[1]) : 0;
+                        } else if (text.includes("Cash on Delivery")) {
+                            return 3000; // Push special items to the very end
+                        }
+                        return 0;
+                    };
+
+                    const weightA = extractWeight(cellA);
+                    const weightB = extractWeight(cellB);
+
+                    if (weightA !== weightB) {
+                        return ascending ? weightA - weightB : weightB - weightA;
+                    }
+                }
+
+                // Special handling for price column (column 1)
+                if (columnIndex === 1) {
+                    // Handle formula-based prices
                     const isFormulaA = cellA.includes("K *") || cellA.includes("* K");
                     const isFormulaB = cellB.includes("K *") || cellB.includes("* K");
 
                     if (isFormulaA && !isFormulaB) {
-                        return ascending ? 1 : -1; // Formula values at the end when ascending
+                        return ascending ? 1 : -1;
                     } else if (!isFormulaA && isFormulaB) {
                         return ascending ? -1 : 1;
                     } else if (isFormulaA && isFormulaB) {
-                        // Both are formulas, compare by prefix number if exists
                         const prefixA = cellA.match(/^(\d+)\s*\*/);
                         const prefixB = cellB.match(/^(\d+)\s*\*/);
                         if (prefixA && prefixB) {
                             return ascending ?
                                 parseInt(prefixA[1]) - parseInt(prefixB[1]) :
                                 parseInt(prefixB[1]) - parseInt(prefixA[1]);
-                        } else {
-                            return 0;
                         }
                     }
 
-                    // Handle "base + per kg" format (like "35 + 1 per kg")
-                    const baseRateA = parseFloat(cellA.split('+')[0]);
-                    const baseRateB = parseFloat(cellB.split('+')[0]);
+                    // Handle special cases for "+" in price
+                    if (cellA.includes("+") && cellB.includes("+")) {
+                        const baseA = parseFloat(cellA.split("+")[0]);
+                        const baseB = parseFloat(cellB.split("+")[0]);
 
-                    if (!isNaN(baseRateA) && !isNaN(baseRateB)) {
-                        if (baseRateA !== baseRateB) {
-                            return ascending ? baseRateA - baseRateB : baseRateB - baseRateA;
-                        }
-
-                        // If base rates are the same, compare the additional rate
-                        const additionalRateA = cellA.includes('+') ?
-                            parseFloat(cellA.split('+')[1].replace(/[^0-9.,]/g, '').replace(',', '.')) : 0;
-                        const additionalRateB = cellB.includes('+') ?
-                            parseFloat(cellB.split('+')[1].replace(/[^0-9.,]/g, '').replace(',', '.')) : 0;
-
-                        if (!isNaN(additionalRateA) && !isNaN(additionalRateB)) {
-                            return ascending ? additionalRateA - additionalRateB : additionalRateB - additionalRateA;
+                        if (!isNaN(baseA) && !isNaN(baseB) && baseA !== baseB) {
+                            return ascending ? baseA - baseB : baseB - baseA;
                         }
                     }
                 }
 
-                // Default handling for other columns and simple numeric values
-                let valueA, valueB;
+                // Default handling for numeric values
                 const numA = parseFloat(cellA.replace(/[^0-9.,]/g, '').replace(',', '.'));
                 const numB = parseFloat(cellB.replace(/[^0-9.,]/g, '').replace(',', '.'));
 
                 if (!isNaN(numA) && !isNaN(numB)) {
-                    valueA = numA;
-                    valueB = numB;
-                } else {
-                    valueA = cellA.toLowerCase();
-                    valueB = cellB.toLowerCase();
+                    return ascending ? numA - numB : numB - numA;
                 }
 
-                if (ascending) {
-                    return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
-                } else {
-                    return valueA < valueB ? 1 : valueA > valueB ? -1 : 0;
-                }
+                // Fallback to string comparison
+                const strA = cellA.toLowerCase();
+                const strB = cellB.toLowerCase();
+
+                return ascending ?
+                    strA.localeCompare(strB) :
+                    strB.localeCompare(strA);
             };
 
-            // Sort only normal rows
-            normalRows.sort(compare);
+            // For sorting by weight/dimensions or price, we need to maintain section boundaries
+            if (columnIndex === 0 || columnIndex === 1) {
+                // Sort rows within each section
+                sections.forEach(section => {
+                    section.contentRows.sort(compare);
+                });
 
-            // Clear table body
-            while (tbody.firstChild) {
-                tbody.removeChild(tbody.firstChild);
-            }
-
-            // Reconstruct table with header rows in their original positions
-            let normalRowIndex = 0;
-            let headerRowIndex = 0;
-
-            for (let i = 0; i < rows.length; i++) {
-                if (headerRowIndex < headerRowIndices.length && headerRowIndices[headerRowIndex].originalIndex === i) {
-                    // Insert a header row
-                    tbody.appendChild(headerRowIndices[headerRowIndex].row);
-                    headerRowIndex++;
-                } else if (normalRowIndex < normalRows.length) {
-                    // Insert a normal row
-                    tbody.appendChild(normalRows[normalRowIndex]);
-                    normalRowIndex++;
+                // Clear table and rebuild
+                while (tbody.firstChild) {
+                    tbody.removeChild(tbody.firstChild);
                 }
-            }
 
-            // Append any remaining rows
-            while (normalRowIndex < normalRows.length) {
-                tbody.appendChild(normalRows[normalRowIndex]);
-                normalRowIndex++;
-            }
+                // Reconstruct table with sorted sections
+                sections.forEach(section => {
+                    if (section.headerRow) {
+                        tbody.appendChild(section.headerRow);
+                    }
+                    section.contentRows.forEach(row => {
+                        tbody.appendChild(row);
+                    });
+                });
+            } else {
+                // For other columns, use simpler sorting
+                normalRows.sort(compare);
 
-            while (headerRowIndex < headerRowIndices.length) {
-                tbody.appendChild(headerRowIndices[headerRowIndex].row);
-                headerRowIndex++;
+                // Clear table and rebuild
+                while (tbody.firstChild) {
+                    tbody.removeChild(tbody.firstChild);
+                }
+
+                // Add all rows back in sorted order
+                normalRows.forEach(row => {
+                    tbody.appendChild(row);
+                });
             }
 
             // Update sort icons and data-sort attribute
