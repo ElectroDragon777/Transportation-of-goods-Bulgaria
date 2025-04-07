@@ -29,4 +29,7 @@ Slight rework after school stress. Templates found: [I can use HTTrack, so I do 
 
 ==== April 3rd 2025 ====
 We are getting real, slowly.
+
+==== April 4-6th 2025 ====
+Dashboard enhancements. Price-decision table is a bit off in its sorting when it comes to pricing. As of April 6th, FAQs and Contacts are worked on. The DB is done... in its old variant, got to update it to the new one now.
 -- End of current logs --
