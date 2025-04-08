@@ -5,10 +5,12 @@
                 <div class="d-sm-flex align-items-center justify-content-between border-bottom">
                     <div>
                         <div class="btn-wrapper">
-                            <a id="share-users" class="btn btn-outline-dark align-items-center"><i class="icon-share"></i> Share</a>
-                            <a id="print-users" class="btn btn-outline-dark align-items-center"><i class="icon-printer"></i> Print</a>
+                            <a id="share-users" class="btn btn-outline-dark align-items-center"><i
+                                    class="icon-share"></i> Share</a>
+                            <a id="print-users" class="btn btn-outline-dark align-items-center"><i
+                                    class="icon-printer"></i> Print</a>
                             <a href="<?php echo INSTALL_URL; ?>?controller=User&action=create"
-                               class="btn btn-primary text-white me-0"><i class="icon-plus"></i> New User</a>
+                                class="btn btn-primary text-white me-0"><i class="icon-plus"></i> New User</a>
                         </div>
                     </div>
                 </div>
@@ -18,9 +20,10 @@
                         <div class="card-header bg-gradient-light py-3">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h5 class="card-title mb-0 font-weight-bold text-primary">Advanced Filters</h5>
-                                <button type="button" class="btn btn-primary btn-sm rounded-pill px-3 d-flex align-items-center"
-                                        data-bs-toggle="collapse" data-bs-target="#filters-container" aria-expanded="false"
-                                        aria-controls="filters-container">
+                                <button type="button"
+                                    class="btn btn-primary btn-sm rounded-pill px-3 d-flex align-items-center"
+                                    data-bs-toggle="collapse" data-bs-target="#filters-container" aria-expanded="false"
+                                    aria-controls="filters-container">
                                     <i class="fa fa-filter me-2"></i>
                                     <span>Toggle Filters</span>
                                 </button>
@@ -32,48 +35,66 @@
                                     <div class="row">
                                         <div class="col-md-4 mb-3">
                                             <label for="filter-name" class="form-label">Name</label>
-                                            <input type="text" class="form-control" id="filter-name" placeholder="Search by name">
+                                            <input type="text" class="form-control" id="filter-name"
+                                                placeholder="Search by name">
                                         </div>
                                         <div class="col-md-4 mb-3">
                                             <label for="filter-email" class="form-label">Email</label>
-                                            <input type="text" class="form-control" id="filter-email" placeholder="Search by email">
+                                            <input type="text" class="form-control" id="filter-email"
+                                                placeholder="Search by email">
                                         </div>
                                         <div class="col-md-4 mb-3">
                                             <label for="filter-phone" class="form-label">Phone Number</label>
-                                            <input type="text" class="form-control" id="filter-phone" placeholder="Search by phone">
+                                            <input type="text" class="form-control" id="filter-phone"
+                                                placeholder="Search by phone">
                                         </div>
                                         <div class="col-md-4 mb-3">
                                             <label for="filter-country" class="form-label">Country</label>
-                                            <input type="text" class="form-control" id="filter-country" placeholder="Search by country">
+                                            <input type="text" class="form-control" id="filter-country"
+                                                placeholder="Search by country">
                                         </div>
                                         <div class="col-md-4 mb-3">
                                             <label for="filter-region" class="form-label">Region</label>
-                                            <input type="text" class="form-control" id="filter-region" placeholder="Search by region">
+                                            <input type="text" class="form-control" id="filter-region"
+                                                placeholder="Search by region">
                                         </div>
                                         <div class="col-md-4 mb-3">
                                             <label for="filter-address" class="form-label">Address</label>
-                                            <input type="text" class="form-control" id="filter-address" placeholder="Search by address">
+                                            <input type="text" class="form-control" id="filter-address"
+                                                placeholder="Search by address">
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-12 mb-3">
                                             <label class="form-label">Roles To Show</label>
                                             <div class="d-flex flex-wrap gap-2">
-                                                <div class="form-check border rounded p-2 px-4 d-flex align-items-center shadow-sm" style="background: #ffffff; border: 2px solid #007bff; border-radius: 8px; transition: all 0.3s ease-in-out; cursor: pointer;">
-                                                    <input class="form-check-input me-2" type="checkbox" id="role-user" value="user" checked>
-                                                    <label class="form-check-label fw-semibold text-primary" for="role-user">User</label>
+                                                <div class="form-check border rounded p-2 px-4 d-flex align-items-center shadow-sm"
+                                                    style="background: #ffffff; border: 2px solid #007bff; border-radius: 8px; transition: all 0.3s ease-in-out; cursor: pointer;">
+                                                    <input class="form-check-input me-2" type="checkbox" id="role-user"
+                                                        value="user" checked>
+                                                    <label class="form-check-label fw-semibold text-primary"
+                                                        for="role-user">User</label>
                                                 </div>
-                                                <div class="form-check border rounded p-2 px-4 d-flex align-items-center shadow-sm" style="background: #ffffff; border: 2px solid #28a745; border-radius: 8px; transition: all 0.3s ease-in-out; cursor: pointer;">
-                                                    <input class="form-check-input me-2" type="checkbox" id="role-admin" value="admin" checked>
-                                                    <label class="form-check-label fw-semibold text-success" for="role-admin">Admin</label>
+                                                <div class="form-check border rounded p-2 px-4 d-flex align-items-center shadow-sm"
+                                                    style="background: #ffffff; border: 2px solid #28a745; border-radius: 8px; transition: all 0.3s ease-in-out; cursor: pointer;">
+                                                    <input class="form-check-input me-2" type="checkbox" id="role-admin"
+                                                        value="admin" checked>
+                                                    <label class="form-check-label fw-semibold text-success"
+                                                        for="role-admin">Admin</label>
                                                 </div>
-                                                <div class="form-check border rounded p-2 px-4 d-flex align-items-center shadow-sm" style="background: #ffffff; border: 2px solid #dc3545; border-radius: 8px; transition: all 0.3s ease-in-out; cursor: pointer;">
-                                                    <input class="form-check-input me-2" type="checkbox" id="role-root" value="root" checked>
-                                                    <label class="form-check-label fw-semibold text-danger" for="role-root">Root</label>
+                                                <div class="form-check border rounded p-2 px-4 d-flex align-items-center shadow-sm"
+                                                    style="background: #ffffff; border: 2px solid #dc3545; border-radius: 8px; transition: all 0.3s ease-in-out; cursor: pointer;">
+                                                    <input class="form-check-input me-2" type="checkbox" id="role-root"
+                                                        value="root" checked>
+                                                    <label class="form-check-label fw-semibold text-danger"
+                                                        for="role-root">Root</label>
                                                 </div>
-                                                <div class="form-check border rounded p-2 px-4 d-flex align-items-center shadow-sm" style="background: #ffffff; border: 2px solid #ffc107; border-radius: 8px; transition: all 0.3s ease-in-out; cursor: pointer;">
-                                                    <input class="form-check-input me-2" type="checkbox" id="role-courier" value="courier" checked>
-                                                    <label class="form-check-label fw-semibold text-warning" for="role-courier">Courier</label>
+                                                <div class="form-check border rounded p-2 px-4 d-flex align-items-center shadow-sm"
+                                                    style="background: #ffffff; border: 2px solid #ffc107; border-radius: 8px; transition: all 0.3s ease-in-out; cursor: pointer;">
+                                                    <input class="form-check-input me-2" type="checkbox"
+                                                        id="role-courier" value="courier" checked>
+                                                    <label class="form-check-label fw-semibold text-warning"
+                                                        for="role-courier">Courier</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -95,7 +116,8 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <button id="bulk-delete-users-btn" class="btn btn-danger d-none">
-                                        <i class="fa fa-trash"></i> Delete Selected (<span id="selected-count-users">0</span>)
+                                        <i class="fa fa-trash"></i> Delete Selected (<span
+                                            id="selected-count-users">0</span>)
                                     </button>
                                 </div>
                             </div>
@@ -113,7 +135,7 @@
 </div>
 
 <div class="modal fade" id="deleteUser" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-     aria-hidden="true">
+    aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -133,7 +155,7 @@
 </div>
 
 <div class="modal fade" id="deleteUsers" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-     aria-hidden="true">
+    aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -176,7 +198,8 @@
 </div>
 
 <!-- Share Modal -->
-<div class="modal fade" id="usersShareModal" tabindex="-1" role="dialog" aria-labelledby="shareModalLabel" aria-hidden="true">
+<div class="modal fade" id="usersShareModal" tabindex="-1" role="dialog" aria-labelledby="shareModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
