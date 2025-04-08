@@ -54,7 +54,6 @@
                                             <select class="form-control settings-input" id="date_format" name="settings[date_format]" required>
                                                 <?php
                                                 // Define common date formats
-
                                                 foreach (Utility::$dateFormats as $format => $label) {
                                                     // Set the selected date format
                                                     $selected = ($format == $setting['value']) ? 'selected' : '';
@@ -70,6 +69,7 @@
                             </div>
                         <?php endforeach; ?>
 
+                        <!-- Buttons -->
                         <div class="row">
                             <div class="col-12">
                                 <button type="submit" id="save-btn" class="btn btn-primary text-white me-2" disabled>Save Changes</button>
