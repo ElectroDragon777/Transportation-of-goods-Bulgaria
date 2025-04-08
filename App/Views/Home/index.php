@@ -150,12 +150,12 @@
 
                     <!-- Orders progress -->
 
-                    <!-- The version it should be, coded  -->
+                    <!-- The version it should be, coded by me, but not working yet. Reminder to check notes! >w< -->
                     <!-- <?php
-                    $userModel = new \App\Models\User();
-                    require_once 'D:\XAMPP\htdocs\Transportation-of-goods-Bulgaria\App\Views\User\component\table.php';
+                    // $userModel = new \App\Models\User();
+                    // require_once 'D:\XAMPP\htdocs\Transportation-of-goods-Bulgaria\App\Views\User\component\table.php';
                     // Fetch users
-                    $users = $userModel->getAll([]); // Empty array means no filters
+                    // $users = $userModel->getAll([]); // Empty array means no filters
                     
                     // // Debugging (optional)
                     // echo '<pre>';
@@ -892,9 +892,9 @@
                                         <div class="col-md-4 grid-margin stretch-card">
                                             <div class="card card-rounded border-primary">
                                                 <div class="card-body text-center">
-                                                    <img src="D:\XAMPP\htdocs\Transportation-of-goods-Bulgaria\Important DB Pictures and PFPs and More Images\For DashBoard\About\page2-img1.jpg"
+                                                    <img src="Extras\Dashboard\AboutUs\page2-img1.jpg"
                                                         alt="Reliability" class="img-fluid mb-3"
-                                                        style="max-height: 100px;">
+                                                        style="max-height: 200px;">
                                                     <h4 class="card-title">Reliability</h4>
                                                     <p class="card-text">
                                                         Your requests are our priority. We ensure timely and secure
@@ -906,8 +906,8 @@
                                         <div class="col-md-4 grid-margin stretch-card">
                                             <div class="card card-rounded border-success">
                                                 <div class="card-body text-center">
-                                                    <img src="/Important DB Pictures and PFPs and More Images/For DashBoard/About/page2-img2.jpg"
-                                                        alt="Safety" class="img-fluid mb-3" style="max-height: 100px;">
+                                                    <img src="Extras\Dashboard\AboutUs\page2-img2.jpg"
+                                                        alt="Safety" class="img-fluid mb-3" style="max-height: 200px;">
                                                     <h4 class="card-title">Safety</h4>
                                                     <p class="card-text">
                                                         We handle your goods with utmost care, ensuring they reach their
@@ -919,9 +919,9 @@
                                         <div class="col-md-4 grid-margin stretch-card">
                                             <div class="card card-rounded border-info">
                                                 <div class="card-body text-center">
-                                                    <img src="/Important DB Pictures and PFPs and More Images/For DashBoard/About/page2-img3.jpg"
+                                                    <img src="Extras\Dashboard\AboutUs\page2-img3.jpg"
                                                         alt="Transparency" class="img-fluid mb-3"
-                                                        style="max-height: 100px;">
+                                                        style="max-height: 200px;">
                                                     <h4 class="card-title">Transparency</h4>
                                                     <p class="card-text">
                                                         We keep you informed every step of the way with clear
@@ -1226,7 +1226,7 @@
                                             <div class="card-header" id="headingFive">
                                                 <h5 class="mb-0">
                                                     <button class="btn btn-link btn-block text-left collapsed"
-                                                        type="button" data-toggle="collapse" data-target="#collapseFive"
+                                                        type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive"
                                                         aria-expanded="false" aria-controls="collapseFive">
                                                         <i class="mdi mdi-help-circle-outline mr-2"></i> What areas in
                                                         Bulgaria do you serve?
