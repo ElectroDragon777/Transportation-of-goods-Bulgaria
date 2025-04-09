@@ -7,11 +7,11 @@ https://stackoverflow.com/questions/51264422/how-to-refresh-a-div-every-x-second
 
 
 ~/~/~ What to work on: ~/~/~
-W-1. favicon.ico and .png; logo => Must make logo for mine and use it for both, as well for the (A) for when minimising/Tablet view. [Done with DMS, to change with my own later]
+W-1. [DONE] favicon.ico and .png; logo => Must make logo for mine and use it for both, as well for the (A) for when minimising/Tablet view. [Done with DMS, to change with my own later]
 W-2. Remove Products and replace with Paletes, to generate code for tracking and everything from the notes.
 W-3. [TO BE TESTED] Make PFP to update automatically after first update.
 W-4. [FIXED] Fix 'Edit User' Button. (must be 'profile' instead of 'edit' of http://localhost/Transportation-of-goods-Bulgaria/index.php?controller=User&action=edit&id=1 e.g)
-W-5. UPDATE THE ENTIRE SITE's PREVIEW (The Dashboard thing.)
+W-5. [85% DONE] UPDATE THE ENTIRE SITE's PREVIEW (The Dashboard thing.)
 
 
 ============= USING THIS AS TEMPORARY LOG =============
@@ -32,4 +32,10 @@ We are getting real, slowly.
 
 ==== April 4-6th 2025 ====
 Dashboard enhancements. Price-decision table is a bit off in its sorting when it comes to pricing. As of April 6th, FAQs and Contacts are worked on. The DB is done... in its old variant, got to update it to the new one now.
+
+==== April 7th 2025 ====
+Mentor meeting, she said I could use Google Maps API and for the tracking - VarnaTraffic's, interesting, since VT has no API.
+
+==== April 8th 2025 ====
+Looks better, Contacts almost done. A lot of early issues are fixed! Now, time to modify!
 -- End of current logs --
