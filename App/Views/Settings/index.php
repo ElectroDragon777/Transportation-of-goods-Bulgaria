@@ -45,13 +45,17 @@
                                         </select>
                                     <?php elseif ($setting['key'] === 'opening_time' || $setting['key'] === 'closing_time' || $setting['key'] === 'weekend_opening_time' || $setting['key'] === 'weekend_closing_time' || $setting['key'] === 'order_cut_off_time'): ?>
                                         <input type="time" class="form-control settings-input" id="<?php echo $setting['key']; ?>" name="settings[<?php echo $setting['key']; ?>]" value="<?php echo $setting['value']; ?>" required>
-                                    <?php elseif ($setting['key'] === 'weekend_operation'): ?>
+                                        <?php elseif ($setting['key'] === 'weekend_operation'): ?>
                                         <select class="form-control settings-input" id="<?php echo $setting['key']; ?>" name="settings[<?php echo $setting['key']; ?>]" required>
                                             <option value="1" <?php echo ($setting['value'] == '1') ? 'selected' : ''; ?>>Enabled</option>
                                             <option value="0" <?php echo ($setting['value'] == '0') ? 'selected' : ''; ?>>Disabled</option>
                                         </select>
                                     <?php elseif ($setting['key'] === 'default_order_status'): ?>
-                                        <input type="text" class="form-control settings-input" id="<?php echo $setting['key']; ?>" name="settings[<?php echo $setting['key']; ?>]" value="<?php echo $setting['value']; ?>" required>
+                                        <select class="form-control settings-input" id="<?php echo $setting['key']; ?>" name="settings[<?php echo $setting['key']; ?>]" required>
+                                            <?php foreach (Utility::$order_status as $key => $label): ?>
+                                                <option value="<?php echo $key; ?>" <?php echo ($setting['value'] == $key) ? 'selected' : ''; ?>><?php echo $label; ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
                                     <?php /* ?>
                                     <?php elseif ($setting['key'] === 'tax_rate'): ?>
                                         <input type="number" step="0.01" min="0" class="form-control settings-input" id="<?php echo $setting['key']; ?>" name="settings[<?php echo $setting['key']; ?>]" value="<?php echo $setting['value']; ?>" required>
@@ -85,3 +89,22 @@
         </div>
     </div>
 </div>
+
+
+<!-- Weekend work times buttons to be disabled if WW is disabled -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const weekendOperation = document.getElementById('weekend_operation');
+        const weekendOpeningTime = document.getElementById('weekend_opening_time');
+        const weekendClosingTime = document.getElementById('weekend_closing_time');
+
+        function toggleWeekendTimes() {
+            const isDisabled = weekendOperation.value === '0';
+            weekendOpeningTime.disabled = isDisabled;
+            weekendClosingTime.disabled = isDisabled;
+        }
+
+        toggleWeekendTimes(); // Initial state
+        weekendOperation.addEventListener('change', toggleWeekendTimes);
+    });
+</script>
