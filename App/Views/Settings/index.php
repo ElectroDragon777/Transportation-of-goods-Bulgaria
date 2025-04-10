@@ -14,7 +14,30 @@
                             <div class="row">
                                 <div class="form-group col-md-6 mb-3">
                                     <label for="<?php echo $setting['key']; ?>" class="form-label"><?php echo ucwords(str_replace('_', ' ', $setting['key'])); ?></label>
-                                    <?php if ($setting['key'] === 'tax_rate' || $setting['key'] === 'shipping_rate'): ?>
+                                    <?php if ($setting['key'] === 'email_sending'): ?>
+                                        <select class="form-control settings-input" id="<?php echo $setting['key']; ?>" name="settings[<?php echo $setting['key']; ?>]" required>
+                                            <option value="enabled" <?php echo ($setting['value'] == 'enabled') ? 'selected' : ''; ?>
+                                                <?php echo (!MAIL_CONFIGURED) ? 'disabled' : ''; ?>>Enabled</option>
+                                            <option value="disabled" <?php echo ($setting['value'] == 'disabled') ? 'selected' : ''; ?>>Disabled</option>
+                                        </select>
+                                        <?php if (!MAIL_CONFIGURED): ?>
+                                            <a href="<?php echo INSTALL_URL; ?>?controller=Install&action=step4" class="btn btn-warning mt-2">Configure Email</a>
+                                        <?php endif; ?>
+                                    <?php elseif ($setting['key'] === 'date_format'): ?>
+                                        <div class="form-group col-md-6 mb-3">
+                                            <select class="form-control settings-input" id="date_format" name="settings[date_format]" required>
+                                                <?php
+                                                foreach (Utility::$dateFormats as $format => $label) {
+                                                    $selected = ($format == $setting['value']) ? 'selected' : '';
+                                                    echo "<option value=\"{$format}\" $selected>{$label}</option>";
+                                                }
+                                                ?>
+                                            </select>
+                                        </div>
+                                    <?php /* ?>
+                                    <?php elseif ($setting['key'] === 'tax_rate'): ?>
+                                        <input type="number" step="0.01" min="0" class="form-control settings-input" id="<?php echo $setting['key']; ?>" name="settings[<?php echo $setting['key']; ?>]" value="<?php echo $setting['value']; ?>" required>
+                                    <?php elseif ($setting['key'] === 'shipping_rate'): ?>
                                         <input type="number" step="0.01" min="0" class="form-control settings-input" id="<?php echo $setting['key']; ?>" name="settings[<?php echo $setting['key']; ?>]" value="<?php echo $setting['value']; ?>" required>
                                     <?php elseif ($setting['key'] === 'currency_code'): ?>
                                         <select class="form-control settings-input" id="<?php echo $setting['key']; ?>" name="settings[<?php echo $setting['key']; ?>]" required>
@@ -25,51 +48,26 @@
                                             }
                                             ?>
                                         </select>
-                                    <?php elseif ($setting['key'] === 'email_sending'): ?>
-                                        <select class="form-control settings-input" id="<?php echo $setting['key']; ?>" name="settings[<?php echo $setting['key']; ?>]" required>
-                                            <option value="enabled" <?php echo ($setting['value'] == 'enabled') ? 'selected' : ''; ?> 
-                                                    <?php echo (!MAIL_CONFIGURED) ? 'disabled' : ''; ?>>Enabled</option>
-                                            <option value="disabled" <?php echo ($setting['value'] == 'disabled') ? 'selected' : ''; ?>>Disabled</option>
-                                        </select>
-
-                                        <?php if (!MAIL_CONFIGURED): ?>
-                                            <a href="<?php echo INSTALL_URL; ?>?controller=Install&action=step4" class="btn btn-warning mt-2">Configure Email</a>
-                                        <?php endif; ?>
                                     <?php elseif ($setting['key'] === 'timezone'): ?>
                                         <div class="form-group col-md-6 mb-3">
                                             <select class="form-control settings-input" id="timezone" name="settings[timezone]" required>
                                                 <?php
-                                                // Get all available timezones
+                                                // Extracts Timezones
                                                 $timezones = DateTimeZone::listIdentifiers();
+                                                // Selects Timezones
                                                 foreach ($timezones as $timezone) {
-                                                    // Set the selected timezone
                                                     $selected = ($timezone == $setting['value']) ? 'selected' : '';
                                                     echo "<option value=\"{$timezone}\" $selected>{$timezone}</option>";
                                                 }
                                                 ?>
                                             </select>
                                         </div>
-                                    <?php elseif ($setting['key'] === 'date_format'): ?>
-                                        <div class="form-group col-md-6 mb-3">
-                                            <select class="form-control settings-input" id="date_format" name="settings[date_format]" required>
-                                                <?php
-                                                // Define common date formats
-                                                foreach (Utility::$dateFormats as $format => $label) {
-                                                    // Set the selected date format
-                                                    $selected = ($format == $setting['value']) ? 'selected' : '';
-                                                    echo "<option value=\"{$format}\" $selected>{$label}</option>";
-                                                }
-                                                ?>
-                                            </select>
-                                        </div>
-                                    <?php else: ?>
-                                        <input type="text" class="form-control settings-input" id="<?php echo $setting['key']; ?>" name="settings[<?php echo $setting['key']; ?>]" value="<?php echo $setting['value']; ?>" required>
+                                    <?php */ ?>
                                     <?php endif; ?>
                                 </div>
                             </div>
                         <?php endforeach; ?>
 
-                        <!-- Buttons -->
                         <div class="row">
                             <div class="col-12">
                                 <button type="submit" id="save-btn" class="btn btn-primary text-white me-2" disabled>Save Changes</button>

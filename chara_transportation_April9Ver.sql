@@ -3,13 +3,14 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:8111
--- Generation Time: Apr 10, 2025 at 12:45 PM EEST
+-- Generation Time: Apr 03, 2025 at 12:31 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
-SET time_zone = "+02:00"; -- Updated to EEST
+SET time_zone = "+00:00";
+
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -32,7 +33,7 @@ CREATE TABLE `notifications` (
   `message` text NOT NULL,
   `link` varchar(255) DEFAULT NULL,
   `is_seen` tinyint(1) DEFAULT 0,
-  `created_at` bigint(20) DEFAULT unix_timestamp()
+  `created_at` bigint(20) DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- --------------------------------------------------------
@@ -49,8 +50,8 @@ CREATE TABLE `orders` (
   `region` varchar(255) NOT NULL,
   `status` varchar(50) NOT NULL,
   `product_price` decimal(10,2) NOT NULL,
-  `tax_rate` decimal(5,2) DEFAULT NULL,
-  `shipping_price` decimal(10,2) DEFAULT NULL,
+  `tax` decimal(10,2) NOT NULL,
+  `shipping_price` decimal(10,2) NOT NULL,
   `total_amount` decimal(10,2) NOT NULL,
   `created_at` bigint(20) DEFAULT unix_timestamp(),
   `last_processed` bigint(20) DEFAULT unix_timestamp(),
@@ -62,13 +63,13 @@ CREATE TABLE `orders` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `order_pallets`
+-- Table structure for table `order_products`
 --
 
-CREATE TABLE `order_pallets` (
+CREATE TABLE `order_products` (
   `id` int(11) NOT NULL,
   `order_id` int(11) NOT NULL,
-  `pallet_id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
   `quantity` int(11) NOT NULL,
   `price` decimal(10,2) NOT NULL,
   `subtotal` decimal(10,2) NOT NULL
@@ -77,19 +78,15 @@ CREATE TABLE `order_pallets` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `pallets`
+-- Table structure for table `products`
 --
 
-CREATE TABLE `pallets` (
+CREATE TABLE `products` (
   `id` int(11) NOT NULL,
   `name` varchar(100) NOT NULL,
   `description` text DEFAULT NULL,
   `price` decimal(10,2) NOT NULL,
-  `size_x_cm` int(3) NOT NULL,
-  `size_y_cm` int(3) NOT NULL,
-  `size_z_cm` int(3) NOT NULL,
-  `weight_kg` decimal(3,1) NOT NULL,
-  `code_billlanding` int(10) NOT NULL,
+  `stock` int(11) NOT NULL DEFAULT 0,
   `created_at` bigint(20) DEFAULT unix_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
@@ -102,7 +99,7 @@ CREATE TABLE `pallets` (
 CREATE TABLE `settings` (
   `id` int(11) NOT NULL,
   `key` varchar(255) NOT NULL,
-  `value` varchar(255) DEFAULT NULL
+  `value` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
@@ -111,15 +108,11 @@ CREATE TABLE `settings` (
 
 INSERT INTO `settings` (`id`, `key`, `value`) VALUES
 (1, 'email_sending', 'disabled'),
-(2, 'date_format', 'dd/mm/Y'),
-(3, 'opening_time', '08:00'),
-(4, 'closing_time', '18:00'),
-(5, 'weekend_operation', '0'),
-(6, 'weekend_opening_time', '10:00'),
-(7, 'weekend_closing_time', '17:00'),
-(8, 'order_cut_off_time', '17:00'),
-(9, 'default_order_status', 'Pending'),
-(10, 'timezone', 'Europe/Sofia');
+(2, 'tax_rate', '10.00'),
+(3, 'shipping_rate', '5.00'),
+(4, 'currency_code', '$'),
+(5, 'timezone', 'Europe/Sofia'),
+(6, 'date_format', 'm/d/Y');
 
 -- --------------------------------------------------------
 
@@ -136,6 +129,7 @@ CREATE TABLE `users` (
   `created_at` bigint(20) DEFAULT unix_timestamp(),
   `role` varchar(20) NOT NULL,
   `address` varchar(255) DEFAULT NULL,
+  `country` varchar(255) DEFAULT NULL,
   `region` varchar(255) DEFAULT NULL,
   `photo_path` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
@@ -144,10 +138,12 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `phone_number`, `password_hash`, `created_at`, `role`, `address`, `region`, `photo_path`) VALUES
-(1, 'Chara Dreemurr', 'chara@abv.bg', '', '$2y$10$SzepIhkBjgGu7USFhcIajOf6INf1T9tFMvKxgrCkBzZRIt0IUWUWy', 1743619906, 'root', '', '', 'web/upload/profile_1_67ed879ca62ff.jpg'),
-(2, 'Hakane', 'hakane.hoshino@yahoo.com', NULL, '$2y$10$ziUyifPVgfFHNBiN/hT5MOOzOsAbsFO400vRw0u2d2qmW1OJw/cfW', 1743620055, 'user', NULL, NULL, 'web/upload/profile_2_67ed885239962.png'),
-(3, 'Monika', 'monika@gmail.com', NULL, '$2y$10$Xl7uKdPNbXLRbDgJQeTxCuO532QZLoPcCU5LzIFje/fMef9qSn/aK', 1743620068, 'courier', NULL, NULL, 'web/upload/profile_3_67ed8803c86f5.jpg');
+INSERT INTO `users` (`id`, `name`, `email`, `phone_number`, `password_hash`, `created_at`, `role`, `address`, `country`, `region`, `photo_path`) VALUES
+(1, 'Chara Dreemurr', 'chara@abv.bg', '', '$2y$10$SzepIhkBjgGu7USFhcIajOf6INf1T9tFMvKxgrCkBzZRIt0IUWUWy', 1743619906, 'root', '', '', '', 'web/upload/profile_1_67ed879ca62ff.jpg'),
+(2, 'Hakane', 'hakane.hoshino@yahoo.com', NULL, '$2y$10$ziUyifPVgfFHNBiN/hT5MOOzOsAbsFO400vRw0u2d2qmW1OJw/cfW', 1743620055, 'user', NULL, NULL, NULL, 'web/upload/profile_2_67ed885239962.png'),
+(3, 'Monika', 'monika@gmail.com', NULL, '$2y$10$Xl7uKdPNbXLRbDgJQeTxCuO532QZLoPcCU5LzIFje/fMef9qSn/aK', 1743620068, 'courier', NULL, NULL, NULL, 'web/upload/profile_3_67ed8803c86f5.jpg'),
+(5, 'Tester_User', 'test@user.com', NULL, '$2y$10$aiV3E314MKhsxk2OlX5JIuFEK4SFD/9boXIvuxdcXZBTPD45Lxt.W', 1743672152, 'user', NULL, NULL, NULL, 'web/upload/profile_5_67ee58a823ec2.png'),
+(6, 'Tester_2', 'test2@user.com', '', '$2y$10$IQW9a2.ydd0.zsNm329JTeSwFL45woUXSvZnZN/TDDPZkV9TbNZ.m', 1743673552, 'user', '', '', '', 'web/upload/profile_6_67ee5c25aac0f.png');
 
 --
 -- Indexes for dumped tables
@@ -166,24 +162,22 @@ ALTER TABLE `orders`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `order_pallets`
+-- Indexes for table `order_products`
 --
-ALTER TABLE `order_pallets`
+ALTER TABLE `order_products`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `pallets`
+-- Indexes for table `products`
 --
-ALTER TABLE `pallets`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `code_billlanding` (`code_billlanding`);
+ALTER TABLE `products`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `settings`
 --
 ALTER TABLE `settings`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `key` (`key`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `users`
@@ -208,28 +202,28 @@ ALTER TABLE `orders`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `order_pallets`
+-- AUTO_INCREMENT for table `order_products`
 --
-ALTER TABLE `order_pallets`
+ALTER TABLE `order_products`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `pallets`
+-- AUTO_INCREMENT for table `products`
 --
-ALTER TABLE `pallets`
+ALTER TABLE `products`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `settings`
 --
 ALTER TABLE `settings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
