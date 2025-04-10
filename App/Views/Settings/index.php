@@ -10,8 +10,19 @@
                     <?php endif; ?>
 
                     <form id="settings-form" class="forms-sample" method="POST" action="<?php echo INSTALL_URL; ?>?controller=Settings&action=index">
-                        <?php foreach ($tpl['settings'] as $setting): ?>
-                            <div class="row">
+
+                        <div class="row">
+                            <?php
+                            $counter = 0;
+                            foreach ($tpl['settings'] as $setting):
+                                // Skip Timezone
+                                if ($setting['key'] === 'timezone') continue;
+
+                                // Start a new row for every two settings
+                                if ($counter % 2 === 0): ?>
+                                    </div><div class="row">
+                                <?php endif; ?>
+
                                 <div class="form-group col-md-6 mb-3">
                                     <label for="<?php echo $setting['key']; ?>" class="form-label"><?php echo ucwords(str_replace('_', ' ', $setting['key'])); ?></label>
                                     <?php if ($setting['key'] === 'email_sending'): ?>
@@ -24,16 +35,23 @@
                                             <a href="<?php echo INSTALL_URL; ?>?controller=Install&action=step4" class="btn btn-warning mt-2">Configure Email</a>
                                         <?php endif; ?>
                                     <?php elseif ($setting['key'] === 'date_format'): ?>
-                                        <div class="form-group col-md-6 mb-3">
-                                            <select class="form-control settings-input" id="date_format" name="settings[date_format]" required>
-                                                <?php
-                                                foreach (Utility::$dateFormats as $format => $label) {
-                                                    $selected = ($format == $setting['value']) ? 'selected' : '';
-                                                    echo "<option value=\"{$format}\" $selected>{$label}</option>";
-                                                }
-                                                ?>
-                                            </select>
-                                        </div>
+                                        <select class="form-control settings-input" id="date_format" name="settings[date_format]" required>
+                                            <?php
+                                            foreach (Utility::$dateFormats as $format => $label) {
+                                                $selected = ($format == $setting['value']) ? 'selected' : '';
+                                                echo "<option value=\"{$format}\" $selected>{$label}</option>";
+                                            }
+                                            ?>
+                                        </select>
+                                    <?php elseif ($setting['key'] === 'opening_time' || $setting['key'] === 'closing_time' || $setting['key'] === 'weekend_opening_time' || $setting['key'] === 'weekend_closing_time' || $setting['key'] === 'order_cut_off_time'): ?>
+                                        <input type="time" class="form-control settings-input" id="<?php echo $setting['key']; ?>" name="settings[<?php echo $setting['key']; ?>]" value="<?php echo $setting['value']; ?>" required>
+                                    <?php elseif ($setting['key'] === 'weekend_operation'): ?>
+                                        <select class="form-control settings-input" id="<?php echo $setting['key']; ?>" name="settings[<?php echo $setting['key']; ?>]" required>
+                                            <option value="1" <?php echo ($setting['value'] == '1') ? 'selected' : ''; ?>>Enabled</option>
+                                            <option value="0" <?php echo ($setting['value'] == '0') ? 'selected' : ''; ?>>Disabled</option>
+                                        </select>
+                                    <?php elseif ($setting['key'] === 'default_order_status'): ?>
+                                        <input type="text" class="form-control settings-input" id="<?php echo $setting['key']; ?>" name="settings[<?php echo $setting['key']; ?>]" value="<?php echo $setting['value']; ?>" required>
                                     <?php /* ?>
                                     <?php elseif ($setting['key'] === 'tax_rate'): ?>
                                         <input type="number" step="0.01" min="0" class="form-control settings-input" id="<?php echo $setting['key']; ?>" name="settings[<?php echo $setting['key']; ?>]" value="<?php echo $setting['value']; ?>" required>
@@ -41,32 +59,19 @@
                                         <input type="number" step="0.01" min="0" class="form-control settings-input" id="<?php echo $setting['key']; ?>" name="settings[<?php echo $setting['key']; ?>]" value="<?php echo $setting['value']; ?>" required>
                                     <?php elseif ($setting['key'] === 'currency_code'): ?>
                                         <select class="form-control settings-input" id="<?php echo $setting['key']; ?>" name="settings[<?php echo $setting['key']; ?>]" required>
-                                            <?php
-                                            foreach (Utility::$currencies as $k => $v) {
-                                                $selected = ($k == $setting['value']) ? 'selected' : '';
-                                                echo "<option value=\"{$k}\" $selected>{$v}</option>";
-                                            }
-                                            ?>
+                                        <?php
+                                        foreach (Utility::$currencies as $k => $v) {
+                                            $selected = ($k == $setting['value']) ? 'selected' : '';
+                                            echo "<option value=\"{$k}\" $selected>{$v}</option>";
+                                        }
+                                        ?>
                                         </select>
-                                    <?php elseif ($setting['key'] === 'timezone'): ?>
-                                        <div class="form-group col-md-6 mb-3">
-                                            <select class="form-control settings-input" id="timezone" name="settings[timezone]" required>
-                                                <?php
-                                                // Extracts Timezones
-                                                $timezones = DateTimeZone::listIdentifiers();
-                                                // Selects Timezones
-                                                foreach ($timezones as $timezone) {
-                                                    $selected = ($timezone == $setting['value']) ? 'selected' : '';
-                                                    echo "<option value=\"{$timezone}\" $selected>{$timezone}</option>";
-                                                }
-                                                ?>
-                                            </select>
-                                        </div>
                                     <?php */ ?>
                                     <?php endif; ?>
                                 </div>
-                            </div>
-                        <?php endforeach; ?>
+                                <?php $counter++; ?>
+                            <?php endforeach; ?>
+                        </div>
 
                         <div class="row">
                             <div class="col-12">
