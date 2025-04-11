@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS `users`;
-DROP TABLE IF EXISTS `products`;
+DROP TABLE IF EXISTS `pallets`; -- Updated from products
 DROP TABLE IF EXISTS `orders`;
-DROP TABLE IF EXISTS `order_products`;
+DROP TABLE IF EXISTS `order_pallets`; -- Updated from order_products
 DROP TABLE IF EXISTS `couriers`;
 DROP TABLE IF EXISTS `settings`;
 DROP TABLE IF EXISTS `notifications`;
@@ -22,13 +22,17 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Create the `products` table
-CREATE TABLE IF NOT EXISTS `products` (
+-- Create the `pallets` table (Updated from products)
+CREATE TABLE IF NOT EXISTS `pallets` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(100) NOT NULL,
   `description` TEXT DEFAULT NULL,
   `price` DECIMAL(10, 2) NOT NULL,
-  `stock` INT NOT NULL DEFAULT 0,
+  `size_x_cm` INT(3) NOT NULL,
+  `size_y_cm` INT(3) NOT NULL,
+  `size_z_cm` INT(3) NOT NULL,
+  `weight_kg` DECIMAL(3, 1) NOT NULL,
+  `code_billlanding` INT(10) NOT NULL UNIQUE,
   `created_at` BIGINT DEFAULT UNIX_TIMESTAMP(),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -42,8 +46,8 @@ CREATE TABLE IF NOT EXISTS `orders` (
   `region` VARCHAR(255) NOT NULL,
   `status` VARCHAR(50) NOT NULL,
   `product_price` DECIMAL(10, 2) NOT NULL,
-  `tax` DECIMAL(10, 2) NOT NULL,
-  `shipping_price` DECIMAL(10, 2) NOT NULL,
+  `tax_rate` DECIMAL(5, 2) DEFAULT NULL,
+  `shipping_price` DECIMAL(10, 2) DEFAULT NULL,
   `total_amount` DECIMAL(10, 2) NOT NULL,
   `created_at` BIGINT DEFAULT UNIX_TIMESTAMP(),
   `last_processed` BIGINT DEFAULT UNIX_TIMESTAMP(),
@@ -53,11 +57,11 @@ CREATE TABLE IF NOT EXISTS `orders` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Create the `order_details` table
-CREATE TABLE IF NOT EXISTS `order_products` (
+-- Create the `order_pallets` table (Updated from order_products)
+CREATE TABLE IF NOT EXISTS `order_pallets` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `order_id` INT(11) NOT NULL,
-  `product_id` INT(11) NOT NULL,
+  `pallet_id` INT(11) NOT NULL,
   `quantity` INT(11) NOT NULL,
   `price` DECIMAL(10, 2) NOT NULL,
   `subtotal` DECIMAL(10, 2) NOT NULL,
@@ -77,25 +81,29 @@ CREATE TABLE IF NOT EXISTS `order_products` (
 CREATE TABLE IF NOT EXISTS `settings` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `key` VARCHAR(255) NOT NULL,
-  `value` VARCHAR(255) NOT NULL,
+  `value` VARCHAR(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Create the `notifications` table
 CREATE TABLE `notifications` (
-    `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `user_id` INT(11) NOT NULL,
-    `message` TEXT NOT NULL,
-    `link` VARCHAR(255) NULL, -- Optional, to open a specific page
-    `is_seen` TINYINT(1) DEFAULT 0, -- 0 = unseen, 1 = seen
-    `created_at` BIGINT DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`)
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `user_id` INT(11) NOT NULL,
+  `message` TEXT NOT NULL,
+  `link` VARCHAR(255) NULL, -- Optional, to open a specific page
+  `is_seen` TINYINT(1) DEFAULT 0, -- 0 = unseen, 1 = seen
+  `created_at` BIGINT DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `settings` (`key`, `value`) 
-VALUES ('email_sending', 'enabled'),
-('tax_rate', 10.00),
-('shipping_rate', 5.00),
-('currency_code', '$'),
-('timezone', 'Europe/Sofia'),
-('date_format', 'm/d/Y');
+INSERT INTO `settings` (`key`, `value`)
+VALUES ('email_sending', 'disabled'), -- Updated to match the current settings
+       ('date_format', 'dd/mm/Y'),
+       ('opening_time', '08:00'),
+       ('closing_time', '18:00'),
+       ('weekend_operation', '0'),
+       ('weekend_opening_time', '10:00'),
+       ('weekend_closing_time', '17:00'),
+       ('order_cut_off_time', '17:00'),
+       ('default_order_status', 'Pending'),
+       ('timezone', 'Europe/Sofia');

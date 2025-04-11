@@ -817,10 +817,10 @@
                                     <h3 class="card-title card-title-dash">About Us</h3>
                                     <p class="card-description"><br>Welcome to Elec-Transport! We are a team of
                                         couriers,
-                                        ready to deliver everything you want! No matter when, your palletes will arrive
+                                        ready to deliver everything you want! No matter when, your pallets will arrive
                                         in the office in
                                         due time. We make everything easier, not pressuring with paperwork, just sign
-                                        you have gotten your pallete and you are free to go! We will take care of the
+                                        you have gotten your palletand you are free to go! We will take care of the
                                         paperwork for you.</p>
                                     <p class="card-description">* This company is with made for educational
                                         purposes/diploma thesis and
@@ -1221,79 +1221,79 @@
                                     ?>
 
                                     <?php if ($isLoggedIn && $userRole !== 'admin' && $userRole !== 'root'): ?>
-                                        <p>Writing as <strong><?php echo htmlspecialchars($username); ?></strong></p>
-                                        <p class="text-muted">Admins cannot use this contact form.</p>
-                                        <form id="contactForm">
-                                            <div class="form-group">
-                                                <label for="message">Message</label>
-                                                <textarea class="form-control" id="message" rows="5" required></textarea>
-                                            </div>
-                                            <button type="button" class="btn btn-primary mr-2"
-                                                onclick="sendMessage()">Send</button>
-                                            <button type="reset" class="btn btn-light">Clear</button>
-                                            <div id="messageSentAlert" class="alert alert-success mt-3"
-                                                style="display:none;">Message sent!</div>
-                                        </form>
+                                            <p>Writing as <strong><?php echo htmlspecialchars($username); ?></strong></p>
+                                            <p class="text-muted">Admins cannot use this contact form.</p>
+                                            <form id="contactForm">
+                                                <div class="form-group">
+                                                    <label for="message">Message</label>
+                                                    <textarea class="form-control" id="message" rows="5" required></textarea>
+                                                </div>
+                                                <button type="button" class="btn btn-primary mr-2"
+                                                    onclick="sendMessage()">Send</button>
+                                                <button type="reset" class="btn btn-light">Clear</button>
+                                                <div id="messageSentAlert" class="alert alert-success mt-3"
+                                                    style="display:none;">Message sent!</div>
+                                            </form>
                                     <?php else: ?>
-                                        <p class="card-description">Feel free to reach out to us using the contact
-                                            information below or by sending us a message.</p>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <h4>Contact Information:</h4>
-                                                <?php if ($adminInfo && $adminInfo['name']): ?>
-                                                    <h5><?php echo htmlspecialchars($adminInfo['name']); ?></h5>
-                                                <?php endif; ?>
-                                                <?php if ($adminInfo && $adminInfo['profile_picture']): ?>
-                                                    <div class="mb-3">
-                                                        <img src="web/upload/<?php echo htmlspecialchars($adminInfo['profile_picture']); ?>"
-                                                            alt="Admin Profile Picture" class="img-thumbnail rounded-circle"
-                                                            style="width: 80px; height: 80px; object-fit: cover;">
-                                                    </div>
-                                                <?php endif; ?>
-                                                <?php if ($adminInfo && $adminInfo['address']): ?>
-                                                    <p><i class="mdi mdi-home-outline"></i> Address:
-                                                        <?php echo htmlspecialchars($adminInfo['address']); ?>
-                                                    </p>
-                                                <?php endif; ?>
-                                                <?php if ($adminInfo && $adminInfo['phone']): ?>
-                                                    <p><i class="mdi mdi-phone-outline"></i> Phone:
-                                                        <?php echo htmlspecialchars($adminInfo['phone']); ?>
-                                                    </p>
-                                                <?php endif; ?>
-                                                <?php if ($adminInfo && $adminInfo['email']): ?>
-                                                    <p><i class="mdi mdi-email-outline"></i> E-mail: <a
-                                                            href="mailto:<?php echo htmlspecialchars($adminInfo['email']); ?>"><?php echo htmlspecialchars($adminInfo['email']); ?></a>
-                                                    </p>
-                                                <?php endif; ?>
+                                            <p class="card-description">Feel free to reach out to us using the contact
+                                                information below or by sending us a message.</p>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <h4>Contact Information:</h4>
+                                                    <?php if ($adminInfo && $adminInfo['name']): ?>
+                                                            <h5><?php echo htmlspecialchars($adminInfo['name']); ?></h5>
+                                                    <?php endif; ?>
+                                                    <?php if ($adminInfo && $adminInfo['profile_picture']): ?>
+                                                            <div class="mb-3">
+                                                                <img src="web/upload/<?php echo htmlspecialchars($adminInfo['profile_picture']); ?>"
+                                                                    alt="Admin Profile Picture" class="img-thumbnail rounded-circle"
+                                                                    style="width: 80px; height: 80px; object-fit: cover;">
+                                                            </div>
+                                                    <?php endif; ?>
+                                                    <?php if ($adminInfo && $adminInfo['address']): ?>
+                                                            <p><i class="mdi mdi-home-outline"></i> Address:
+                                                                <?php echo htmlspecialchars($adminInfo['address']); ?>
+                                                            </p>
+                                                    <?php endif; ?>
+                                                    <?php if ($adminInfo && $adminInfo['phone']): ?>
+                                                            <p><i class="mdi mdi-phone-outline"></i> Phone:
+                                                                <?php echo htmlspecialchars($adminInfo['phone']); ?>
+                                                            </p>
+                                                    <?php endif; ?>
+                                                    <?php if ($adminInfo && $adminInfo['email']): ?>
+                                                            <p><i class="mdi mdi-email-outline"></i> E-mail: <a
+                                                                    href="mailto:<?php echo htmlspecialchars($adminInfo['email']); ?>"><?php echo htmlspecialchars($adminInfo['email']); ?></a>
+                                                            </p>
+                                                    <?php endif; ?>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <h4>Send us a Message:</h4>
+                                                    <form id="guestContactForm">
+                                                        <div class="form-group">
+                                                            <label for="name">Name</label>
+                                                            <input type="text" class="form-control" id="name" required>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="email">Email</label>
+                                                            <input type="email" class="form-control" id="email" required>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="phone">Phone</label>
+                                                            <input type="tel" class="form-control" id="phone">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="guestMessage">Message</label>
+                                                            <textarea class="form-control" id="guestMessage" rows="5"
+                                                                required></textarea>
+                                                        </div>
+                                                        <button type="button" class="btn btn-primary mr-2"
+                                                            onclick="sendGuestMessage()">Send</button>
+                                                        <button type="reset" class="btn btn-light">Clear</button>
+                                                        <div id="guestMessageSentAlert" class="alert alert-success mt-3"
+                                                            style="display:none;">Message sent!</div>
+                                                    </form>
+                                                </div>
                                             </div>
-                                            <div class="col-md-6">
-                                                <h4>Send us a Message:</h4>
-                                                <form id="guestContactForm">
-                                                    <div class="form-group">
-                                                        <label for="name">Name</label>
-                                                        <input type="text" class="form-control" id="name" required>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="email">Email</label>
-                                                        <input type="email" class="form-control" id="email" required>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="phone">Phone</label>
-                                                        <input type="tel" class="form-control" id="phone">
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="guestMessage">Message</label>
-                                                        <textarea class="form-control" id="guestMessage" rows="5"
-                                                            required></textarea>
-                                                    </div>
-                                                    <button type="button" class="btn btn-primary mr-2"
-                                                        onclick="sendGuestMessage()">Send</button>
-                                                    <button type="reset" class="btn btn-light">Clear</button>
-                                                    <div id="guestMessageSentAlert" class="alert alert-success mt-3"
-                                                        style="display:none;">Message sent!</div>
-                                                </form>
-                                            </div>
-                                        </div>
                                     <?php endif; ?>
 
                                 </div>
