@@ -34,20 +34,18 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="collapse" href="#pallets" aria-expanded="false" aria-controls="pallets">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#products" aria-expanded="false"
+                        aria-controls="products">
                         <i class="menu-icon mdi mdi-cube-outline"></i>
-                        <span class="menu-title">Pallets</span> <i class="menu-arrow"></i>
+                        <span class="menu-title">Products</span>
+                        <i class="menu-arrow"></i>
                     </a>
-                    <div class="collapse" id="pallets">
+                    <div class="collapse" id="products">
                         <ul class="nav flex-column sub-menu">
-                            <li class="nav-item">
-                                <a class="nav-link" href="<?php echo INSTALL_URL; ?>?controller=Pallet&action=list">List
-                                    Pallets</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="<?php echo INSTALL_URL; ?>?controller=Pallet&action=create">Create
-                                    Pallet</a>
-                            </li>
+                            <li class="nav-item"> <a class="nav-link"
+                                    href="<?php INSTALL_URL; ?>?controller=Product&action=list">List Products</a></li>
+                            <li class="nav-item"> <a class="nav-link"
+                                    href="<?php INSTALL_URL; ?>?controller=Product&action=create">Create Product</a></li>
                         </ul>
                     </div>
                 </li>
