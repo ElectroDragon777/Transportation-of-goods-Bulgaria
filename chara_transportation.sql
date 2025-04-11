@@ -42,21 +42,18 @@ CREATE TABLE `notifications` (
 --
 
 CREATE TABLE `orders` (
-  `id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `address` varchar(255) NOT NULL,
-  `country` varchar(255) NOT NULL,
-  `region` varchar(255) NOT NULL,
-  `status` varchar(50) NOT NULL,
-  `product_price` decimal(10,2) NOT NULL,
-  `tax_rate` decimal(5,2) DEFAULT NULL,
-  `shipping_price` decimal(10,2) DEFAULT NULL,
-  `total_amount` decimal(10,2) NOT NULL,
-  `created_at` bigint(20) DEFAULT unix_timestamp(),
-  `last_processed` bigint(20) DEFAULT unix_timestamp(),
-  `courier_id` int(11) NOT NULL,
-  `tracking_number` varchar(100) DEFAULT NULL,
-  `delivery_date` varchar(255) DEFAULT NULL
+    `id` int(11) NOT NULL,
+    `user_id` int(11) NOT NULL,
+    `address` varchar(255) NOT NULL,
+    `region` varchar(255) NOT NULL,
+    `status` varchar(50) NOT NULL,
+    `product_price` decimal(10,2) NOT NULL,
+    `total_amount` decimal(10,2) NOT NULL,
+    `created_at` bigint(20) DEFAULT unix_timestamp(),
+    `last_processed` bigint(20) DEFAULT unix_timestamp(),
+    `courier_id` int(11) NOT NULL,
+    `tracking_number` varchar(255) DEFAULT NULL,
+    `delivery_date` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- --------------------------------------------------------
@@ -69,9 +66,9 @@ CREATE TABLE `order_pallets` (
   `id` int(11) NOT NULL,
   `order_id` int(11) NOT NULL,
   `pallet_id` int(11) NOT NULL,
-  `quantity` int(11) NOT NULL,
   `price` decimal(10,2) NOT NULL,
-  `subtotal` decimal(10,2) NOT NULL
+  `subtotal` decimal(10,2) NOT NULL,
+  `mini_tax` decimal(10,2) DEFAULT 0.00
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- --------------------------------------------------------

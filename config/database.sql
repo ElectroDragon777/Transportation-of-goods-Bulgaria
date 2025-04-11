@@ -42,17 +42,14 @@ CREATE TABLE IF NOT EXISTS `orders` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `user_id` INT(11) NOT NULL,
   `address` VARCHAR(255) NOT NULL,
-  `country` VARCHAR(255) NOT NULL,
   `region` VARCHAR(255) NOT NULL,
   `status` VARCHAR(50) NOT NULL,
   `product_price` DECIMAL(10, 2) NOT NULL,
-  `tax_rate` DECIMAL(5, 2) DEFAULT NULL,
-  `shipping_price` DECIMAL(10, 2) DEFAULT NULL,
   `total_amount` DECIMAL(10, 2) NOT NULL,
   `created_at` BIGINT DEFAULT UNIX_TIMESTAMP(),
   `last_processed` BIGINT DEFAULT UNIX_TIMESTAMP(),
   `courier_id` INT(11) NOT NULL,
-  `tracking_number` VARCHAR(100) DEFAULT NULL,
+  `tracking_number` VARCHAR(255) DEFAULT NULL,
   `delivery_date` VARCHAR(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -62,9 +59,9 @@ CREATE TABLE IF NOT EXISTS `order_pallets` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `order_id` INT(11) NOT NULL,
   `pallet_id` INT(11) NOT NULL,
-  `quantity` INT(11) NOT NULL,
   `price` DECIMAL(10, 2) NOT NULL,
   `subtotal` DECIMAL(10, 2) NOT NULL,
+  `mini_tax` DECIMAL(10, 2) DEFAULT 0.00,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
