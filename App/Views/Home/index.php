@@ -41,12 +41,6 @@
                         <div class="col-sm-12">
                             <div class="statistics-details d-flex align-items-center justify-content-between">
                                 <div>
-                                    <p class="statistics-title">Bounce Rate</p>
-                                    <h3 class="rate-percentage">32.53%</h3>
-                                    <p class="text-danger d-flex"><i class="mdi mdi-menu-down"></i><span>-0.5%</span>
-                                    </p>
-                                </div>
-                                <div>
                                     <p class="statistics-title">Page Views</p>
                                     <h3 class="rate-percentage">7,682</h3>
                                     <p class="text-success d-flex"><i class="mdi mdi-menu-up"></i><span>+0.1%</span></p>
@@ -59,7 +53,7 @@
                                 <div class="d-none d-md-block">
                                     <p class="statistics-title">Avg. Time on Site</p>
                                     <h3 class="rate-percentage">2m:35s</h3>
-                                    <p class="text-success d-flex"><i class="mdi mdi-menu-down"></i><span>+0.8%</span>
+                                    <p class="text-success d-flex"><i class="mdi mdi-menu-up"></i><span>+0.8%</span>
                                     </p>
                                 </div>
                             </div>
@@ -1057,7 +1051,7 @@
                                 <div class="card-body">
                                     <h3 class="card-title card-title-dash">FAQs (Frequently Asked Questions)</h3>
                                     <p class="card-description">Find answers to common questions about our local
-                                        transportation services in Bulgaria.</p>
+                                        transportation services.</p>
 
                                     <div class="accordion" id="faqAccordion">
                                         <div class="card card-rounded mb-2">
@@ -1075,9 +1069,11 @@
                                             <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
                                                 data-parent="#faqAccordion">
                                                 <div class="card-body">
-                                                    We transport a wide range of goods, including [mention specific
-                                                    types of goods you handle, e.g., documents, parcels, furniture,
-                                                    equipment]. Please note that due to our local focus within Bulgaria,
+                                                    We transport documents and pallets
+                                                    at any size to your location or your selected office's, either for
+                                                    you or a friend/relative. Please note that due to our local focus
+                                                    within
+                                                    Bulgaria,
                                                     we do not handle international shipping.
                                                 </div>
                                             </div>
@@ -1221,79 +1217,79 @@
                                     ?>
 
                                     <?php if ($isLoggedIn && $userRole !== 'admin' && $userRole !== 'root'): ?>
-                                            <p>Writing as <strong><?php echo htmlspecialchars($username); ?></strong></p>
-                                            <p class="text-muted">Admins cannot use this contact form.</p>
-                                            <form id="contactForm">
-                                                <div class="form-group">
-                                                    <label for="message">Message</label>
-                                                    <textarea class="form-control" id="message" rows="5" required></textarea>
-                                                </div>
-                                                <button type="button" class="btn btn-primary mr-2"
-                                                    onclick="sendMessage()">Send</button>
-                                                <button type="reset" class="btn btn-light">Clear</button>
-                                                <div id="messageSentAlert" class="alert alert-success mt-3"
-                                                    style="display:none;">Message sent!</div>
-                                            </form>
-                                    <?php else: ?>
-                                            <p class="card-description">Feel free to reach out to us using the contact
-                                                information below or by sending us a message.</p>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <h4>Contact Information:</h4>
-                                                    <?php if ($adminInfo && $adminInfo['name']): ?>
-                                                            <h5><?php echo htmlspecialchars($adminInfo['name']); ?></h5>
-                                                    <?php endif; ?>
-                                                    <?php if ($adminInfo && $adminInfo['profile_picture']): ?>
-                                                            <div class="mb-3">
-                                                                <img src="web/upload/<?php echo htmlspecialchars($adminInfo['profile_picture']); ?>"
-                                                                    alt="Admin Profile Picture" class="img-thumbnail rounded-circle"
-                                                                    style="width: 80px; height: 80px; object-fit: cover;">
-                                                            </div>
-                                                    <?php endif; ?>
-                                                    <?php if ($adminInfo && $adminInfo['address']): ?>
-                                                            <p><i class="mdi mdi-home-outline"></i> Address:
-                                                                <?php echo htmlspecialchars($adminInfo['address']); ?>
-                                                            </p>
-                                                    <?php endif; ?>
-                                                    <?php if ($adminInfo && $adminInfo['phone']): ?>
-                                                            <p><i class="mdi mdi-phone-outline"></i> Phone:
-                                                                <?php echo htmlspecialchars($adminInfo['phone']); ?>
-                                                            </p>
-                                                    <?php endif; ?>
-                                                    <?php if ($adminInfo && $adminInfo['email']): ?>
-                                                            <p><i class="mdi mdi-email-outline"></i> E-mail: <a
-                                                                    href="mailto:<?php echo htmlspecialchars($adminInfo['email']); ?>"><?php echo htmlspecialchars($adminInfo['email']); ?></a>
-                                                            </p>
-                                                    <?php endif; ?>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <h4>Send us a Message:</h4>
-                                                    <form id="guestContactForm">
-                                                        <div class="form-group">
-                                                            <label for="name">Name</label>
-                                                            <input type="text" class="form-control" id="name" required>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="email">Email</label>
-                                                            <input type="email" class="form-control" id="email" required>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="phone">Phone</label>
-                                                            <input type="tel" class="form-control" id="phone">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="guestMessage">Message</label>
-                                                            <textarea class="form-control" id="guestMessage" rows="5"
-                                                                required></textarea>
-                                                        </div>
-                                                        <button type="button" class="btn btn-primary mr-2"
-                                                            onclick="sendGuestMessage()">Send</button>
-                                                        <button type="reset" class="btn btn-light">Clear</button>
-                                                        <div id="guestMessageSentAlert" class="alert alert-success mt-3"
-                                                            style="display:none;">Message sent!</div>
-                                                    </form>
-                                                </div>
+                                        <p>Writing as <strong><?php echo htmlspecialchars($username); ?></strong></p>
+                                        <p class="text-muted">Admins cannot use this contact form.</p>
+                                        <form id="contactForm">
+                                            <div class="form-group">
+                                                <label for="message">Message</label>
+                                                <textarea class="form-control" id="message" rows="5" required></textarea>
                                             </div>
+                                            <button type="button" class="btn btn-primary mr-2"
+                                                onclick="sendMessage()">Send</button>
+                                            <button type="reset" class="btn btn-light">Clear</button>
+                                            <div id="messageSentAlert" class="alert alert-success mt-3"
+                                                style="display:none;">Message sent!</div>
+                                        </form>
+                                    <?php else: ?>
+                                        <p class="card-description">Feel free to reach out to us using the contact
+                                            information below or by sending us a message.</p>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <h4>Contact Information:</h4>
+                                                <?php if ($adminInfo && $adminInfo['name']): ?>
+                                                    <h5><?php echo htmlspecialchars($adminInfo['name']); ?></h5>
+                                                <?php endif; ?>
+                                                <?php if ($adminInfo && $adminInfo['profile_picture']): ?>
+                                                    <div class="mb-3">
+                                                        <img src="web/upload/<?php echo htmlspecialchars($adminInfo['profile_picture']); ?>"
+                                                            alt="Admin Profile Picture" class="img-thumbnail rounded-circle"
+                                                            style="width: 80px; height: 80px; object-fit: cover;">
+                                                    </div>
+                                                <?php endif; ?>
+                                                <?php if ($adminInfo && $adminInfo['address']): ?>
+                                                    <p><i class="mdi mdi-home-outline"></i> Address:
+                                                        <?php echo htmlspecialchars($adminInfo['address']); ?>
+                                                    </p>
+                                                <?php endif; ?>
+                                                <?php if ($adminInfo && $adminInfo['phone']): ?>
+                                                    <p><i class="mdi mdi-phone-outline"></i> Phone:
+                                                        <?php echo htmlspecialchars($adminInfo['phone']); ?>
+                                                    </p>
+                                                <?php endif; ?>
+                                                <?php if ($adminInfo && $adminInfo['email']): ?>
+                                                    <p><i class="mdi mdi-email-outline"></i> E-mail: <a
+                                                            href="mailto:<?php echo htmlspecialchars($adminInfo['email']); ?>"><?php echo htmlspecialchars($adminInfo['email']); ?></a>
+                                                    </p>
+                                                <?php endif; ?>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <h4>Send us a Message:</h4>
+                                                <form id="guestContactForm">
+                                                    <div class="form-group">
+                                                        <label for="name">Name</label>
+                                                        <input type="text" class="form-control" id="name" required>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="email">Email</label>
+                                                        <input type="email" class="form-control" id="email" required>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="phone">Phone</label>
+                                                        <input type="tel" class="form-control" id="phone">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="guestMessage">Message</label>
+                                                        <textarea class="form-control" id="guestMessage" rows="5"
+                                                            required></textarea>
+                                                    </div>
+                                                    <button type="button" class="btn btn-primary mr-2"
+                                                        onclick="sendGuestMessage()">Send</button>
+                                                    <button type="reset" class="btn btn-light">Clear</button>
+                                                    <div id="guestMessageSentAlert" class="alert alert-success mt-3"
+                                                        style="display:none;">Message sent!</div>
+                                                </form>
+                                            </div>
+                                        </div>
                                     <?php endif; ?>
 
                                 </div>

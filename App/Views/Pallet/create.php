@@ -59,9 +59,13 @@
                                     name="weight_kg" required>
                             </div>
                             <div class="form-group col-md-6 mb-3">
-                                <label for="code_billlanding" class="form-label">Code Billlanding</label>
-                                <input type="number" class="form-control" id="code_billlanding" name="code_billlanding"
-                                    required oninput="formatBilllanding(this)">
+                                <label for="code_billlanding" class="form-label">Code Billlanding
+                                    (Auto-assigned)</label>
+                                <input type="text" class="form-control" id="code_billlanding" name="code_billlanding"
+                                    value="<?php echo isset($next_billlanding_code) ? $next_billlanding_code : ''; ?>"
+                                    readonly style="background-color: #f8f9fa;">
+                                <small class="form-text text-muted">This code is automatically assigned by the
+                                    system.</small>
                             </div>
                         </div>
 
@@ -81,6 +85,9 @@
 
 <script>
     function formatBilllanding(input) {
+        // Don't format if the field is readonly
+        if (input.readOnly) return;
+
         let value = input.value;
         if (value.length > 10) {
             value = value.slice(0, 10); // Truncate to 10 digits if longer
@@ -96,7 +103,7 @@
     // Add event listener to format the initial value if any
     document.addEventListener('DOMContentLoaded', function () {
         const billlandingInput = document.getElementById('code_billlanding');
-        if (billlandingInput && billlandingInput.value) {
+        if (billlandingInput && billlandingInput.value && !billlandingInput.readOnly) {
             formatBilllanding(billlandingInput);
         }
     });
