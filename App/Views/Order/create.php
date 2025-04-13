@@ -20,7 +20,7 @@
                     <h4 class="card-title">Create New Order</h4>
 
                     <?php if (isset($error_message)): ?>
-                            <div class="alert alert-danger"><?php echo $error_message; ?></div>
+                        <div class="alert alert-danger"><?php echo $error_message; ?></div>
                     <?php endif; ?>
 
                     <form method="POST" id="booking-frm-id"
@@ -45,7 +45,6 @@
                                         foreach ($tpl['users'] as $user) {
                                             echo "<option value=\"{$user['id']}\" 
                                                 data-address=\"" . htmlspecialchars($user['address']) . "\" 
-                                                data-country=\"" . htmlspecialchars($user['country']) . "\"
                                                 data-region=\"" . htmlspecialchars($user['region']) . "\">
                                                 {$user['name']}</option>";
                                         }
@@ -103,7 +102,7 @@
                                 <!-- <div class="mb-3">
                                     <label for="shippingPrice" class="form-label">Shipping Price</label>
                                     <div class="input-group">
-                                        <span class="input-group-text"><?php echo $tpl['currency']; ?></span>
+                                        <span class="input-group-text"></* ?php echo $tpl['currency']; */ ?></span>
                                         <input type="text" class="form-control" id="shippingPrice"  name="shipping_price" required readonly>
                                     </div>
                                 </div>  -->
@@ -122,13 +121,13 @@
                                     <label for="status" class="form-label">Order Status</label>
                                     <select class="form-select" id="status" name="status" required>
                                         <option value=''>---</option>
-                                        <?php
+                                        </*?php
                                         foreach (Utility::$order_status as $k => $v) {
                                             ?>
-                                            <option value="<?php echo $k; ?>"><?php echo $v; ?></option>
-                                            <?php
+                                            <option value="</*?php echo $k; ?>"></*?php echo $v; */?></option>
+                                            </*?php
                                         }
-                                        ?>
+                                        */?>
                                     </select>
                                 </div> -->
                                 <div id="productRows">

@@ -2,7 +2,8 @@
 
 use App\Models\Setting;
 
-class Utility {
+class Utility
+{
 
     static $order_status = [
         'pending' => 'Pending',
@@ -32,11 +33,13 @@ class Utility {
         'l, F j, Y' => 'Monday, March 24, 2025', // Day, Month Date, Year
     ];
 
-    static function generateRandomString($length = 10) {
+    static function generateRandomString($length = 10)
+    {
         return substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
     }
 
-    static function getDisplayableAmount($amount) {
+    static function getDisplayableAmount($amount)
+    {
         $settingModel = new Setting();
         $currency = $settingModel->getFirstBy(['key' => 'currency_code'])['value'];
 

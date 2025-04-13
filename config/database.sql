@@ -16,7 +16,6 @@ CREATE TABLE IF NOT EXISTS `users` (
   `created_at` BIGINT DEFAULT UNIX_TIMESTAMP(),
   `role` VARCHAR(20) NOT NULL,
   `address` VARCHAR(255),
-  `country` VARCHAR(255),
   `region` VARCHAR(255),
   `photo_path` VARCHAR(255),
   PRIMARY KEY (`id`)
@@ -103,4 +102,5 @@ VALUES ('email_sending', 'disabled'), -- Updated to match the current settings
        ('weekend_closing_time', '17:00'),
        ('order_cut_off_time', '17:00'),
        ('default_order_status', 'Pending'),
-       ('timezone', 'Europe/Sofia');
+       ('timezone', 'Europe/Sofia'),
+       ('currency', 'BGN'); -- Added currency setting

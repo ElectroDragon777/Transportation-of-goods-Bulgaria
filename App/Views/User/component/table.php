@@ -16,7 +16,6 @@
             <th>Role</th>
             <th>Phone Number</th>
             <th>Address</th>
-            <th>Country</th>
             <th>Region</th>
             <th style="text-align: right;">Actions</th>
         </tr>
@@ -39,7 +38,6 @@
                 <td><?php echo htmlspecialchars($user['role']); ?></td>
                 <td><?php echo htmlspecialchars($user['phone_number'] ?? 'N/A'); ?></td>
                 <td><?php echo htmlspecialchars($user['address'] ?? 'N/A'); ?></td>
-                <td><?php echo htmlspecialchars($user['country'] ?? 'N/A'); ?></td>
                 <td><?php echo htmlspecialchars($user['region'] ?? 'N/A'); ?></td>
                 <td style="text-align: right;">
                     <a class="btn btn-light btn-circle mdc-ripple-upgraded" href="<?php echo INSTALL_URL; ?>?controller=User&action=profile&id=<?php echo $user['id']; ?>">

@@ -5,12 +5,14 @@
                 <div class="d-sm-flex align-items-center justify-content-between border-bottom">
                     <div>
                         <div class="btn-wrapper">
-                            <a id="share-couriers" class="btn btn-outline-dark align-items-center"><i class="icon-share"></i>
+                            <a id="share-couriers" class="btn btn-outline-dark align-items-center"><i
+                                    class="icon-share"></i>
                                 Share</a>
-                            <a id="print-couriers" class="btn btn-outline-dark align-items-center"><i class="icon-printer"></i>
+                            <a id="print-couriers" class="btn btn-outline-dark align-items-center"><i
+                                    class="icon-printer"></i>
                                 Print</a>
                             <a href="<?php echo INSTALL_URL; ?>?controller=Courier&action=create"
-                               class="btn btn-primary text-white me-0"><i class="icon-plus"></i> New Courier</a>
+                                class="btn btn-primary text-white me-0"><i class="icon-plus"></i> New Courier</a>
                         </div>
                     </div>
                 </div>
@@ -20,9 +22,9 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <h5 class="card-title mb-0 font-weight-bold text-primary">Advanced Filters</h5>
                                 <button type="button"
-                                        class="btn btn-primary btn-sm rounded-pill px-3 d-flex align-items-center"
-                                        data-bs-toggle="collapse" data-bs-target="#filters-container" aria-expanded="false"
-                                        aria-controls="filters-container">
+                                    class="btn btn-primary btn-sm rounded-pill px-3 d-flex align-items-center"
+                                    data-bs-toggle="collapse" data-bs-target="#filters-container" aria-expanded="false"
+                                    aria-controls="filters-container">
                                     <i class="fa fa-filter me-2"></i>
                                     <span>Toggle Filters</span>
                                 </button>
@@ -34,27 +36,28 @@
                                     <div class="row">
                                         <div class="col-md-4 mb-3">
                                             <label for="filter-name" class="form-label">Courier Name</label>
-                                            <input type="text" class="form-control" id="filter-name" placeholder="Search by name">
+                                            <input type="text" class="form-control" id="filter-name"
+                                                placeholder="Search by name">
                                         </div>
                                         <div class="col-md-4 mb-3">
                                             <label for="filter-email" class="form-label">Email</label>
-                                            <input type="text" class="form-control" id="filter-email" placeholder="Search by email">
+                                            <input type="text" class="form-control" id="filter-email"
+                                                placeholder="Search by email">
                                         </div>
                                         <div class="col-md-4 mb-3">
                                             <label for="filter-phone" class="form-label">Phone Number</label>
-                                            <input type="text" class="form-control" id="filter-phone" placeholder="Search by phone">
-                                        </div>
-                                        <div class="col-md-4 mb-3">
-                                            <label for="filter-country" class="form-label">Country</label>
-                                            <input type="text" class="form-control" id="filter-country" placeholder="Search by country">
+                                            <input type="text" class="form-control" id="filter-phone"
+                                                placeholder="Search by phone">
                                         </div>
                                         <div class="col-md-4 mb-3">
                                             <label for="filter-region" class="form-label">Region</label>
-                                            <input type="text" class="form-control" id="filter-region" placeholder="Search by region">
+                                            <input type="text" class="form-control" id="filter-region"
+                                                placeholder="Search by region">
                                         </div>
                                         <div class="col-md-4 mb-3">
                                             <label for="filter-address" class="form-label">Address</label>
-                                            <input type="text" class="form-control" id="filter-address" placeholder="Search by address">
+                                            <input type="text" class="form-control" id="filter-address"
+                                                placeholder="Search by address">
                                         </div>
                                     </div>
                                     <div class="d-flex justify-content-end gap-2">
@@ -74,7 +77,8 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <button id="bulk-delete-couriers-btn" class="btn btn-danger d-none">
-                                    <i class="fa fa-trash"></i> Delete Selected (<span id="selected-count-couriers">0</span>)
+                                    <i class="fa fa-trash"></i> Delete Selected (<span
+                                        id="selected-count-couriers">0</span>)
                                 </button>
                             </div>
                         </div>
@@ -92,7 +96,7 @@
 </div>
 
 <div class="modal fade" id="deleteCourier" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-     aria-hidden="true">
+    aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -112,7 +116,7 @@
 </div>
 
 <div class="modal fade" id="deleteCouriers" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-     aria-hidden="true">
+    aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -132,7 +136,8 @@
 </div>
 
 <!-- Share Modal -->
-<div class="modal fade" id="couriersShareModal" tabindex="-1" role="dialog" aria-labelledby="shareModalLabel" aria-hidden="true">
+<div class="modal fade" id="couriersShareModal" tabindex="-1" role="dialog" aria-labelledby="shareModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">

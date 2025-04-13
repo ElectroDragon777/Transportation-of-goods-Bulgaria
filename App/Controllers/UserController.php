@@ -46,9 +46,6 @@ class UserController extends Controller
             if (!empty($_POST['address'])) {
                 $opts["address LIKE '%" . $_POST['address'] . "%' AND 1 "] = "1";
             }
-            if (!empty($_POST['country'])) {
-                $opts["country LIKE '%" . $_POST['country'] . "%' AND 1 "] = "1";
-            }
             if (!empty($_POST['region'])) {
                 $opts["region LIKE '%" . $_POST['region'] . "%' AND 1 "] = "1";
             }

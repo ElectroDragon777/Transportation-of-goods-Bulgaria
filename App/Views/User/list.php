@@ -49,11 +49,6 @@
                                                 placeholder="Search by phone">
                                         </div>
                                         <div class="col-md-4 mb-3">
-                                            <label for="filter-country" class="form-label">Country</label>
-                                            <input type="text" class="form-control" id="filter-country"
-                                                placeholder="Search by country">
-                                        </div>
-                                        <div class="col-md-4 mb-3">
                                             <label for="filter-region" class="form-label">Region</label>
                                             <input type="text" class="form-control" id="filter-region"
                                                 placeholder="Search by region">

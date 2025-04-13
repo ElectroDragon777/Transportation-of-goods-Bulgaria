@@ -116,7 +116,8 @@ INSERT INTO `settings` (`id`, `key`, `value`) VALUES
 (7, 'weekend_closing_time', '17:00'),
 (8, 'order_cut_off_time', '17:00'),
 (9, 'default_order_status', 'Pending'),
-(10, 'timezone', 'Europe/Sofia');
+(10, 'timezone', 'Europe/Sofia'),
+(11, 'currency', 'BGN');
 
 -- --------------------------------------------------------
 
@@ -220,7 +221,7 @@ ALTER TABLE `pallets`
 -- AUTO_INCREMENT for table `settings`
 --
 ALTER TABLE `settings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `users`

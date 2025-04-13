@@ -7,11 +7,13 @@ use Core;
 use Core\View;
 use Core\Controller;
 
-class CourierController extends Controller {
+class CourierController extends Controller
+{
 
     var $layout = 'admin';
 
-    public function __construct() {
+    public function __construct()
+    {
         if (empty($_SESSION['user'])) {
             header("Location: " . INSTALL_URL . "?controller=Auth&action=login", true, 301);
             exit;
@@ -22,7 +24,8 @@ class CourierController extends Controller {
         }
     }
 
-    function list($layout = 'admin') {
+    function list($layout = 'admin')
+    {
         $userModel = new \App\Models\User();
 
         $opts = array();
@@ -39,9 +42,6 @@ class CourierController extends Controller {
             if (!empty($_POST['address'])) {
                 $opts["address LIKE '%" . $_POST['address'] . "%' AND 1 "] = "1";
             }
-            if (!empty($_POST['country'])) {
-                $opts["country LIKE '%" . $_POST['country'] . "%' AND 1 "] = "1";
-            }
             if (!empty($_POST['region'])) {
                 $opts["region LIKE '%" . $_POST['region'] . "%' AND 1 "] = "1";
             }
@@ -55,11 +55,13 @@ class CourierController extends Controller {
         $this->view($layout, ['couriers' => $couriers]);
     }
 
-    function filter() {
+    function filter()
+    {
         $this->list('ajax');
     }
 
-    function print() {
+    function print()
+    {
         // Check if courierData is provided
         if (isset($_POST['courierData'])) {
             // Decode the JSON data
@@ -74,7 +76,8 @@ class CourierController extends Controller {
         $this->view('ajax', ['couriers' => $couriers]);
     }
 
-    function create() {
+    function create()
+    {
         // Create an instance of the User model
         $userModel = new \App\Models\User();
 
@@ -107,7 +110,8 @@ class CourierController extends Controller {
         $this->view($this->layout, $arr);
     }
 
-    function delete() {
+    function delete()
+    {
         $userModel = new \App\Models\User();
 
         if (!empty($_POST['id'])) {
@@ -121,7 +125,8 @@ class CourierController extends Controller {
         $this->view('ajax', ['couriers' => $couriers]);
     }
 
-    function bulkDelete() {
+    function bulkDelete()
+    {
         $userModel = new \App\Models\User();
 
         if (!empty($_POST['ids']) && is_array($_POST['ids'])) {
@@ -133,7 +138,8 @@ class CourierController extends Controller {
         $this->view('ajax', ['couriers' => $couriers]);
     }
 
-    function edit() {
+    function edit()
+    {
         $userModel = new \App\Models\User();
 
         $arr = $userModel->get($_GET['id']);
@@ -156,7 +162,8 @@ class CourierController extends Controller {
         $this->view($this->layout, $arr);
     }
 
-    function export() {
+    function export()
+    {
         // Check if courierData is provided
         if (isset($_POST['courierData'])) {
             // Decode the JSON data
@@ -187,7 +194,8 @@ class CourierController extends Controller {
         }
     }
 
-    private function exportAsPDF($couriers) {
+    private function exportAsPDF($couriers)
+    {
         if (ob_get_level()) {
             ob_end_clean();
         }
@@ -197,8 +205,8 @@ class CourierController extends Controller {
         $pdf->SetCreator('Your App');
         $pdf->SetTitle('Couriers Export');
         $pdf->SetHeaderData('', 0, 'Couriers List', '');
-        $pdf->setHeaderFont(Array('helvetica', '', 12));
-        $pdf->setFooterFont(Array('helvetica', '', 10));
+        $pdf->setHeaderFont(array('helvetica', '', 12));
+        $pdf->setFooterFont(array('helvetica', '', 10));
         $pdf->SetDefaultMonospacedFont('courier');
         $pdf->SetMargins(15, 15, 15);
         $pdf->SetAutoPageBreak(TRUE, 15);
@@ -214,7 +222,8 @@ class CourierController extends Controller {
         exit;
     }
 
-    private function generateDynamicCourierTable($couriers) {
+    private function generateDynamicCourierTable($couriers)
+    {
         // Start HTML table
         $html = '<table border="1" cellpadding="5">
 <thead>
@@ -257,7 +266,8 @@ class CourierController extends Controller {
         return $html;
     }
 
-    private function exportAsExcel($couriers) {
+    private function exportAsExcel($couriers)
+    {
         // Include SimpleXLSXGen
         require(__DIR__ . '/../Helpers/export/simplexlsxgen/src/SimpleXLSXGen.php');
 
@@ -297,7 +307,8 @@ class CourierController extends Controller {
         exit;
     }
 
-    private function exportAsCSV($couriers) {
+    private function exportAsCSV($couriers)
+    {
         // Set headers for CSV download
         header('Content-Type: text/csv');
         header('Content-Disposition: attachment; filename="couriers_export.csv"');

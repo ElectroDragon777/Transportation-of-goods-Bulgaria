@@ -46,9 +46,6 @@ class OrderController extends Controller
             if (!empty($_POST['trackingNumber'])) {
                 $opts["tracking_number LIKE '%" . $_POST['trackingNumber'] . "%' AND 1 "] = "1";
             }
-            if (!empty($_POST['country'])) {
-                $opts["country LIKE '%" . $_POST['country'] . "%' AND 1 "] = "1";
-            }
             if (!empty($_POST['region'])) {
                 $opts["region LIKE '%" . $_POST['region'] . "%' AND 1 "] = "1";
             }
@@ -88,7 +85,7 @@ class OrderController extends Controller
         // Pass the data to the view
         $arr = [
             'orders' => $orders,
-            'currency' => $this->settings['currency_code']
+            'currency' => $this->settings['lv']  // $this->settings['currency_code'], set manually, since local.
         ];
 
         $this->view($layout, $arr);
@@ -116,7 +113,7 @@ class OrderController extends Controller
         $userModel = new \App\Models\User();
         $notificationModel = new \App\Models\Notification();
         $mailer = new \App\Helpers\mailer\Mailer();
-        $currency = $this->settings['currency_code'];
+        $currency = $this->settings['lv']; // $this->settings['currency_code'], set manually, since local.
 
         if (!empty($_POST['send'])) {
             $productIds = $_POST['product_id'];
@@ -271,7 +268,7 @@ class OrderController extends Controller
             'customer' => $customerData,
             'courier' => $courierData,
             'products' => $orderProducts,
-            'currency' => $this->settings['currency_code']
+            'currency' => $this->settings['lv'], // $this->settings['currency_code'], set manually, since local.
         ];
 
         $this->view($this->layout, $data);
@@ -317,7 +314,8 @@ class OrderController extends Controller
             $order['delivery_date'] = date($this->settings['date_format'], $order['delivery_date']);
         }
 
-        $this->view('ajax', ['orders' => $orders, 'currency' => $this->settings['currency_code']]);
+        //$this->view('ajax', ['orders' => $orders, 'currency' => $this->settings['currency_code']]);
+        $this->view('ajax', ['orders' => $orders, 'currency' => $this->settings['lv']]); // $this->settings['currency_code'], set manually, since local.
     }
 
     function pay()
@@ -333,7 +331,7 @@ class OrderController extends Controller
             $orderProducts = $orderProductsModel->getAll(['order_id' => $orderId]);
 
             $this->view($this->layout, [
-                'currency_code' => $this->settings['currency_code'],
+                // 'currency_code' => $this->settings['currency_code'],
                 'order' => $order,
                 'user' => $user,
                 'order_products' => $orderProducts
@@ -394,7 +392,7 @@ class OrderController extends Controller
             'cmd' => '_notify-validate',
             'tx' => $_POST['txn_id'], // PayPal transaction ID
             'amt' => $_POST['mc_gross'], // Total amount paid
-            'currency_code' => $_POST['mc_currency'], // Currency code
+            // 'currency_code' => $_POST['mc_currency'], // Currency code
         );
 
         // Send the IPN data back to PayPal for validation
@@ -468,7 +466,8 @@ class OrderController extends Controller
             $order['delivery_date'] = date($this->settings['date_format'], $order['delivery_date']);
         }
 
-        $this->view('ajax', ['orders' => $orders, 'currency' => $this->settings['currency_code']]);
+        //$this->view('ajax', ['orders' => $orders, 'currency' => $this->settings['currency_code']]);
+        $this->view('ajax', ['orders' => $orders, 'currency' => $this->settings['lv']]); // $this->settings['currency_code'], set manually, since local.
     }
 
     function print()
@@ -745,7 +744,6 @@ class OrderController extends Controller
             'delivery_date' => 'Delivery Date',
             'formatted_total' => 'Total Price',
             'address' => 'Address',
-            'country' => 'Country',
             'region' => 'Region',
             'status_text' => 'Status'
         ];
@@ -945,9 +943,6 @@ class OrderController extends Controller
                             </p>
                             <p><strong>Address:</strong>
                                 <?= htmlspecialchars($order['address']) ?>
-                            </p>
-                            <p><strong>Country:</strong>
-                                <?= htmlspecialchars($order['country']) ?>
                             </p>
                             <p><strong>Region:</strong>
                                 <?= htmlspecialchars($order['region']) ?>

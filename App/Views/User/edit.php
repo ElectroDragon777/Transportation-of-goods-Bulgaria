@@ -28,10 +28,6 @@
                                 <label for="email" class="form-label">Email*</label>
                                 <input type="email" class="form-control" id="email" name="email" value="<?php echo $tpl['email']; ?>" required>
                             </div>
-                            <div class="form-group col-md-6 mb-3">
-                                <label for="country" class="form-label">Country</label>
-                                <input type="text" class="form-control" id="country" name="country" value="<?php echo $tpl['country']; ?>">
-                            </div>
                         </div>
 
                         <div class="row">

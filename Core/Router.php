@@ -1,9 +1,10 @@
 <?php
 namespace Core;
 
-class Router {
-
-    public function resolve(): void {
+class Router
+{
+    public function resolve(): void
+    {
         $controllerName = $_REQUEST['controller'] ?? null;
         $actionName = $_REQUEST['action'] ?? null;
 
@@ -29,7 +30,6 @@ class Router {
             return;
         }
 
-        // Извикване на метода на контролера
         $controller->$actionName();
     }
 }

@@ -66,7 +66,9 @@ class ProductController extends Controller
 
         $products = $productModel->getAll($opts);
 
-        $this->view($layout, ['products' => $products, 'currency' => $this->settings['currency_code']]);
+        $this->view($layout, ['products' => $products, 'currency' => $this->settings['lv']]); // $this->settings['currency_code']]);s
+
+        //$this->view($layout, ['products' => $products, 'currency' => $this->settings['currency_code']]);
     }
 
     function filter()
@@ -97,7 +99,7 @@ class ProductController extends Controller
         if (isset($error_message)) {
             $arr['error_message'] = $error_message;
         }
-        $arr['currency'] = $this->settings['currency_code'];
+        $arr['currency'] = $this->settings['lv']; // $this->settings['currency_code'];
 
         // Load the view and pass the data to it
         $this->view($this->layout, $arr);
@@ -148,8 +150,9 @@ class ProductController extends Controller
             }
         }
 
-        $arr['currency'] = $this->settings['currency_code'];
+        $arr['currency'] = $this->settings['lv']; // $this->settings['currency_code'];
         // Load the view and pass the data to it
+        //$this->view($this->layout);
         $this->view($this->layout, $arr);
     }
 

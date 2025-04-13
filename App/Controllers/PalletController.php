@@ -75,7 +75,8 @@ class PalletController extends Controller
 
         $pallets = $palletModel->getAll($opts); // Updated to Pallet model
 
-        $this->view($layout, ['pallets' => $pallets, 'currency' => $this->settings['currency_code']]); // Updated to pallets
+        $this->view($layout, ['pallets' => $pallets, 'currency' => $this->settings['lv']]); // Updated to pallets
+        //$this->view($layout, ['pallets' => $pallets, 'currency' => $this->settings['currency_code']]); // Updated to pallets
     }
 
     function filter()
@@ -106,9 +107,10 @@ class PalletController extends Controller
         if (isset($error_message)) {
             $arr['error_message'] = $error_message;
         }
-        $arr['currency'] = $this->settings['currency_code'];
+        $arr['currency'] = $this->settings['lv'];
 
         // Load the view and pass the data to it
+        //$this->view($this->layout);
         $this->view($this->layout, $arr);
     }
 
@@ -157,8 +159,9 @@ class PalletController extends Controller
             }
         }
 
-        $arr['currency'] = $this->settings['currency_code'];
+        $arr['currency'] = $this->settings['lv']; // $this->settings['currency_code'];
         // Load the view and pass the data to it
+        //$this->view($this->layout);
         $this->view($this->layout, $arr);
     }
 

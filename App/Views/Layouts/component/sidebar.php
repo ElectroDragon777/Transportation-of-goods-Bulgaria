@@ -5,7 +5,9 @@
             $currentController = $_GET['controller'] ?? 'Dashboard';
             $currentAction = $_GET['action'] ?? 'index';
             ?>
-            <li class="nav-item <?php if ($currentController == 'Dashboard')
+
+            <!-- Dashboard -->
+            <li class="nav-item <?php if ($currentController == 'Dashboard' && (!isset($_GET['controller']) || $_GET['controller'] == 'Dashboard'))
                 echo 'active'; ?>">
                 <a class="nav-link" href="<?php echo INSTALL_URL; ?>">
                     <i class="mdi mdi-chart-line menu-icon"></i>
@@ -36,14 +38,12 @@
                     <div class="collapse <?php if ($currentController == 'Order')
                         echo 'show'; ?>" id="orders">
                         <ul class="nav flex-column sub-menu">
-                            <li
-                                class="nav-item <?php if ($currentController == 'Order' && $currentAction == 'list')
-                                    echo 'active'; ?>">
+                            <li class="nav-item <?php if ($currentController == 'Order' && $currentAction == 'list')
+                                echo 'active'; ?>">
                                 <a class="nav-link" href="<?php INSTALL_URL; ?>?controller=Order&action=list">List Orders</a>
                             </li>
-                            <li
-                                class="nav-item <?php if ($currentController == 'Order' && $currentAction == 'create')
-                                    echo 'active'; ?>">
+                            <li class="nav-item <?php if ($currentController == 'Order' && $currentAction == 'create')
+                                echo 'active'; ?>">
                                 <a class="nav-link" href="<?php INSTALL_URL; ?>?controller=Order&action=create">Create Order</a>
                             </li>
                         </ul>
@@ -60,14 +60,12 @@
                     <div class="collapse <?php if ($currentController == 'Pallet')
                         echo 'show'; ?>" id="pallets">
                         <ul class="nav flex-column sub-menu">
-                            <li
-                                class="nav-item <?php if ($currentController == 'Pallet' && $currentAction == 'list')
-                                    echo 'active'; ?>">
+                            <li class="nav-item <?php if ($currentController == 'Pallet' && $currentAction == 'list')
+                                echo 'active'; ?>">
                                 <a class="nav-link" href="<?php INSTALL_URL; ?>?controller=Pallet&action=list">List Pallets</a>
                             </li>
-                            <li
-                                class="nav-item <?php if ($currentController == 'Pallet' && $currentAction == 'create')
-                                    echo 'active'; ?>">
+                            <li class="nav-item <?php if ($currentController == 'Pallet' && $currentAction == 'create')
+                                echo 'active'; ?>">
                                 <a class="nav-link" href="<?php INSTALL_URL; ?>?controller=Pallet&action=create">Create
                                     Pallet</a>
                             </li>
@@ -85,14 +83,12 @@
                     <div class="collapse <?php if ($currentController == 'User')
                         echo 'show'; ?>" id="users">
                         <ul class="nav flex-column sub-menu">
-                            <li
-                                class="nav-item <?php if ($currentController == 'User' && $currentAction == 'list')
-                                    echo 'active'; ?>">
+                            <li class="nav-item <?php if ($currentController == 'User' && $currentAction == 'list')
+                                echo 'active'; ?>">
                                 <a class="nav-link" href="<?php INSTALL_URL; ?>?controller=User&action=list">List Users</a>
                             </li>
-                            <li
-                                class="nav-item <?php if ($currentController == 'User' && $currentAction == 'create')
-                                    echo 'active'; ?>">
+                            <li class="nav-item <?php if ($currentController == 'User' && $currentAction == 'create')
+                                echo 'active'; ?>">
                                 <a class="nav-link" href="<?php INSTALL_URL; ?>?controller=User&action=create">Create User</a>
                             </li>
                         </ul>
@@ -110,15 +106,13 @@
                     <div class="collapse <?php if ($currentController == 'Courier')
                         echo 'show'; ?>" id="couriers">
                         <ul class="nav flex-column sub-menu">
-                            <li
-                                class="nav-item <?php if ($currentController == 'Courier' && $currentAction == 'list')
-                                    echo 'active'; ?>">
+                            <li class="nav-item <?php if ($currentController == 'Courier' && $currentAction == 'list')
+                                echo 'active'; ?>">
                                 <a class="nav-link" href="<?php INSTALL_URL; ?>?controller=Courier&action=list">List
                                     Couriers</a>
                             </li>
-                            <li
-                                class="nav-item <?php if ($currentController == 'Courier' && $currentAction == 'create')
-                                    echo 'active'; ?>">
+                            <li class="nav-item <?php if ($currentController == 'Courier' && $currentAction == 'create')
+                                echo 'active'; ?>">
                                 <a class="nav-link" href="<?php INSTALL_URL; ?>?controller=Courier&action=create">Create
                                     Courier</a>
                             </li>
@@ -144,6 +138,22 @@
                     </a>
                 </li>
             <?php endif; ?>
+
+            <!-- Courier Tracking -->
+            <li class="nav-item nav-category">Courier Tracking</li>
+            <li class="nav-item <?php if ($currentController == 'CourierTracking')
+                echo 'active'; ?>">
+                <a class="nav-link" href="<?php
+                $installUrl = INSTALL_URL;
+                // Remove index.php from the URL
+                $baseUrl = str_replace('index.php', '', $installUrl);
+                // Append courier_tracking.php
+                echo $baseUrl . 'index.php' . '?controller=CourierTracking&action=index';
+                ?>">
+                    <i class="mdi mdi-map-marker-path menu-icon"></i>
+                    <span class="menu-title">Courier Tracking</span>
+                </a>
+            </li>
         <?php endif; ?>
     </ul>
 </nav>
