@@ -1093,11 +1093,10 @@
                                             <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
                                                 data-parent="#faqAccordion">
                                                 <div class="card-body">
-                                                    You can request a service by [mention the ways to request, e.g.,
-                                                    filling out the contact form on our website, calling us directly at
-                                                    [your phone number], or emailing us at [your email address]]. Please
-                                                    provide details about the goods, pickup and delivery locations
-                                                    within Bulgaria, and any specific requirements.
+                                                    You can request a service by clicking on "Create Order" and choose!
+                                                    Please
+                                                    provide details about the order, pickup and delivery locations
+                                                    within the country, and anything more specific.
                                                 </div>
                                             </div>
                                         </div>
@@ -1116,12 +1115,11 @@
                                             <div id="collapseThree" class="collapse" aria-labelledby="headingThree"
                                                 data-parent="#faqAccordion">
                                                 <div class="card-body">
-                                                    Our pricing is based on several factors, including [mention factors,
-                                                    e.g., the size and weight of the goods, the distance of
-                                                    transportation within Bulgaria, and any special handling
-                                                    requirements]. For a detailed quote, please contact us with the
-                                                    specifics of your needs. You can also refer to our <a
-                                                        href="#pricing">Price-setting Page</a> for general pricing
+                                                    Our pricing is based on several factors, including the size and
+                                                    weight of the goods, the distance of
+                                                    transportation within country. You can refer to our <a
+                                                        href="#price_decision">Price-setting Page</a> for general
+                                                    pricing
                                                     guidelines.
                                                 </div>
                                             </div>
@@ -1142,9 +1140,8 @@
                                                 data-parent="#faqAccordion">
                                                 <div class="card-body">
                                                     Our standard operating hours for pickups and deliveries within
-                                                    Bulgaria are [mention your operating hours, e.g., Monday to Friday,
-                                                    9:00 AM to 6:00 PM]. We may offer services outside these hours by
-                                                    prior arrangement.
+                                                    Bulgaria are from 8:00 to 18:00. Any order outside these hours is
+                                                    rescheduled.
                                                 </div>
                                             </div>
                                         </div>
@@ -1165,8 +1162,8 @@
                                                 data-parent="#faqAccordion">
                                                 <div class="card-body">
                                                     We provide local transportation services throughout Bulgaria,
-                                                    covering [mention specific regions or a general statement like "all
-                                                    major cities and towns in Bulgaria"]. Please contact us to confirm
+                                                    covering all
+                                                    major cities and towns in Bulgaria". Please contact us to confirm
                                                     service availability for your specific locations.
                                                 </div>
                                             </div>
@@ -1181,42 +1178,22 @@
                 </div>
                 <!-- Contacts -->
                 <div class="tab-pane fade" id="contacts" role="tabpanel" aria-labelledby="contacts">
-                    <div class="row flex-grow">
+                    <div class="row d-flex align-items-stretch">
                         <div class="col-12 grid-margin stretch-card">
                             <div class="card card-rounded">
                                 <div class="card-body">
                                     <h3 class="card-title card-title-dash">Contact Us</h3>
 
                                     <?php
-                                    // Assuming you have a way to check if the user is logged in and get their username/role
-                                    // Replace these placeholders with your actual PHP logic
-                                    $isLoggedIn = isset($_SESSION['user_id']); // Example: Check if user ID session exists
-                                    $username = $isLoggedIn ? $_SESSION['username'] : ''; // Example: Get username from session
-                                    $userRole = $isLoggedIn ? $_SESSION['role'] : ''; // Example: Get user role from session
-                                    
-                                    // Replace with your database connection details
-                                    $servername = "localhost";
-                                    $db_username = "your_db_username";
-                                    $password = "your_db_password";
-                                    $dbname = "your_db_name";
-
-                                    try {
-                                        $conn = new PDO("mysql:host=$servername;dbname=$dbname;charset=utf8mb4", $db_username, $password);
-                                        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-                                        // Assuming you have a table named 'admin_contacts' with columns like:
-                                        // address, phone, email
-                                        $stmt = $conn->prepare("SELECT address, phone, email FROM admin_contacts LIMIT 1");
-                                        $stmt->execute();
-                                        $adminInfo = $stmt->fetch(PDO::FETCH_ASSOC);
-
-                                    } catch (PDOException $e) {
-                                        echo "<p class='text-danger'>Error retrieving admin contact information: " . $e->getMessage() . "</p>";
-                                        $adminInfo = null;
-                                    }
+                                    // Check if the user is logged in and get their role
+                                    $userModel = new \App\Models\User();
+                                    $root = $userModel->getFirstBy(['role' => 'root']);
                                     ?>
 
-                                    <?php if ($isLoggedIn && $userRole !== 'admin' && $userRole !== 'root'): ?>
+                                    <!-- Form --> <!-- Put $root when checked. -->
+                                    <?php if (false): ?>
+                                        <p class="card-description">If you have any questions or need assistance,
+                                            please feel free to reach out to us.</p>
                                         <p>Writing as <strong><?php echo htmlspecialchars($username); ?></strong></p>
                                         <p class="text-muted">Admins cannot use this contact form.</p>
                                         <form id="contactForm">
@@ -1233,35 +1210,57 @@
                                     <?php else: ?>
                                         <p class="card-description">Feel free to reach out to us using the contact
                                             information below or by sending us a message.</p>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <h4>Contact Information:</h4>
-                                                <?php if ($adminInfo && $adminInfo['name']): ?>
-                                                    <h5><?php echo htmlspecialchars($adminInfo['name']); ?></h5>
-                                                <?php endif; ?>
-                                                <?php if ($adminInfo && $adminInfo['profile_picture']): ?>
-                                                    <div class="mb-3">
-                                                        <img src="web/upload/<?php echo htmlspecialchars($adminInfo['profile_picture']); ?>"
-                                                            alt="Admin Profile Picture" class="img-thumbnail rounded-circle"
-                                                            style="width: 80px; height: 80px; object-fit: cover;">
+                                        <div class="row d-flex align-items-stretch">
+                                            <div class="col-md-6 d-flex-column justify-content-center">
+                                                <div class="admin-contact-card">
+                                                    <div class="text-center text-content">
+                                                        <h4 class="text-light font-weight-bold mb-3">Administrator Contact
+                                                        </h4>
+
+                                                        <?php if (!empty($root['photo_path'])): ?>
+                                                            <img src="<?php echo htmlspecialchars($root['photo_path']); ?>"
+                                                                alt="Root Profile Picture"
+                                                                class="img-thumbnail rounded-circle mb-3"
+                                                                style="width: 100px; height: 100px; object-fit: cover; border: 2px solid #ccc; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+                                                        <?php endif; ?>
+
+                                                        <?php if (!empty($root['name'])): ?>
+                                                            <h4 class="mb-2 text-warning font-weight-bold">
+                                                                <?php echo htmlspecialchars($root['name']); ?>
+                                                            </h4>
+                                                        <?php endif; ?>
+
+                                                        <hr class="my-2">
                                                     </div>
-                                                <?php endif; ?>
-                                                <?php if ($adminInfo && $adminInfo['address']): ?>
-                                                    <p><i class="mdi mdi-home-outline"></i> Address:
-                                                        <?php echo htmlspecialchars($adminInfo['address']); ?>
-                                                    </p>
-                                                <?php endif; ?>
-                                                <?php if ($adminInfo && $adminInfo['phone']): ?>
-                                                    <p><i class="mdi mdi-phone-outline"></i> Phone:
-                                                        <?php echo htmlspecialchars($adminInfo['phone']); ?>
-                                                    </p>
-                                                <?php endif; ?>
-                                                <?php if ($adminInfo && $adminInfo['email']): ?>
-                                                    <p><i class="mdi mdi-email-outline"></i> E-mail: <a
-                                                            href="mailto:<?php echo htmlspecialchars($adminInfo['email']); ?>"><?php echo htmlspecialchars($adminInfo['email']); ?></a>
-                                                    </p>
-                                                <?php endif; ?>
+
+                                                    <div class="px-3 text-content">
+                                                        <?php if (!empty($root['address'])): ?>
+                                                            <p><i class="mdi mdi-home-outline text-secondary"></i>
+                                                                <strong>Address:</strong>
+                                                                <?php echo htmlspecialchars($root['address']); ?>
+                                                            </p>
+                                                        <?php endif; ?>
+
+                                                        <?php if (!empty($root['phone_number'])): ?>
+                                                            <p><i class="mdi mdi-phone-outline text-success"></i>
+                                                                <strong>Phone:</strong>
+                                                                <?php echo htmlspecialchars($root['phone_number']); ?>
+                                                            </p>
+                                                        <?php endif; ?>
+
+                                                        <?php if (!empty($root['email'])): ?>
+                                                            <p><i class="mdi mdi-email-outline text-danger"></i>
+                                                                <strong>E-mail:</strong>
+                                                                <a href="mailto:<?php echo htmlspecialchars($root['email']); ?>"
+                                                                    class="text-white">
+                                                                    <?php echo htmlspecialchars($root['email']); ?>
+                                                                </a>
+                                                            </p>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                </div>
                                             </div>
+
                                             <div class="col-md-6">
                                                 <h4>Send us a Message:</h4>
                                                 <form id="guestContactForm">
@@ -1650,3 +1649,43 @@
             }
         });
     </script>
+
+    <!-- Root PFP BG for Contacts -->
+    <!-- Extras/Dashboard/ContactsBG/BG.png -->
+    <style>
+        .admin-contact-card {
+            position: relative;
+            background: url('Extras/Dashboard/ContactsBG/BG.png') no-repeat center;
+            background-size: cover;
+            opacity: 0.85;
+            padding: 20px;
+            border-radius: 8px;
+            color: #ffffff;
+            /* Ensures text remains bright */
+        }
+
+        /* Soft transparent background behind the text for contrast */
+        .admin-contact-card .text-content {
+            position: relative;
+            background: rgba(255, 255, 255, 0.15);
+            /* Light background for better readability */
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        /* Ensure link contrast */
+        .admin-contact-card a {
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        /* Flexbox for layout */
+        .admin-contact-card,
+        .guest-contact-form {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            /* Ensures both halves stretch equally */
+        }
+    </style>

@@ -86,13 +86,22 @@ if (!empty($tpl['notifications'])) {
                         <input type="search" class="form-control" placeholder="Search Here" title="Search here">
                     </form>
                 </li> -->
+
+                <!-- Messages -->
                 <li class="nav-item dropdown">
                     <a class="nav-link count-indicator" id="notificationDropdown" href="#" data-bs-toggle="dropdown">
                         <i class="icon-mail icon-lg"></i>
+                        <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0"
+                            aria-labelledby="notificationDropdown">
+                            <a class="dropdown-item py-3 border-bottom">
+                                <p class="mb-0 font-weight-medium float-left">You have 4 new messages </p>
+                                <span class="badge badge-pill badge-primary float-right">View all</span>
+                            </a>
+                        </div>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0"
                         aria-labelledby="notificationDropdown">
-                        <a class="dropdown-item py-3 border-bottom">
+                        <!-- <a class="dropdown-item py-3 border-bottom">
                             <p class="mb-0 font-weight-medium float-left">You have 4 new notifications </p>
                             <span class="badge badge-pill badge-primary float-right">View all</span>
                         </a>
@@ -122,7 +131,7 @@ if (!empty($tpl['notifications'])) {
                                 <h6 class="preview-subject fw-normal text-dark mb-1">New user registration</h6>
                                 <p class="fw-light small-text mb-0"> 2 days ago </p>
                             </div>
-                        </a>
+                        </a> -->
                     </div>
                 </li>
                 <li class="nav-item dropdown">
@@ -176,6 +185,8 @@ if (!empty($tpl['notifications'])) {
                         <?php endif; ?>
                     </div>
                 </li>
+
+                <!-- User Profile -->
                 <li class="nav-item dropdown d-none d-lg-block user-dropdown">
                     <a class="nav-link" id="UserDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
                         <?php if (!empty($_SESSION['user']['photo_path'])): ?>
