@@ -5,13 +5,14 @@ https://stackoverflow.com/questions/22038036/uploading-images-using-php-but-with
 https://stackoverflow.com/questions/51264422/how-to-refresh-a-div-every-x-seconds/51264964
 ^-- Forgot to add the second link.
 
+Proper README is when done.
 
 ~/~/~ What to work on: ~/~/~
 W-1. [DONE] favicon.ico and .png; logo => Must make logo for mine and use it for both, as well for the (A) for when minimising/Tablet view. [Done with DMS, to change with my own later]
-W-2. Remove Products and replace with Paletes, to generate code for tracking and everything from the notes.
+W-2. [IN PROGRESS] Remove Products and replace with Paletes, to generate code for tracking and everything from the notes.
 W-3. [TO BE TESTED] Make PFP to update automatically after first update.
 W-4. [FIXED] Fix 'Edit User' Button. (must be 'profile' instead of 'edit' of http://localhost/Transportation-of-goods-Bulgaria/index.php?controller=User&action=edit&id=1 e.g)
-W-5. [85% DONE] UPDATE THE ENTIRE SITE's PREVIEW (The Dashboard thing.)
+W-5. [95% DONE/Excluding Courier Tracking] UPDATE THE ENTIRE SITE's PREVIEW (The Dashboard thing.)
 
 
 ============= USING THIS AS TEMPORARY LOG =============
@@ -38,4 +39,25 @@ Mentor meeting, she said I could use Google Maps API and for the tracking - Varn
 
 ==== April 8th 2025 ====
 Looks better, Contacts almost done. A lot of early issues are fixed! Now, time to modify!
--- End of current logs --
+
+==== April 14th 2024 ====
+A lot of progress and fixes. Another mentor meeting today, got some more directions.
+
+--- Notes: (Copied from the Notepad I wrote) ---
+==== For the 30-page v ====
+Tables' purposes for Thesis (30 pages)
+Scheme first. Explain more complicated functions after the tables; explain project's goals and how it helps and what it does.
+==== For the 30-page ^ ====
+	v TO-DO ^
+==== For Site v ====
+No trucks or vehicles for couriers, unneeded.
+CUSTOM Setting for couriers to allow tracking;
+Highscores for couriers. (km/packets/clients(--))
+--Can make discounts after every 3 orders by 1.5% with cap of 12%.
+Couriers to be tracked - all when ADMIN/Root, relevant by User.
+Status for being busy for couriers.
+Activity Section - how much time is spent on site; how many orders/how many log ins and all sorts of statistics for the user. Make history of orders per user and show the time it took to arrive.
+Another reminder for pallete one day prior. [-- means "eventually" in these Notes!]
+==== For Site ^ ====
+
+------------ End of current logs ------------
