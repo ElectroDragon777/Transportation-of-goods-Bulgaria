@@ -964,7 +964,7 @@
                                                         <span class="sort-icon sort-desc">&#9660;</span>
                                                     </th>
                                                     <th scope="col" data-sortable="true">
-                                                        Price (lv)
+                                                        Price (BGN)
                                                         <span class="sort-icon sort-asc">&#9650;</span>
                                                         <span class="sort-icon sort-desc">&#9660;</span>
                                                     </th>
@@ -995,13 +995,13 @@
                                                 <tr>
                                                     <td>20 kg - 50 kg</td>
                                                     <td>35 + 1 per kg over 20</td>
-                                                    <td>Base price of 35 lv plus 1 lv for each kilogram exceeding 20
+                                                    <td>Base price of 35 BGN plus 1 BGN for each kilogram exceeding 20
                                                         kg, up to 50 kg.</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Over 50 kg (max 80/120/90 cm)</td>
                                                     <td>30 + 0.9 per kg</td>
-                                                    <td>Base price of 30 lv plus 0.9 lv for each kilogram over 50 kg,
+                                                    <td>Base price of 30 BGN plus 0.9 BGN for each kilogram over 50 kg,
                                                         up to 1000 kg, with maximum dimensions of 80x120x90 cm.</td>
                                                 </tr>
                                                 <tr class="table-info">

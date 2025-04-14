@@ -85,7 +85,7 @@ class OrderController extends Controller
         // Pass the data to the view
         $arr = [
             'orders' => $orders,
-            'currency' => $this->settings['lv']  // $this->settings['currency_code'], set manually, since local.
+            'currency' => $this->settings['currency']  // $this->settings['currency_code'], set manually to currency, since local+modded.
         ];
 
         $this->view($layout, $arr);
@@ -113,7 +113,7 @@ class OrderController extends Controller
         $userModel = new \App\Models\User();
         $notificationModel = new \App\Models\Notification();
         $mailer = new \App\Helpers\mailer\Mailer();
-        $currency = $this->settings['lv']; // $this->settings['currency_code'], set manually, since local.
+        $currency = $this->settings['currency']; // $this->settings['currency_code'], set manually to currency, since local+modded.
 
         if (!empty($_POST['send'])) {
             $productIds = $_POST['product_id'];
@@ -268,7 +268,7 @@ class OrderController extends Controller
             'customer' => $customerData,
             'courier' => $courierData,
             'products' => $orderProducts,
-            'currency' => $this->settings['lv'], // $this->settings['currency_code'], set manually, since local.
+            'currency' => $this->settings['currency'], // $this->settings['currency_code'], set manually to currency, since local+modded.
         ];
 
         $this->view($this->layout, $data);
@@ -315,7 +315,7 @@ class OrderController extends Controller
         }
 
         //$this->view('ajax', ['orders' => $orders, 'currency' => $this->settings['currency_code']]);
-        $this->view('ajax', ['orders' => $orders, 'currency' => $this->settings['lv']]); // $this->settings['currency_code'], set manually, since local.
+        $this->view('ajax', ['orders' => $orders, 'currency' => $this->settings['currency']]); // $this->settings['currency_code'], set manually to currency, since local+modded.
     }
 
     function pay()
@@ -331,7 +331,7 @@ class OrderController extends Controller
             $orderProducts = $orderProductsModel->getAll(['order_id' => $orderId]);
 
             $this->view($this->layout, [
-                // 'currency_code' => $this->settings['currency_code'],
+                'currency' => $this->settings['currency'], // $this->settings['currency_code'], set manually to currency, since local+modded.
                 'order' => $order,
                 'user' => $user,
                 'order_products' => $orderProducts
@@ -467,7 +467,7 @@ class OrderController extends Controller
         }
 
         //$this->view('ajax', ['orders' => $orders, 'currency' => $this->settings['currency_code']]);
-        $this->view('ajax', ['orders' => $orders, 'currency' => $this->settings['lv']]); // $this->settings['currency_code'], set manually, since local.
+        $this->view('ajax', ['orders' => $orders, 'currency' => $this->settings['currency']]); // $this->settings['currency_code'], set manually to currency, since local+modded.
     }
 
     function print()
@@ -502,7 +502,7 @@ class OrderController extends Controller
         $userModel = new \App\Models\User();
         $notificationModel = new \App\Models\Notification();
         $mailer = new \App\Helpers\mailer\Mailer();
-        $currency = $this->settings['currency_code'];
+        $currency = $this->settings['currency'];
 
         if (!empty($_POST['id'])) {
             $orderId = $_POST['id'];

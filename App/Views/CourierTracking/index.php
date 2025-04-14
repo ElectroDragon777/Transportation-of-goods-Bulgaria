@@ -1005,6 +1005,8 @@
             // Using OSRM demo server
             const url = `https://router.project-osrm.org/route/v1/driving/${fromLng},${fromLat};${toLng},${toLat}?overview=full&geometries=geojson`;
 
+            console.log("OSRM URL:", url); // Debug: Log the OSRM URL
+
             // Show loading indication
             if (toMarker) {
                 toMarker.setPopupContent("Loading route information...");
@@ -1013,26 +1015,36 @@
 
             fetch(url)
                 .then(response => {
+                    console.log("OSRM Response:", response); // Debug: Log the response
                     if (!response.ok) {
                         throw new Error("Network response was not ok");
                     }
                     return response.json();
                 })
                 .then(data => {
-                    console.log("Route data received");
+                    console.log("Route data received:", data); // Debug: Log the data
                     if (data.routes && data.routes.length > 0) {
                         const route = data.routes[0];
                         const routeGeoJSON = route.geometry;
 
+                        console.log("Route GeoJSON:", routeGeoJSON); // Debug: Log GeoJSON
+
                         // Create route layer with styling
                         try {
+                            // Remove previous route layer if it exists
+                            if (currentRouteLayer) {
+                                officeMap.removeLayer(currentRouteLayer);
+                            }
+
                             currentRouteLayer = L.geoJSON(routeGeoJSON, {
                                 style: {
-                                    color: "#0066CC",
+                                    color: "blue",
                                     weight: 5,
                                     opacity: 0.7
                                 }
                             }).addTo(officeMap);
+
+                            console.log("Route layer added to map"); // Debug: Log layer addition
 
                             // Add distance and duration info
                             const distance = (route.distance / 1000).toFixed(1); // km
@@ -1051,11 +1063,21 @@
                                 padding: [50, 50],
                                 maxZoom: 10
                             });
+
+                            currentRouteLayer.bringToFront();
+
+                            console.log("Map bounds updated to fit route"); // Debug: Log bounds update
+
                         } catch (e) {
                             console.error("Error adding route to map:", e);
                             if (toMarker) {
                                 toMarker.setPopupContent("Error displaying route. Please try again.");
                             }
+                        }
+                    } else {
+                        console.warn("No routes found in OSRM response"); // Debug: Warn if no routes
+                        if (toMarker) {
+                            toMarker.setPopupContent("No route found between the selected points.");
                         }
                     }
                 })
