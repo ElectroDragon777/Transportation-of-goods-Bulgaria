@@ -3,13 +3,14 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:8111
--- Generation Time: Apr 10, 2025 at 12:45 PM EEST
+-- Generation Time: Apr 14, 2025 at 09:00 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
-SET time_zone = "+02:00"; -- Updated to EEST
+SET time_zone = "+00:00";
+
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -42,18 +43,18 @@ CREATE TABLE `notifications` (
 --
 
 CREATE TABLE `orders` (
-    `id` int(11) NOT NULL,
-    `user_id` int(11) NOT NULL,
-    `address` varchar(255) NOT NULL,
-    `region` varchar(255) NOT NULL,
-    `status` varchar(50) NOT NULL,
-    `product_price` decimal(10,2) NOT NULL,
-    `total_amount` decimal(10,2) NOT NULL,
-    `created_at` bigint(20) DEFAULT unix_timestamp(),
-    `last_processed` bigint(20) DEFAULT unix_timestamp(),
-    `courier_id` int(11) NOT NULL,
-    `tracking_number` varchar(255) DEFAULT NULL,
-    `delivery_date` varchar(255) DEFAULT NULL
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `address` varchar(255) NOT NULL,
+  `region` varchar(255) NOT NULL,
+  `status` varchar(50) NOT NULL,
+  `product_price` decimal(10,2) NOT NULL,
+  `total_amount` decimal(10,2) NOT NULL,
+  `created_at` bigint(20) DEFAULT unix_timestamp(),
+  `last_processed` bigint(20) DEFAULT unix_timestamp(),
+  `courier_id` int(11) NOT NULL,
+  `tracking_number` varchar(255) DEFAULT NULL,
+  `delivery_date` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- --------------------------------------------------------
@@ -108,14 +109,14 @@ CREATE TABLE `settings` (
 
 INSERT INTO `settings` (`id`, `key`, `value`) VALUES
 (1, 'email_sending', 'disabled'),
-(2, 'date_format', 'dd/mm/Y'),
+(2, 'date_format', 'd/m/Y'),
 (3, 'opening_time', '08:00'),
 (4, 'closing_time', '18:00'),
 (5, 'weekend_operation', '0'),
 (6, 'weekend_opening_time', '10:00'),
 (7, 'weekend_closing_time', '17:00'),
-(8, 'order_cut_off_time', '17:00'),
-(9, 'default_order_status', 'Pending'),
+(8, 'order_cut_off_time', '18:00'),
+(9, 'default_order_status', 'pending'),
 (10, 'timezone', 'Europe/Sofia'),
 (11, 'currency', 'BGN');
 
@@ -143,9 +144,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `phone_number`, `password_hash`, `created_at`, `role`, `address`, `region`, `photo_path`) VALUES
-(1, 'Chara Dreemurr', 'chara@abv.bg', '', '$2y$10$SzepIhkBjgGu7USFhcIajOf6INf1T9tFMvKxgrCkBzZRIt0IUWUWy', 1743619906, 'root', '', '', 'web/upload/profile_1_67ed879ca62ff.jpg'),
-(2, 'Hakane', 'hakane.hoshino@yahoo.com', NULL, '$2y$10$ziUyifPVgfFHNBiN/hT5MOOzOsAbsFO400vRw0u2d2qmW1OJw/cfW', 1743620055, 'user', NULL, NULL, 'web/upload/profile_2_67ed885239962.png'),
-(3, 'Monika', 'monika@gmail.com', NULL, '$2y$10$Xl7uKdPNbXLRbDgJQeTxCuO532QZLoPcCU5LzIFje/fMef9qSn/aK', 1743620068, 'courier', NULL, NULL, 'web/upload/profile_3_67ed8803c86f5.jpg');
+(1, 'Chara Dreemurr', 'chara@abv.bg', '0882872569', '$2y$10$SzepIhkBjgGu7USFhcIajOf6INf1T9tFMvKxgrCkBzZRIt0IUWUWy', 1743619906, 'root', '', '', 'web/upload/profile_1_67fb7114f4035.jpg'),
+(2, 'Hakane', 'hakane.hoshino@yahoo.com', '0886777106', '$2y$10$ziUyifPVgfFHNBiN/hT5MOOzOsAbsFO400vRw0u2d2qmW1OJw/cfW', 1743620055, 'user', '', '', 'web/upload/profile_2_67ed885239962.png'),
+(3, 'Monika', 'monika@gmail.com', '0883878982', '$2y$10$Xl7uKdPNbXLRbDgJQeTxCuO532QZLoPcCU5LzIFje/fMef9qSn/aK', 1743620068, 'courier', '', '', 'web/upload/profile_3_67ed8803c86f5.jpg');
 
 --
 -- Indexes for dumped tables

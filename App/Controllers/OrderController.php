@@ -109,7 +109,7 @@ class OrderController extends Controller
 
         $orderModel = new \App\Models\Order();
         $orderProductsModel = new \App\Models\OrderProducts();
-        $productModel = new \App\Models\Product();
+        $productModel = new \App\Models\Pallet();
         $userModel = new \App\Models\User();
         $notificationModel = new \App\Models\Notification();
         $mailer = new \App\Helpers\mailer\Mailer();
@@ -221,7 +221,7 @@ class OrderController extends Controller
     {
         $orderModel = new \App\Models\Order();
         $orderProductsModel = new \App\Models\OrderProducts();
-        $productModel = new \App\Models\Product();
+        $productModel = new \App\Models\Pallet();
         $userModel = new \App\Models\User();
 
         if (empty($_SESSION['user'])) {
@@ -285,7 +285,7 @@ class OrderController extends Controller
             exit;
         }
 
-        $productModel = new \App\Models\Product();
+        $productModel = new \App\Models\Pallet();
         $orderModel = new \App\Models\Order();
         $orderProductsModel = new \App\Models\OrderProducts();
         $userModel = new \App\Models\User();
@@ -498,7 +498,7 @@ class OrderController extends Controller
 
         $orderModel = new \App\Models\Order();
         $orderProductsModel = new \App\Models\OrderProducts();
-        $productModel = new \App\Models\Product();
+        $productModel = new \App\Models\Pallet();
         $userModel = new \App\Models\User();
         $notificationModel = new \App\Models\Notification();
         $mailer = new \App\Helpers\mailer\Mailer();
@@ -648,7 +648,7 @@ class OrderController extends Controller
 
     private function calculateOrderTotal(array $productIds, array $quantities): array
     {
-        $productModel = new \App\Models\Product();
+        $productModel = new \App\Models\Pallet();
         $productPrice = 0;
 
         foreach ($productIds as $key => $productId) {
