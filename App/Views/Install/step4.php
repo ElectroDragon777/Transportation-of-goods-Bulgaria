@@ -3,6 +3,7 @@
         <h1>Elec-Transport Setup</h1>
     </div>
     <div class="steps">
+        <p class="card-text mb-4">Steps:</p>
         <div class="step completed">1</div>
         <div class="step-line completed"></div>
         <div class="step completed">2</div>
@@ -15,8 +16,8 @@
     </div>
     <div class="card shadow-sm">
         <div class="card-body">
-            <h2 class="card-title text-center mb-4">Mail Configuration</h2>
-            <p class="card-text mb-4">Please enter your mail server details below:</p>
+            <h2 class="card-title text-center mb-4">=~= Mail Configuration =~=</h2>
+            <p class="card-text mb-4">Please enter your Mail Server details below:</p>
 
             <?php if (isset($tpl['error_message'])): ?>
                 <div class="alert alert-danger" role="alert">
@@ -44,7 +45,7 @@
                     <div class="form-text">Common ports: 25, 465, 587, 2525</div>
                 </div>
                 <div class="mb-3">
-                    <label for="mail_username" class="form-label">Mail Username</label>
+                    <label for="mail_username" class="form-label">Mail's Username:</label>
                     <input type="text" class="form-control" id="mailUsername" name="mail_username" value="<?php
                     if (MAIL_USERNAME != '{mail_username}') {
                         echo MAIL_USERNAME;
@@ -52,7 +53,7 @@
                     ?>" required>
                 </div>
                 <div class="mb-3">
-                    <label for="mail_password" class="form-label">Mail Password</label>
+                    <label for="mail_password" class="form-label">Mail's Password:</label>
                     <div class="position-relative">
                         <input type="password" class="form-control" id="mailPassword" name="mail_password" required>
                         <i class="password-toggle-icon fa fa-eye" data-target="mailPassword"></i>
@@ -72,7 +73,7 @@
         </div>
     </div>
     <div class="mt-4 text-center text-muted">
-        <small>Step 3 of 5 - Mail Configuration</small>
+        <small>-- Step 4 of 5 - Mail Configuration --</small>
     </div>
 </div>
 
@@ -81,12 +82,12 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Skip Mail Configuration</h5>
+                <h5 class="modal-title"><strong>Skip Mail Configuration</strong></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <p>Are you sure you want to skip mail configuration?</p>
-                <p>This means you won’t be able to send system emails until configured later.</p>
+                <p>Keep in mind: This means you will not be able to send system emails until configured later.</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-warning" id="skip-mail-config-button">Skip</button>
