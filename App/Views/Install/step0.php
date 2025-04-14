@@ -10,11 +10,11 @@
                 Please
                 make sure you have the following information ready:</p>
             <ul class="list-group list-group-flush mb-4">
-                <li class="list-group-item">I. Database Connection Details [HostName (localhost/127.0.0.1), UserName]
+                <li class="list-group-item">I. Database Connection Details [HostName (localhost/127.0.0.1), UserName];
                 </li>
-                <li class="list-group-item">II. Root Account Information [RootName, RootPassword]</li>
-                <li class="list-group-item">III. PayPal [Business] Email</li>
-                <p class="card-text">Here SandBox-Emails will be used, it is a GDT only.</p>
+                <li class="list-group-item">II. Root Account Information [RootName, RootPassword];</li>
+                <li class="list-group-item">III. PayPal [Business] Email;</li>
+                <p class="card-text">(Here SandBox-Emails will be used, it is a GDT only)</p>
                 <li class="list-group-item">IV. Mail server configuration (Optional) [MailTrap Emails to Admin/Owner of
                     GDT]</li>
             </ul>
@@ -22,12 +22,12 @@
                 2, not that much.</p>
             <div class="d-grid gap-2">
                 <a href="<?php echo INSTALL_URL; ?>?controller=Install&action=step1" class="btn btn-primary btn-lg">Take
-                    up the Setup</a>
+                    up the Setup!</a>
             </div>
         </div>
     </div>
     <div class="mt-4 text-center text-muted">
-        <small>Elec-Transport Setup == -- Welcome --</small>
+        <small>== Elec-Transport Setup == -- Welcome --</small>
     </div>
 </div>
 
