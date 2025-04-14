@@ -33,7 +33,7 @@
 
 <style>
     .install-container {
-        background-image: url('your-image.jpg');
+        background-image: url('Extras/Dashboard/ContactsBG/BG.png');
         /* Replace with your image path */
         background-size: cover;
         /* Cover the entire container */
