@@ -7,14 +7,14 @@
                         <a class="nav-link active ps-0" id="home-tab" data-bs-toggle="tab" href="#overview" role="tab"
                             aria-controls="overview" aria-selected="true">Home</a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link" id="about-tab" data-bs-toggle="tab" href="#about" role="tab"
                             aria-selected="false">About</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" id="price_decision-tab" data-bs-toggle="tab" href="#price_decision"
                             role="tab" aria-selected="false">Price-decision</a>
-                    </li>
+                    </li> -->
                 </ul>
                 <div>
                     <!-- <div class="btn-wrapper">
@@ -52,329 +52,75 @@
                         </div>
                     </div>
 
-                    <!-- Market Overview -->
-                    <!-- <div class="row">
-                        <div class="col-lg-8 d-flex flex-column">
-                            <div class="row flex-grow">
-                                <div class="col-12 grid-margin stretch-card">
-                                    <div class="card card-rounded">
-                                        <div class="card-body">
-                                            <div class="d-sm-flex justify-content-between align-items-start">
-                                                <div>
-                                                    <h4 class="card-title card-title-dash">Market Overview</h4>
-                                                    <p class="card-subtitle card-subtitle-dash">Lorem ipsum dolor sit
-                                                        amet consectetur adipisicing elit</p>
-                                                </div>
-                                                <div>
-                                                    <div class="dropdown">
-                                                        <button
-                                                            class="btn btn-secondary dropdown-toggle toggle-dark btn-lg mb-0 me-0"
-                                                            type="button" id="dropdownMenuButton2"
-                                                            data-bs-toggle="dropdown" aria-haspopup="true"
-                                                            aria-expanded="false"> This month </button>
-                                                        <div class="dropdown-menu"
-                                                            aria-labelledby="dropdownMenuButton2">
-                                                            <h6 class="dropdown-header">Settings</h6>
-                                                            <a class="dropdown-item" href="#">Action</a>
-                                                            <a class="dropdown-item" href="#">Another action</a>
-                                                            <a class="dropdown-item" href="#">Something else here</a>
-                                                            <div class="dropdown-divider"></div>
-                                                            <a class="dropdown-item" href="#">Separated link</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="d-sm-flex align-items-center mt-1 justify-content-between">
-                                                <div class="d-sm-flex align-items-center mt-4 justify-content-between">
-                                                    <h2 class="me-2 fw-bold">$36,2531.00</h2>
-                                                    <h4 class="me-2">USD</h4>
-                                                    <h4 class="text-success">(+1.37%)</h4>
-                                                </div>
-                                                <div class="me-3">
-                                                    <div id="marketing-overview-legend">
-                                                        <div class="chartjs-legend">
-                                                            <ul>
-                                                                <li class="text-muted text-small"><span
-                                                                        style="background-color:#52CDFF"></span>Last
-                                                                    week</li>
-                                                                <li class="text-muted text-small"><span
-                                                                        style="background-color:#1F3BB3"></span>This
-                                                                    week</li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="chartjs-bar-wrapper mt-3">
-                                                <div class="chartjs-size-monitor">
-                                                    <div class="chartjs-size-monitor-expand">
-                                                        <div class=""></div>
-                                                    </div>
-                                                    <div class="chartjs-size-monitor-shrink">
-                                                        <div class=""></div>
-                                                    </div>
-                                                </div>
-                                                <canvas id="marketingOverview"
-                                                    style="display: block; width: 577px; height: 150px;" width="577"
-                                                    height="150" class="chartjs-render-monitor"></canvas>
-                                            </div>
-                                        </div>
+                    <div class="container ">
+                        <div class="row d-flex justify-content-between">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">From Office</h5>
+                                        <select class="form-select" id="fromOffice">
+                                            <option value="">Select Office</option>
+                                            <?php
+                                            $offices = [
+                                                ["city" => "Sofia", "lat" => 42.6977, "lng" => 23.3219],
+                                                ["city" => "Plovdiv", "lat" => 42.1482, "lng" => 24.7494],
+                                                ["city" => "Varna", "lat" => 43.2141, "lng" => 27.9147],
+                                                ["city" => "Burgas", "lat" => 42.5061, "lng" => 27.4678],
+                                                ["city" => "Ruse", "lat" => 43.8545, "lng" => 25.9681],
+                                                ["city" => "Stara Zagora", "lat" => 42.4226, "lng" => 25.6347],
+                                                ["city" => "Pleven", "lat" => 43.4114, "lng" => 24.6158],
+                                                ["city" => "Sliven", "lat" => 42.6784, "lng" => 26.3245],
+                                                ["city" => "Yambol", "lat" => 42.4854, "lng" => 26.5060],
+                                                ["city" => "Haskovo", "lat" => 41.9341, "lng" => 25.5560],
+                                                ["city" => "Shumen", "lat" => 43.2761, "lng" => 26.9350],
+                                                ["city" => "Pernik", "lat" => 42.6038, "lng" => 23.0342],
+                                                ["city" => "Dobrich", "lat" => 43.5606, "lng" => 27.8284],
+                                                ["city" => "Pazardzhik", "lat" => 42.1994, "lng" => 24.3317],
+                                                ["city" => "Blagoevgrad", "lat" => 42.0227, "lng" => 23.0906],
+                                                ["city" => "Veliko Tarnovo", "lat" => 43.0757, "lng" => 25.6172],
+                                                ["city" => "Gabrovo", "lat" => 42.8764, "lng" => 25.3259],
+                                                ["city" => "Vratsa", "lat" => 43.2048, "lng" => 23.5510],
+                                                ["city" => "Kazanlak", "lat" => 42.6205, "lng" => 25.4093],
+                                                ["city" => "Vidin", "lat" => 43.9935, "lng" => 22.8724],
+                                                ["city" => "Montana", "lat" => 43.4127, "lng" => 23.2357],
+                                                ["city" => "Kardzhali", "lat" => 41.6446, "lng" => 25.3649],
+                                                ["city" => "Lovech", "lat" => 43.1304, "lng" => 24.7153],
+                                                ["city" => "Silistra", "lat" => 44.1189, "lng" => 27.2758],
+                                                ["city" => "Targovishte", "lat" => 43.2500, "lng" => 26.5700],
+                                                ["city" => "Razgrad", "lat" => 43.5333, "lng" => 26.5167]
+                                            ];
+                                            foreach ($offices as $office): ?>
+                                                <option value="<?= $office['lat'] . ',' . $office['lng'] ?>">
+                                                    <?= $office['city'] ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
                                     </div>
                                 </div>
-                            </div> -->
-
-                    <!-- Orders progress -->
-
-                    <!-- Removed for now. Will do later. The version it should be, coded by me, but not working yet. Reminder to check notes! >w< -->
-
-
-                    <!-- This is the BootStrap's -->
-                    <!-- <div class="row flex-grow">
-                        <div class="col-12 grid-margin stretch-card">
-                            <div class="card card-rounded">
-                                <div class="card-body">
-                                    <div class="d-sm-flex justify-content-between align-items-start">
-                                        <div>
-                                            <h4 class="card-title card-title-dash">Pending Requests</h4>
-                                            <p class="card-subtitle card-subtitle-dash">You have 50+ new
-                                                requests</p>
-                                        </div>
-                                        <div>
-                                            <button class="btn btn-primary btn-lg text-white mb-0 me-0" type="button"><i
-                                                    class="mdi mdi-account-plus"></i>Add new
-                                                member</button>
-                                        </div>
-                                    </div>
-                                    <div class="table-responsive mt-1">
-                                        <table class="table select-table">
-                                            <thead>
-                                                <tr>
-                                                    <th>
-                                                        <div class="form-check form-check-flat mt-0">
-                                                            <label class="form-check-label">
-                                                                <input type="checkbox" class="form-check-input"
-                                                                    aria-checked="false"><i class="input-helper"></i><i
-                                                                    class="input-helper"></i></label>
-                                                        </div>
-                                                    </th>
-                                                    <th>Customer</th>
-                                                    <th>Company</th>
-                                                    <th>Progress</th>
-                                                    <th>Status</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>
-                                                        <div class="form-check form-check-flat mt-0">
-                                                            <label class="form-check-label">
-                                                                <input type="checkbox" class="form-check-input"
-                                                                    aria-checked="false"><i class="input-helper"></i><i
-                                                                    class="input-helper"></i></label>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex ">
-                                                            <img src="images/faces/face1.jpg" alt="">
-                                                            <div>
-                                                                <h6>Brandon Washington</h6>
-                                                                <p>Head admin</p>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <h6>Company name 1</h6>
-                                                        <p>company type</p>
-                                                    </td>
-                                                    <td>
-                                                        <div>
-                                                            <div
-                                                                class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap">
-                                                                <p class="text-success">79%</p>
-                                                                <p>85/162</p>
-                                                            </div>
-                                                            <div class="progress progress-md">
-                                                                <div class="progress-bar bg-success" role="progressbar"
-                                                                    style="width: 85%" aria-valuenow="25"
-                                                                    aria-valuemin="0" aria-valuemax="100"></div>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="badge badge-opacity-warning">In progress
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <div class="form-check form-check-flat mt-0">
-                                                            <label class="form-check-label">
-                                                                <input type="checkbox" class="form-check-input"
-                                                                    aria-checked="false"><i class="input-helper"></i><i
-                                                                    class="input-helper"></i></label>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex">
-                                                            <img src="images/faces/face2.jpg" alt="">
-                                                            <div>
-                                                                <h6>Laura Brooks</h6>
-                                                                <p>Head admin</p>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <h6>Company name 1</h6>
-                                                        <p>company type</p>
-                                                    </td>
-                                                    <td>
-                                                        <div>
-                                                            <div
-                                                                class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap">
-                                                                <p class="text-success">65%</p>
-                                                                <p>85/162</p>
-                                                            </div>
-                                                            <div class="progress progress-md">
-                                                                <div class="progress-bar bg-success" role="progressbar"
-                                                                    style="width: 65%" aria-valuenow="65"
-                                                                    aria-valuemin="0" aria-valuemax="100"></div>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="badge badge-opacity-warning">In progress
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <div class="form-check form-check-flat mt-0">
-                                                            <label class="form-check-label">
-                                                                <input type="checkbox" class="form-check-input"
-                                                                    aria-checked="false"><i class="input-helper"></i><i
-                                                                    class="input-helper"></i></label>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex">
-                                                            <img src="images/faces/face3.jpg" alt="">
-                                                            <div>
-                                                                <h6>Wayne Murphy</h6>
-                                                                <p>Head admin</p>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <h6>Company name 1</h6>
-                                                        <p>company type</p>
-                                                    </td>
-                                                    <td>
-                                                        <div>
-                                                            <div
-                                                                class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap">
-                                                                <p class="text-success">65%</p>
-                                                                <p>85/162</p>
-                                                            </div>
-                                                            <div class="progress progress-md">
-                                                                <div class="progress-bar bg-warning" role="progressbar"
-                                                                    style="width: 38%" aria-valuenow="38"
-                                                                    aria-valuemin="0" aria-valuemax="100"></div>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="badge badge-opacity-warning">In progress
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <div class="form-check form-check-flat mt-0">
-                                                            <label class="form-check-label">
-                                                                <input type="checkbox" class="form-check-input"
-                                                                    aria-checked="false"><i class="input-helper"></i><i
-                                                                    class="input-helper"></i></label>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex">
-                                                            <img src="images/faces/face4.jpg" alt="">
-                                                            <div>
-                                                                <h6>Matthew Bailey</h6>
-                                                                <p>Head admin</p>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <h6>Company name 1</h6>
-                                                        <p>company type</p>
-                                                    </td>
-                                                    <td>
-                                                        <div>
-                                                            <div
-                                                                class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap">
-                                                                <p class="text-success">65%</p>
-                                                                <p>85/162</p>
-                                                            </div>
-                                                            <div class="progress progress-md">
-                                                                <div class="progress-bar bg-danger" role="progressbar"
-                                                                    style="width: 15%" aria-valuenow="15"
-                                                                    aria-valuemin="0" aria-valuemax="100"></div>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="badge badge-opacity-danger">Pending</div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <div class="form-check form-check-flat mt-0">
-                                                            <label class="form-check-label">
-                                                                <input type="checkbox" class="form-check-input"
-                                                                    aria-checked="false"><i class="input-helper"></i><i
-                                                                    class="input-helper"></i></label>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex">
-                                                            <img src="images/faces/face5.jpg" alt="">
-                                                            <div>
-                                                                <h6>Katherine Butler</h6>
-                                                                <p>Head admin</p>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <h6>Company name 1</h6>
-                                                        <p>company type</p>
-                                                    </td>
-                                                    <td>
-                                                        <div>
-                                                            <div
-                                                                class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap">
-                                                                <p class="text-success">65%</p>
-                                                                <p>85/162</p>
-                                                            </div>
-                                                            <div class="progress progress-md">
-                                                                <div class="progress-bar bg-success" role="progressbar"
-                                                                    style="width: 65%" aria-valuenow="65"
-                                                                    aria-valuemin="0" aria-valuemax="100"></div>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="badge badge-opacity-success">Completed</div>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">To Office</h5>
+                                        <select class="form-select" id="toOffice">
+                                            <option value="">Select Office</option>
+                                            <?php foreach ($offices as $office): ?>
+                                                <option value="<?= $office['lat'] . ',' . $office['lng'] ?>">
+                                                    <?= $office['city'] ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div> -->
-
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div id="map-container">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <!-- Events -->
                     <div class="row flex-grow">
                         <div class="col-md-6 col-lg-6 grid-margin stretch-card">
@@ -607,48 +353,6 @@
                             </div>
                         </div>
 
-                        <!-- Type by Amount -->
-                        <!-- <div class="row flex-grow">
-                                    <div class="col-12 grid-margin stretch-card">
-                                        <div class="card card-rounded">
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    <div class="col-lg-12">
-                                                        <div class="chartjs-size-monitor">
-                                                            <div class="chartjs-size-monitor-expand">
-                                                                <div class=""></div>
-                                                            </div>
-                                                            <div class="chartjs-size-monitor-shrink">
-                                                                <div class=""></div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="d-flex justify-content-between align-items-center mb-3">
-                                                            <h4 class="card-title card-title-dash">Type By Amount</h4>
-                                                        </div>
-                                                        <canvas class="my-auto chartjs-render-monitor" id="doughnutChart"
-                                                            height="166" style="display: block; width: 249px; height: 166px;"
-                                                            width="249"></canvas>
-                                                        <div id="doughnut-chart-legend" class="mt-5 text-center">
-                                                            <div class="chartjs-legend">
-                                                                <ul class="justify-content-center">
-                                                                    <li><span style="background-color:#1F3BB3"></span>Total
-                                                                    </li>
-                                                                    <li><span style="background-color:#FDD0C7"></span>Net
-                                                                    </li>
-                                                                    <li><span style="background-color:#52CDFF"></span>Gross
-                                                                    </li>
-                                                                    <li><span style="background-color:#81DADA"></span>AVG
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> -->
-
                         <!-- Reports  -->
                         <div class="col-md-6 col-lg-6 grid-margin stretch-card">
                             <div class="card card-rounded">
@@ -696,339 +400,6 @@
                                         <canvas id="leaveReport" style="display: block; width: 100%; height: auto;"
                                             width="249%" height="100%" class="chartjs-render-monitor"></canvas>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <!-- <div class="row flex-grow">
-                            <div class="col-12 grid-margin stretch-card">
-                                <div class="card card-rounded">
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-lg-12">
-                                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                                    <div>
-                                                        <h4 class="card-title card-title-dash">Top Performer</h4>
-                                                    </div>
-                                                </div>
-                                                <div class="mt-3">
-                                                    <div
-                                                        class="wrapper d-flex align-items-center justify-content-between py-2 border-bottom">
-                                                        <div class="d-flex">
-                                                            <img class="img-sm rounded-10" src="images/faces/face1.jpg"
-                                                                alt="profile">
-                                                            <div class="wrapper ms-3">
-                                                                <p class="ms-1 mb-1 fw-bold">Brandon Washington</p>
-                                                                <small class="text-muted mb-0">162543</small>
-                                                            </div>
-                                                        </div>
-                                                        <div class="text-muted text-small">
-                                                            1h ago
-                                                        </div>
-                                                    </div>
-                                                    <div
-                                                        class="wrapper d-flex align-items-center justify-content-between py-2 border-bottom">
-                                                        <div class="d-flex">
-                                                            <img class="img-sm rounded-10" src="images/faces/face2.jpg"
-                                                                alt="profile">
-                                                            <div class="wrapper ms-3">
-                                                                <p class="ms-1 mb-1 fw-bold">Wayne Murphy</p>
-                                                                <small class="text-muted mb-0">162543</small>
-                                                            </div>
-                                                        </div>
-                                                        <div class="text-muted text-small">
-                                                            1h ago
-                                                        </div>
-                                                    </div>
-                                                    <div
-                                                        class="wrapper d-flex align-items-center justify-content-between py-2 border-bottom">
-                                                        <div class="d-flex">
-                                                            <img class="img-sm rounded-10" src="images/faces/face3.jpg"
-                                                                alt="profile">
-                                                            <div class="wrapper ms-3">
-                                                                <p class="ms-1 mb-1 fw-bold">Katherine Butler</p>
-                                                                <small class="text-muted mb-0">162543</small>
-                                                            </div>
-                                                        </div>
-                                                        <div class="text-muted text-small">
-                                                            1h ago
-                                                        </div>
-                                                    </div>
-                                                    <div
-                                                        class="wrapper d-flex align-items-center justify-content-between py-2 border-bottom">
-                                                        <div class="d-flex">
-                                                            <img class="img-sm rounded-10" src="images/faces/face4.jpg"
-                                                                alt="profile">
-                                                            <div class="wrapper ms-3">
-                                                                <p class="ms-1 mb-1 fw-bold">Matthew Bailey</p>
-                                                                <small class="text-muted mb-0">162543</small>
-                                                            </div>
-                                                        </div>
-                                                        <div class="text-muted text-small">
-                                                            1h ago
-                                                        </div>
-                                                    </div>
-                                                    <div
-                                                        class="wrapper d-flex align-items-center justify-content-between pt-2">
-                                                        <div class="d-flex">
-                                                            <img class="img-sm rounded-10" src="images/faces/face5.jpg"
-                                                                alt="profile">
-                                                            <div class="wrapper ms-3">
-                                                                <p class="ms-1 mb-1 fw-bold">Rafell John</p>
-                                                                <small class="text-muted mb-0">Alaska, USA</small>
-                                                            </div>
-                                                        </div>
-                                                        <div class="text-muted text-small">
-                                                            1h ago
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> -->
-                    </div>
-                </div>
-
-
-                <!-- About Page :: Also, keep in mind, show active is for HOME only. Do not add to "tab-pane fade" the "show active" unless it is HOME-->
-                <div class="tab-pane fade" id="about" role="tabpanel" aria-labelledby="about">
-                    <div class="row flex-grow">
-                        <div class="col-12 grid-margin stretch-card">
-                            <div class="card card-rounded">
-                                <div class="card-body">
-                                    <h3 class="card-title card-title-dash">About Us</h3>
-                                    <p class="card-description"><br>Welcome to Elec-Transport! We are a team of
-                                        couriers,
-                                        ready to deliver everything you want! No matter when, your pallets will arrive
-                                        in the office in
-                                        due time. We make everything easier, not pressuring with paperwork, just sign
-                                        you have gotten your palletand you are free to go! We will take care of the
-                                        paperwork for you.</p>
-                                    <p class="card-description">* This company is with made for educational
-                                        purposes/diploma thesis and
-                                        is not real, so please, do not spend money on it.</p>
-                                    <div class="row">
-                                        <div class="col-md-4 grid-margin stretch-card">
-                                            <div class="card card-rounded border-primary">
-                                                <div class="card-body text-center">
-                                                    <img src="Extras\Dashboard\AboutUs\page2-img1.jpg" alt="Reliability"
-                                                        class="img-fluid mb-3" style="max-height: 200px;">
-                                                    <h4 class="card-title">Reliability</h4>
-                                                    <p class="card-text">
-                                                        Your requests are our priority. We ensure timely and secure
-                                                        delivery, every time.
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 grid-margin stretch-card">
-                                            <div class="card card-rounded border-success">
-                                                <div class="card-body text-center">
-                                                    <img src="Extras\Dashboard\AboutUs\page2-img2.jpg" alt="Safety"
-                                                        class="img-fluid mb-3" style="max-height: 200px;">
-                                                    <h4 class="card-title">Safety</h4>
-                                                    <p class="card-text">
-                                                        We handle your goods with utmost care, ensuring they reach their
-                                                        destination safely.
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 grid-margin stretch-card">
-                                            <div class="card card-rounded border-info">
-                                                <div class="card-body text-center">
-                                                    <img src="Extras\Dashboard\AboutUs\page2-img3.jpg"
-                                                        alt="Transparency" class="img-fluid mb-3"
-                                                        style="max-height: 200px;">
-                                                    <h4 class="card-title">Transparency</h4>
-                                                    <p class="card-text">
-                                                        We keep you informed every step of the way with clear
-                                                        communication and tracking.
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <h3 class="card-title card-title-dash mt-5">Our Solutions</h3>
-                                    <p class="card-description">We offer a wide range of logistics solutions to meet
-                                        your needs.</p>
-
-                                    <!-- Lists -->
-                                    <div class="row">
-                                        <div class="col-md-6 grid-margin stretch-card">
-                                            <div class="card card-rounded bg-light">
-                                                <div class="card-body">
-                                                    <h4 class="card-title"><i
-                                                            class="mdi mdi-truck-delivery text-primary me-2"></i>
-                                                        Logistics Consulting</h4>
-                                                    <p class="card-text">
-                                                        Our logistics experts assist you in finding the best and most
-                                                        cost-effective transport solutions.
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 grid-margin stretch-card">
-                                            <div class="card card-rounded bg-light">
-                                                <div class="card-body">
-                                                    <h4 class="card-title"><i
-                                                            class="mdi mdi-rocket text-warning me-2"></i> Quick Services
-                                                    </h4>
-                                                    <p class="card-text">
-                                                        Fast and time-bound deliveries across all major locations with
-                                                        flexible and optimal routing.
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 grid-margin stretch-card">
-                                            <div class="card card-rounded bg-light">
-                                                <div class="card-body">
-                                                    <h4 class="card-title"><i
-                                                            class="mdi mdi-shield-check text-success me-2"></i> Safe &
-                                                        Secure</h4>
-                                                    <p class="card-text">
-                                                        No matter what the destination is, your cargo will reach it on
-                                                        time and intact.
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 grid-margin stretch-card">
-                                            <div class="card card-rounded bg-light">
-                                                <div class="card-body">
-                                                    <h4 class="card-title"><i
-                                                            class="mdi mdi-home-import-outline text-secondary me-2"></i>
-                                                        Door Delivery & Pick Up</h4>
-                                                    <p class="card-text">
-                                                        Comprehensive delivery services with pick-up at your door and
-                                                        last-mile delivery.
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-3 text-center">
-                                                <div id="offices-BG" class="display-4">0</div>
-                                                <p class="text-muted">Offices in Bulgaria</p>
-                                            </div>
-                                            <div class="col-md-3 text-center">
-                                                <div id="kilometers-covered" class="display-4">0</div>
-                                                <p class="text-muted">Kilometers covered</p>
-                                            </div>
-                                            <div class="col-md-3 text-center">
-                                                <div id="people-team" class="display-4">0</div>
-                                                <p class="text-muted">People in Team</p>
-                                            </div>
-                                            <div class="col-md-3 text-center">
-                                                <div id="clients" class="display-4">0</div>
-                                                <p class="text-muted">Clients</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Price-setting Page -->
-                <div class="tab-pane fade" id="price_decision" role="tabpanel" aria-labelledby="price_decision">
-                    <div class="row flex-grow">
-                        <div class="col-12 grid-margin stretch-card">
-                            <div class="card card-rounded">
-                                <div class="card-body">
-                                    <h3 class="card-title card-title-dash">How do we price?</h3>
-                                    <p class="card-description">Our pricing is based on the weight and dimensions of
-                                        your shipment to ensure fair and transparent costs. Below is a breakdown of our
-                                        pricing structure:</p>
-
-                                    <div class="table-responsive">
-                                        <table class="table table-striped table-hover table-bordered price-table">
-                                            <thead class="thead-light">
-                                                <tr>
-                                                    <th scope="col" data-sortable="true">
-                                                        Weight/Dimensions
-                                                        <span class="sort-icon sort-asc">&#9650;</span>
-                                                        <span class="sort-icon sort-desc">&#9660;</span>
-                                                    </th>
-                                                    <th scope="col" data-sortable="true">
-                                                        Price (lv)
-                                                        <span class="sort-icon sort-asc">&#9650;</span>
-                                                        <span class="sort-icon sort-desc">&#9660;</span>
-                                                    </th>
-                                                    <th scope="col" data-sortable="false">Details</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>Up to 3 kg</td>
-                                                    <td>10</td>
-                                                    <td>Base price for very light packages.</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Up to 6 kg</td>
-                                                    <td>15</td>
-                                                    <td>Price for slightly heavier packages.</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Up to 10 kg</td>
-                                                    <td>20</td>
-                                                    <td>Pricing for medium-weight shipments.</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Up to 20 kg</td>
-                                                    <td>35</td>
-                                                    <td>Standard price for packages up to 20 kg.</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>20 kg - 50 kg</td>
-                                                    <td>35 + 1 per kg over 20</td>
-                                                    <td>Base price of 35 lv plus 1 lv for each kilogram exceeding 20
-                                                        kg, up to 50 kg.</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Over 50 kg (max 80/120/90 cm)</td>
-                                                    <td>30 + 0.9 per kg</td>
-                                                    <td>Base price of 30 lv plus 0.9 lv for each kilogram over 50 kg,
-                                                        up to 1000 kg, with maximum dimensions of 80x120x90 cm.</td>
-                                                </tr>
-                                                <tr class="table-info">
-                                                    <th scope="row" colspan="3" class="text-center">Packages with
-                                                        Dimensions Larger Than 80/120/90 cm</th>
-                                                </tr>
-                                                <tr>
-                                                    <td>Up to 15 kg (large dimensions)</td>
-                                                    <td>K * 150</td>
-                                                    <td>Price is calculated using the coefficient K, where K = (longest
-                                                        dimension in meters * shortest dimension in meters) / 0.96.</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Over 15 kg (large dimensions)</td>
-                                                    <td>2 * K * 150</td>
-                                                    <td>Price is calculated as twice the value using the coefficient K,
-                                                        where K = (longest dimension in meters * shortest dimension in
-                                                        meters) / 0.96.</td>
-                                                </tr>
-                                                <tr class="table-warning">
-                                                    <th scope="row" colspan="3" class="text-center">Additional Fees</th>
-                                                </tr>
-                                                <tr>
-                                                    <td>Cash on Delivery</td>
-                                                    <td>+ 1.5% of the total amount</td>
-                                                    <td>A fee of 1.5% is applied to the total amount for cash on
-                                                        delivery service.</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-
-                                    <p class="mt-3"><strong>Please note:</strong> For shipments exceeding 1000 kg or
-                                        with significantly larger dimensions, please contact us
-                                        for a custom quote.</p>
                                 </div>
                             </div>
                         </div>
@@ -1084,6 +455,7 @@
             observer.observe(aboutSection);
         });
     </script>
+
 
     <!-- Header Styles -->
     <style>
@@ -1352,42 +724,39 @@
         });
     </script>
 
-    <!-- Root PFP BG for Contacts -->
-    <!-- Extras/Dashboard/ContactsBG/BG.png -->
-    <style>
-        .admin-contact-card {
-            position: relative;
-            background: url('Extras/Dashboard/ContactsBG/BG.png') no-repeat center;
-            background-size: cover;
-            opacity: 0.85;
-            padding: 20px;
-            border-radius: 8px;
-            color: #ffffff;
-            /* Ensures text remains bright */
+    <!-- Main Office Locations -->
+    <script>
+        function generateMap() {
+            const fromOfficeSelect = document.getElementById('fromOffice');
+            const toOfficeSelect = document.getElementById('toOffice');
+            const mapContainer = document.getElementById('map-container');
+
+            const fromOffice = fromOfficeSelect.value;
+            const toOffice = toOfficeSelect.value;
+
+            if (fromOffice && toOffice) {
+                const [fromLat, fromLng] = fromOffice.split(',').map(parseFloat);
+                const [toLat, toLng] = toOffice.split(',').map(parseFloat);
+
+                const mapEmbedUrl = `https://www.google.com/maps/embed/v1/dir/?origin=${fromLat},${fromLng}&destination=${toLat},${toLng}`;
+
+                const iframe = document.createElement('iframe');
+                iframe.src = mapEmbedUrl;
+                iframe.width = 600;  // Or whatever width you want, nya~
+                iframe.height = 450; // And the height, nya~
+                iframe.style.border = '0';
+                iframe.allowFullscreen = true;
+                iframe.loading = 'lazy';
+                iframe.referrerPolicy = 'no-referrer-when-downgrade';
+
+                mapContainer.innerHTML = ''; // Clear previous map, nya~
+                mapContainer.appendChild(iframe);
+            } else {
+                mapContainer.innerHTML = '<p>Please select both \'From\' and \'To\' offices, nya~.</p>';
+            }
         }
 
-        /* Soft transparent background behind the text for contrast */
-        .admin-contact-card .text-content {
-            position: relative;
-            background: rgba(255, 255, 255, 0.15);
-            /* Light background for better readability */
-            padding: 10px;
-            border-radius: 8px;
-        }
-
-        /* Ensure link contrast */
-        .admin-contact-card a {
-            color: #ffffff;
-            font-weight: bold;
-        }
-
-        /* Flexbox for layout */
-        .admin-contact-card,
-        .guest-contact-form {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 100%;
-            /* Ensures both halves stretch equally */
-        }
-    </style>
+        // populateDropdowns();  <--  Remove this line, nya~! PHP handles it now.
+        document.getElementById('fromOffice').addEventListener('change', generateMap);
+        document.getElementById('toOffice').addEventListener('change', generateMap);
+    </script>
