@@ -125,7 +125,7 @@
                                             </div>
                                             <div class="col-md-8">
                                                 <p class="mb-0">
-                                                    <?php echo !empty($tpl['user']['address']) ? htmlspecialchars($tpl['user']['address']) : '<span class="text-muted">Not provided</span>'; ?>
+                                                    </*?php echo !empty($tpl['user']['address']) ? htmlspecialchars($tpl['user']['address']) : '<span class="text-muted">Not provided</span>'; */?>
                                                 </p>
                                             </div>
                                         </div>
@@ -136,7 +136,7 @@
                                             </div>
                                             <div class="col-md-8">
                                                 <p class="mb-0">
-                                                    <?php echo !empty($tpl['user']['country']) ? htmlspecialchars($tpl['user']['country']) : '<span class="text-muted">Not provided</span>'; ?>
+                                                    </*?php echo !empty($tpl['user']['country']) ? htmlspecialchars($tpl['user']['country']) : '<span class="text-muted">Not provided</span>'; */?>
                                                 </p>
                                             </div>
                                         </div>
@@ -147,7 +147,7 @@
                                             </div>
                                             <div class="col-md-8">
                                                 <p class="mb-0">
-                                                    <?php echo !empty($tpl['user']['region']) ? htmlspecialchars($tpl['user']['region']) : '<span class="text-muted">Not provided</span>'; ?>
+                                                    </*?php echo !empty($tpl['user']['region']) ? htmlspecialchars($tpl['user']['region']) : '<span class="text-muted">Not provided</span>'; */?>
                                                 </p>
                                             </div>
                                         </div>
