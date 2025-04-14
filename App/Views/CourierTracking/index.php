@@ -1022,12 +1022,12 @@
                     return response.json();
                 })
                 .then(data => {
-                    console.log("Route data received:", data); // Debug: Log the data
+                    console.dir("Route data received:", data); // Debug: Log the data
                     if (data.routes && data.routes.length > 0) {
                         const route = data.routes[0];
                         const routeGeoJSON = route.geometry;
 
-                        console.log("Route GeoJSON:", routeGeoJSON); // Debug: Log GeoJSON
+                        console.dir("Route GeoJSON:", routeGeoJSON); // Debug: Log GeoJSON
 
                         // Create route layer with styling
                         try {
@@ -1063,15 +1063,14 @@
                                 padding: [50, 50],
                                 maxZoom: 10
                             });
-
-                            currentRouteLayer.bringToFront();
-
                             console.log("Map bounds updated to fit route"); // Debug: Log bounds update
 
                         } catch (e) {
                             console.error("Error adding route to map:", e);
                             if (toMarker) {
-                                toMarker.setPopupContent("Error displaying route. Please try again.");
+                                toMarker.setPopupContent(`To: ${document.getElementById('toOffice').options[document.getElementById('toOffice').selectedIndex].text}<br>
+                                                  Distance: ${distance} km <br>
+                                Estimated time: ${duration} min` + "\nError displaying route. Please try again.");
                             }
                         }
                     } else {
