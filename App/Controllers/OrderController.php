@@ -108,32 +108,32 @@ class OrderController extends Controller
         }
 
         $orderModel = new \App\Models\Order();
-        $orderProductsModel = new \App\Models\OrderProducts();
-        $productModel = new \App\Models\Pallet();
+        $OrderPalletsModel = new \App\Models\OrderPallets();
+        $palletModel = new \App\Models\Pallet();
         $userModel = new \App\Models\User();
         $notificationModel = new \App\Models\Notification();
         $mailer = new \App\Helpers\mailer\Mailer();
         $currency = $this->settings['currency']; // $this->settings['currency_code'], set manually to currency, since local+modded.
 
         if (!empty($_POST['send'])) {
-            $productIds = $_POST['product_id'];
+            $palletIds = $_POST['pallet_id'];
             $quantities = $_POST['quantity'];
 
-            // Validate quantities against available product quantities
+            // Validate quantities against available pallet quantities
             $quantityError = false;
             $error_message = null;
 
-            foreach ($productIds as $key => $productId) {
-                $product = $productModel->get($productId);
-                if ($quantities[$key] > $product['stock']) {
-                    $error_message = "Quantity for {$product['name']} exceeds available stock.";
+            foreach ($palletIds as $key => $palletId) {
+                $pallet = $palletModel->get($palletId);
+                if ($quantities[$key] > $pallet['stock']) {
+                    $error_message = "Quantity for {$pallet['name']} exceeds available stock.";
                     $quantityError = true;
                     break;
                 }
             }
 
             if (!$quantityError) {
-                $priceDetails = $this->calculateOrderTotal($productIds, $quantities);
+                $priceDetails = $this->calculateOrderTotal($palletIds, $quantities);
                 $orderData = [
                     'last_processed' => time(),
                     'tracking_number' => \Utility::generateRandomString(),
@@ -145,33 +145,33 @@ class OrderController extends Controller
                 $orderId = $orderModel->save($orderData + $_POST);
 
                 if ($orderId) {
-                    // Save order products and update product quantities
-                    foreach ($productIds as $key => $productId) {
-                        $productDetails = $productModel->get($productId);
-                        $subtotal = $productDetails['price'] * $quantities[$key];
+                    // Save order pallets and update pallet quantities
+                    foreach ($palletIds as $key => $palletId) {
+                        $palletDetails = $palletModel->get($palletId);
+                        $subtotal = $palletDetails['price'] * $quantities[$key];
 
-                        $orderProductData = [
+                        $orderpalletData = [
                             'order_id' => $orderId,
-                            'product_id' => $productId,
+                            'pallet_id' => $palletId,
                             'quantity' => $quantities[$key],
-                            'price' => $productDetails['price'],
+                            'price' => $palletDetails['price'],
                             'subtotal' => $subtotal,
                         ];
 
-                        if (!$orderProductsModel->save($orderProductData)) {
-                            $error_message = "Failed to save order products. Please try again.";
+                        if (!$OrderPalletsModel->save($orderpalletData)) {
+                            $error_message = "Failed to save order pallets. Please try again.";
                             break;
                         }
 
-                        // Update product quantity after order product is saved
-                        $updatedQuantity = $productDetails['stock'] - $quantities[$key];
-                        $updateSuccess = $productModel->update([
-                            'id' => $productId,
+                        // Update pallet quantity after order pallet is saved
+                        $updatedQuantity = $palletDetails['stock'] - $quantities[$key];
+                        $updateSuccess = $palletModel->update([
+                            'id' => $palletId,
                             'stock' => $updatedQuantity
                         ]);
 
                         if (!$updateSuccess) {
-                            $error_message = "Failed to update product stock for {$productDetails['name']}. Please try again.";
+                            $error_message = "Failed to update pallet stock for {$palletDetails['name']}. Please try again.";
                             break;
                         }
                     }
@@ -187,14 +187,14 @@ class OrderController extends Controller
                             $order = $orderModel->get($orderId);
                             $customer = $userModel->get($order['user_id']);
                             $courier = $userModel->get($order['courier_id']);
-                            $orderProducts = $orderProductsModel->getAll(['order_id' => $orderId]);
+                            $OrderPallets = $OrderPalletsModel->getAll(['order_id' => $orderId]);
 
-                            foreach ($orderProducts as &$product) {
-                                $productDetails = $productModel->get($product['product_id']);
-                                $product['name'] = $productDetails['name'] ?? 'Unknown';
+                            foreach ($OrderPallets as &$pallet) {
+                                $palletDetails = $palletModel->get($pallet['pallet_id']);
+                                $pallet['name'] = $palletDetails['name'] ?? 'Unknown';
                             }
 
-                            $emailContent = $this->generateOrderEmail($order, $customer, $courier, $orderProducts, "Order Confirmation");
+                            $emailContent = $this->generateOrderEmail($order, $customer, $courier, $OrderPallets, "Order Confirmation");
 
                             $mailer->sendMail($customer['email'], "Order Confirmation #{$orderId}", $emailContent);
                         }
@@ -209,7 +209,7 @@ class OrderController extends Controller
 
         $arr = [
             'users' => $userModel->getAll(),
-            'products' => $productModel->getAll(),
+            'pallets' => $palletModel->getAll(),
             'couriers' => $userModel->getAll(['role' => 'courier']),
             'currency' => $currency,
             'error_message' => $error_message ?? null
@@ -220,8 +220,8 @@ class OrderController extends Controller
     function details()
     {
         $orderModel = new \App\Models\Order();
-        $orderProductsModel = new \App\Models\OrderProducts();
-        $productModel = new \App\Models\Pallet();
+        $OrderPalletsModel = new \App\Models\OrderPallets();
+        $palletModel = new \App\Models\Pallet();
         $userModel = new \App\Models\User();
 
         if (empty($_SESSION['user'])) {
@@ -256,18 +256,18 @@ class OrderController extends Controller
 
         $opts = array();
         $opts['order_id'] = $orderId;
-        $orderProducts = $orderProductsModel->getAll($opts);
+        $OrderPallets = $OrderPalletsModel->getAll($opts);
 
-        foreach ($orderProducts as &$product) {
-            $productDetails = $productModel->get($product['product_id']);
-            $product['name'] = $productDetails['name'] ?? 'Unknown';
+        foreach ($OrderPallets as &$pallet) {
+            $palletDetails = $palletModel->get($pallet['pallet_id']);
+            $pallet['name'] = $palletDetails['name'] ?? 'Unknown';
         }
 
         $data = [
             'order' => $orderData,
             'customer' => $customerData,
             'courier' => $courierData,
-            'products' => $orderProducts,
+            'pallets' => $OrderPallets,
             'currency' => $this->settings['currency'], // $this->settings['currency_code'], set manually to currency, since local+modded.
         ];
 
@@ -285,21 +285,21 @@ class OrderController extends Controller
             exit;
         }
 
-        $productModel = new \App\Models\Pallet();
+        $palletModel = new \App\Models\Pallet();
         $orderModel = new \App\Models\Order();
-        $orderProductsModel = new \App\Models\OrderProducts();
+        $OrderPalletsModel = new \App\Models\OrderPallets();
         $userModel = new \App\Models\User();
 
         if (!empty($_POST['id'])) {
             $orderId = $_POST['id'];
 
-            $orderProducts = $orderProductsModel->getAll(['order_id' => $orderId]);
-            foreach ($orderProducts as $orderProduct) {
-                $product = $productModel->getFirstBy(['id' => $orderProduct['product_id']]);
-                $product['stock'] += $orderProduct['quantity'];
-                $productModel->update($product);
+            $OrderPallets = $OrderPalletsModel->getAll(['order_id' => $orderId]);
+            foreach ($OrderPallets as $orderpallet) {
+                $pallet = $palletModel->getFirstBy(['id' => $orderpallet['pallet_id']]);
+                $pallet['stock'] += $orderpallet['quantity'];
+                $palletModel->update($pallet);
             }
-            $orderProductsModel->deleteBy(['order_id' => $orderId]);
+            $OrderPalletsModel->deleteBy(['order_id' => $orderId]);
 
             $orderModel->delete($orderId);
         }
@@ -324,17 +324,17 @@ class OrderController extends Controller
             $orderId = $_GET['order_id'];
             $orderModel = new \App\Models\Order();
             $userModel = new \App\Models\User();
-            $orderProductsModel = new \App\Models\OrderProducts();
+            $OrderPalletsModel = new \App\Models\OrderPallets();
 
             $order = $orderModel->get($orderId);
             $user = $userModel->get($order['user_id']);
-            $orderProducts = $orderProductsModel->getAll(['order_id' => $orderId]);
+            $OrderPallets = $OrderPalletsModel->getAll(['order_id' => $orderId]);
 
             $this->view($this->layout, [
                 'currency' => $this->settings['currency'], // $this->settings['currency_code'], set manually to currency, since local+modded.
                 'order' => $order,
                 'user' => $user,
-                'order_products' => $orderProducts
+                'order_pallets' => $OrderPallets
             ]);
         }
     }
@@ -443,15 +443,15 @@ class OrderController extends Controller
         }
 
         $orderModel = new \App\Models\Order();
-        $orderProductsModel = new \App\Models\OrderProducts();
+        $OrderPalletsModel = new \App\Models\OrderPallets();
         $userModel = new \App\Models\User();
 
         if (!empty($_POST['ids']) && is_array($_POST['ids'])) {
             $orderIds = $_POST['ids'];
 
             $inOrderIds = implode(', ', $orderIds);
-            $optsForOrderProduct = ["order_id IN ($inOrderIds) AND 1 " => '1'];
-            $orderProductsModel->deleteBy($optsForOrderProduct);
+            $optsForOrderpallet = ["order_id IN ($inOrderIds) AND 1 " => '1'];
+            $OrderPalletsModel->deleteBy($optsForOrderpallet);
             $optsForOrder = ["id IN ($inOrderIds) AND 1 " => '1'];
             $orderModel->deleteBy($optsForOrder);
         }
@@ -497,8 +497,8 @@ class OrderController extends Controller
         }
 
         $orderModel = new \App\Models\Order();
-        $orderProductsModel = new \App\Models\OrderProducts();
-        $productModel = new \App\Models\Pallet();
+        $OrderPalletsModel = new \App\Models\OrderPallets();
+        $palletModel = new \App\Models\Pallet();
         $userModel = new \App\Models\User();
         $notificationModel = new \App\Models\Notification();
         $mailer = new \App\Helpers\mailer\Mailer();
@@ -507,34 +507,34 @@ class OrderController extends Controller
         if (!empty($_POST['id'])) {
             $orderId = $_POST['id'];
             $order = $orderModel->get($orderId);
-            $currentOrderProducts = $orderProductsModel->getAll(['order_id' => $orderId]);
+            $currentOrderPallets = $OrderPalletsModel->getAll(['order_id' => $orderId]);
 
             $currentQuantities = [];
-            $productIds = array_column($currentOrderProducts, 'product_id');
-            $productData = $productModel->getMultiple($productIds);
+            $palletIds = array_column($currentOrderPallets, 'pallet_id');
+            $palletData = $palletModel->getMultiple($palletIds);
 
-            foreach ($currentOrderProducts as $product) {
-                $currentQuantities[$product['product_id']] = ($currentQuantities[$product['product_id']] ?? 0) + $product['quantity'];
+            foreach ($currentOrderPallets as $pallet) {
+                $currentQuantities[$pallet['pallet_id']] = ($currentQuantities[$pallet['pallet_id']] ?? 0) + $pallet['quantity'];
             }
 
             $quantityError = false;
             $newQuantities = [];
-            $newOrderProducts = [];
+            $newOrderPallets = [];
 
-            foreach ($_POST['product_id'] as $key => $productId) {
+            foreach ($_POST['pallet_id'] as $key => $palletId) {
                 $quantity = $_POST['quantity'][$key];
-                $newQuantities[$productId] = ($newQuantities[$productId] ?? 0) + $quantity;
-                $newOrderProducts[] = ['product_id' => $productId, 'quantity' => $quantity];
+                $newQuantities[$palletId] = ($newQuantities[$palletId] ?? 0) + $quantity;
+                $newOrderPallets[] = ['pallet_id' => $palletId, 'quantity' => $quantity];
             }
 
-            foreach ($newQuantities as $productId => $newTotalQuantity) {
-                $product = $productData[$productId] ?? $productModel->get($productId);
-                $currentTotalQuantity = $currentQuantities[$productId] ?? 0;
+            foreach ($newQuantities as $palletId => $newTotalQuantity) {
+                $pallet = $palletData[$palletId] ?? $palletModel->get($palletId);
+                $currentTotalQuantity = $currentQuantities[$palletId] ?? 0;
                 $stockChange = $newTotalQuantity - $currentTotalQuantity;
-                $updatedStock = $product['stock'] - $stockChange;
+                $updatedStock = $pallet['stock'] - $stockChange;
 
                 if ($updatedStock < 0) {
-                    $error_message = "Quantity for {$product['name']} exceeds available stock.";
+                    $error_message = "Quantity for {$pallet['name']} exceeds available stock.";
                     $quantityError = true;
                     break;
                 }
@@ -554,32 +554,32 @@ class OrderController extends Controller
                     $error_message = "Failed to update order with id " . $orderId;
                 }
 
-                $orderProductsModel->deleteBy(['order_id' => $orderId]);
+                $OrderPalletsModel->deleteBy(['order_id' => $orderId]);
 
-                // Update stock for products based on total difference
-                foreach ($newOrderProducts as $orderProduct) {
-                    $productId = $orderProduct['product_id'];
-                    $quantity = $orderProduct['quantity'];
-                    $productDetails = $productData[$productId] ?? $productModel->get($productId);
-                    $subtotal = $productDetails['price'] * $quantity;
+                // Update stock for pallets based on total difference
+                foreach ($newOrderPallets as $orderpallet) {
+                    $palletId = $orderpallet['pallet_id'];
+                    $quantity = $orderpallet['quantity'];
+                    $palletDetails = $palletData[$palletId] ?? $palletModel->get($palletId);
+                    $subtotal = $palletDetails['price'] * $quantity;
 
-                    $orderProductsModel->save([
+                    $OrderPalletsModel->save([
                         'order_id' => $orderId,
-                        'product_id' => $productId,
+                        'pallet_id' => $palletId,
                         'quantity' => $quantity,
-                        'price' => $productDetails['price'],
+                        'price' => $palletDetails['price'],
                         'subtotal' => $subtotal
                     ]);
                 }
 
-                foreach ($newQuantities as $productId => $newTotalQuantity) {
-                    $productDetails = $productData[$productId] ?? $productModel->get($productId);
-                    $currentTotalQuantity = $currentQuantities[$productId] ?? 0;
+                foreach ($newQuantities as $palletId => $newTotalQuantity) {
+                    $palletDetails = $palletData[$palletId] ?? $palletModel->get($palletId);
+                    $currentTotalQuantity = $currentQuantities[$palletId] ?? 0;
                     $stockChange = $newTotalQuantity - $currentTotalQuantity;
-                    $updatedStock = $productDetails['stock'] - $stockChange;
+                    $updatedStock = $palletDetails['stock'] - $stockChange;
 
-                    if (!$productModel->update(['id' => $productId, 'stock' => $updatedStock])) {
-                        $error_message = "Failed to update product stock for {$productDetails['name']}. Please try again.";
+                    if (!$palletModel->update(['id' => $palletId, 'stock' => $updatedStock])) {
+                        $error_message = "Failed to update pallet stock for {$palletDetails['name']}. Please try again.";
                         break;
                     }
                 }
@@ -597,13 +597,13 @@ class OrderController extends Controller
                     $customer = $userModel->get($order['user_id']);
                     $courier = $userModel->get($order['courier_id']);
 
-                    $orderProducts = $orderProductsModel->getAll(['order_id' => $orderId]);
-                    foreach ($orderProducts as &$orderProduct) {
-                        $orderProductDetails = $productModel->get($orderProduct['product_id']);
-                        $orderProduct['name'] = $orderProductDetails['name'] ?? 'Unknown';
+                    $OrderPallets = $OrderPalletsModel->getAll(['order_id' => $orderId]);
+                    foreach ($OrderPallets as &$orderpallet) {
+                        $orderpalletDetails = $palletModel->get($orderpallet['pallet_id']);
+                        $orderpallet['name'] = $orderpalletDetails['name'] ?? 'Unknown';
                     }
 
-                    $emailContent = $this->generateOrderEmail($order, $customer, $courier, $orderProducts, "Order Update");
+                    $emailContent = $this->generateOrderEmail($order, $customer, $courier, $OrderPallets, "Order Update");
 
                     $mailer->sendMail($customer['email'], "Order Update #{$orderId}", $emailContent);
                 }
@@ -613,24 +613,24 @@ class OrderController extends Controller
         }
 
         $orderId = $_GET['order_id'];
-        $orderProducts = $orderProductsModel->getAll(['order_id' => $orderId]);
+        $OrderPallets = $OrderPalletsModel->getAll(['order_id' => $orderId]);
 
-        $productQuantities = [];
-        foreach ($orderProducts as $orderProduct) {
-            $productId = $orderProduct['product_id'];
-            if (!isset($productQuantities[$productId])) {
-                $productQuantities[$productId] = 0;
+        $palletQuantities = [];
+        foreach ($OrderPallets as $orderpallet) {
+            $palletId = $orderpallet['pallet_id'];
+            if (!isset($palletQuantities[$palletId])) {
+                $palletQuantities[$palletId] = 0;
             }
-            $productQuantities[$productId] += $orderProduct['quantity'];
+            $palletQuantities[$palletId] += $orderpallet['quantity'];
         }
 
         $arr = [
             'order' => $orderModel->get($orderId),
-            'orderProducts' => $orderProducts,
+            'OrderPallets' => $OrderPallets,
             'users' => $userModel->getAll(),
-            'products' => $productModel->getAll(),
+            'pallets' => $palletModel->getAll(),
             'couriers' => $userModel->getAll(['role' => 'courier']),
-            'productQuantities' => $productQuantities,
+            'palletQuantities' => $palletQuantities,
             'currency' => $currency,
             'error_message' => $error_message ?? null
         ];
@@ -640,28 +640,28 @@ class OrderController extends Controller
 
     function calculatePrice()
     {
-        $price_arr = $this->calculateOrderTotal($_POST['product_id'], $_POST['quantity']);
+        $price_arr = $this->calculateOrderTotal($_POST['pallet_id'], $_POST['quantity']);
         header('Content-Type: application/json');
 
         echo json_encode($price_arr);
     }
 
-    private function calculateOrderTotal(array $productIds, array $quantities): array
+    private function calculateOrderTotal(array $palletIds, array $quantities): array
     {
-        $productModel = new \App\Models\Pallet();
-        $productPrice = 0;
+        $palletModel = new \App\Models\Pallet();
+        $palletPrice = 0;
 
-        foreach ($productIds as $key => $productId) {
-            $product = $productModel->get($productId);
-            $productPrice += $product['price'] * $quantities[$key];
+        foreach ($palletIds as $key => $palletId) {
+            $pallet = $palletModel->get($palletId);
+            $palletPrice += $pallet['price'] * $quantities[$key];
         }
 
-        $shippingPrice = ($productPrice * $this->settings['shipping_rate']) / 100;
-        $tax = ($productPrice * $this->settings['tax_rate']) / 100;
-        $total = $productPrice + $tax + $shippingPrice;
+        $shippingPrice = ($palletPrice * $this->settings['shipping_rate']) / 100;
+        $tax = ($palletPrice * $this->settings['tax_rate']) / 100;
+        $total = $palletPrice + $tax + $shippingPrice;
 
         return [
-            'product_price' => number_format($productPrice, 2),
+            'pallet_price' => number_format($palletPrice, 2),
             'shipping_price' => number_format($shippingPrice, 2),
             'tax' => number_format($tax, 2),
             'total' => number_format($total, 2),
@@ -831,7 +831,7 @@ class OrderController extends Controller
         exit;
     }
 
-    private function generateOrderEmail($order, $customer, $courier, $products, $title)
+    private function generateOrderEmail($order, $customer, $courier, $pallets, $title)
     {
         ob_start();
         ?>
@@ -887,20 +887,20 @@ class OrderController extends Controller
                     font-size: 14px;
                 }
 
-                .products-table {
+                .pallets-table {
                     width: 100%;
                     border-collapse: collapse;
                     margin-top: 20px;
                 }
 
-                .products-table th,
-                .products-table td {
+                .pallets-table th,
+                .pallets-table td {
                     padding: 12px;
                     border: 1px solid #ddd;
                     text-align: left;
                 }
 
-                .products-table th {
+                .pallets-table th {
                     background: #0073e6;
                     color: white;
                     font-weight: bold;
@@ -967,29 +967,29 @@ class OrderController extends Controller
                         </div>
                     </div>
                     <h3 style="color: #0073e6; margin-top: 20px;">Order Summary</h3>
-                    <table class="products-table">
+                    <table class="pallets-table">
                         <thead>
                             <tr>
-                                <th>Product</th>
+                                <th>pallet</th>
                                 <th>Qty</th>
                                 <th>Price</th>
                                 <th>Subtotal</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($products as $product) { ?>
+                            <?php foreach ($pallets as $pallet) { ?>
                                 <tr>
                                     <td>
-                                        <?= htmlspecialchars($product['name']) ?>
+                                        <?= htmlspecialchars($pallet['name']) ?>
                                     </td>
                                     <td>
-                                        <?= htmlspecialchars($product['quantity']) ?>
+                                        <?= htmlspecialchars($pallet['quantity']) ?>
                                     </td>
                                     <td>
-                                        <?= \Utility::getDisplayableAmount(htmlspecialchars(number_format($product['price'], 2))) ?>
+                                        <?= \Utility::getDisplayableAmount(htmlspecialchars(number_format($pallet['price'], 2))) ?>
                                     </td>
                                     <td>
-                                        <?= \Utility::getDisplayableAmount(htmlspecialchars(number_format($product['subtotal'], 2))) ?>
+                                        <?= \Utility::getDisplayableAmount(htmlspecialchars(number_format($pallet['subtotal'], 2))) ?>
                                     </td>
                                 </tr>
                             <?php } ?>

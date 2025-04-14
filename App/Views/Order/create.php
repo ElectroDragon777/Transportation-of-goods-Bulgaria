@@ -133,7 +133,7 @@
                                 <div id="productRows">
                                     <div class="row align-items-end mb-3 product-row">
                                         <div class="col-md-12">
-                                            <label for="productIds" class="form-label">pallet</label>
+                                            <label for="productIds" class="form-label">Pallet</label>
                                             <select name="product_id[]" id="productIds" class="form-select" required>
                                                 <option value="">---</option>
                                                 <?php
