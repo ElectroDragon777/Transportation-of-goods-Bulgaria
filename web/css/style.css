@@ -42,12 +42,12 @@ select.form-select option {
     color: #fff;
     position: relative;
 }
-.step.active {
+/* .step.active {
     background-color: #0d6efd;
 }
 .step.completed {
     background-color: #198754;
-}
+} */
 .step-line {
     flex: 1;
     height: 2px;
@@ -57,11 +57,11 @@ select.form-select option {
 .step-line.completed {
     background-color: #198754;
 }
-.install-container {
+/* .install-container {
     max-width: 600px;
     margin: 0 auto;
     padding: 40px 20px;
-}
+} */
 .check-icon {
     font-size: 64px;
     color: #198754;
