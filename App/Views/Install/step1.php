@@ -39,7 +39,7 @@
                                     <div class="form-text">
                                         <p class="text-muted small">Usually "localhost" (e.g. localhost:8111) or an IP
                                             Address
-                                            (e.g. 127.0.0.1)</p>
+                                            (e.g. 127.0.0.1:8111)</p>
                                     </div>
                                 </div>
                                 <div class="mb-3">
@@ -50,6 +50,9 @@
                                             echo DEFAULT_USER;
                                         }
                                         ?>" required>
+                                         <div class="form-text">
+                                        <p class="text-muted small">Must be 'root' for site's purposes.</p>
+                                    </div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="database" class="form-label shadowify" style="width: 100%;">Database
@@ -184,5 +187,17 @@
         padding: 0.75rem 0.75rem;
         font-size: 1rem;
         height: auto;
+    }
+
+    .text-muted.small {
+        color: #ddd;
+        text-shadow: 1px 1px 2px rgba(71, 71, 71, 0.8);
+        margin: 0;
+    }
+
+    .text-muted {
+        color: #ddd;
+        text-shadow: 1px 2px 2px rgba(95, 95, 95, 0.8);
+        margin: 0;
     }
 </style>

@@ -38,6 +38,9 @@
                                         echo $tpl['root']['name'];
                                     }
                                     ?>" required>
+                                     <div class="form-text">
+                                        <p class="text-muted small">Account Name for the 'root', which is you, my friend!</p>
+                                    </div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="root_email" class="form-label shadowify" style="width: 100%;">Root
@@ -66,11 +69,11 @@
                                     <div class="position-relative">
                                         <input type="password" class="form-control" id="rootPasswordConfirm"
                                             name="root_password_confirm" required>
-                                        <i class="password-toggle-icon fa fa-eye" data-target="rootPasswordConfirm"></i>
-                                        <div class="form-text text-muted small">Write it again, just so you do not
+                                        <i class="password-toggle-icon fa fa-eye" data-target="rootPasswordConfirm"></i>                                
+                                    </div>
+                                    <div class="form-text text-muted small">Write it again, just so you do not
                                             forget, <strong>it will be
                                                 hashed!</strong> (And good luck unhashing it.)</div>
-                                    </div>
                                 </div>
 
                                 <div class="d-flex justify-content-between mt-4">
@@ -216,5 +219,17 @@
         right: 10px;
         transform: translateY(-50%);
         cursor: pointer;
+    }
+
+    .text-muted.small {
+        color: #ddd;
+        text-shadow: 1px 1px 2px rgba(71, 71, 71, 0.8);
+        margin: 0;
+    }
+
+    .text-muted {
+        color: #ddd;
+        text-shadow: 1px 2px 2px rgba(95, 95, 95, 0.8);
+        margin: 0;
     }
 </style>
