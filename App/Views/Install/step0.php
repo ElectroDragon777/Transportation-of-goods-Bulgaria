@@ -31,9 +31,8 @@
                                         GDT]</p>
                                 </li>
                             </ul>
-                            <p class="card-text">This Setup is a 5-Step one. You will be going through all, first 3 are
-                                compulsory, last
-                                2, not that much.</p>
+                            <p class="card-text">This Setup is a 5-Step one; Should not take long, maximum 5 minutes of your time! You will be going through all, Steps 1-3 are
+                                compulsory, Step 4 is not compulsory.</p>
                             <div class="d-grid gap-2">
                                 <a href="<?php echo INSTALL_URL; ?>?controller=Install&action=step1"
                                     class="btn btn-primary btn-lg">Take

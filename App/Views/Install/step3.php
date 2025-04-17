@@ -6,8 +6,8 @@
                     <div class="install-logo">
                         <h1>Elec-Transport Setup</h1>
                     </div>
-                    <div class="steps">
-                        <p class="card-text mb-2 text-center text-muted"><strong>Steps:</strong></p>
+                    <p class="card-text mb-2 text-center text-muted"><strong>Steps:</strong></p>
+                    <div class="steps" style="display: flex; align-items: center;">
                         <div class="step completed">1</div>
                         <div class="step-line completed"></div>
                         <div class="step completed">2</div>
@@ -185,5 +185,17 @@
         padding: 0.75rem 0.75rem;
         font-size: 1rem;
         height: auto;
+    }
+
+    .text-muted.small {
+        color: #ddd;
+        text-shadow: 1px 1px 2px rgba(71, 71, 71, 0.8);
+        margin: 0;
+    }
+
+    .text-muted {
+        color: #ddd;
+        text-shadow: 1px 2px 2px rgba(95, 95, 95, 0.8);
+        margin: 0;
     }
 </style>

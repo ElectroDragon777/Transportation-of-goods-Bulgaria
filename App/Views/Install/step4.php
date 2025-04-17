@@ -6,8 +6,8 @@
                     <div class="install-logo">
                         <h1>Elec-Transport Setup</h1>
                     </div>
-                    <div class="steps">
-                        <p class="card-text mb-2 text-center text-muted"><strong>Steps:</strong></p>
+                    <p class="card-text mb-2 text-center text-muted"><strong>Steps:</strong></p>
+                    <div class="steps" style="display: flex; align-items: center;">
                         <div class="step completed">1</div>
                         <div class="step-line completed"></div>
                         <div class="step completed">2</div>
@@ -38,6 +38,9 @@
                                             echo MAIL_HOST;
                                         }
                                         ?>" required>
+                                        <div class="form-text">
+                                        <p class="text-muted small">E.g. <a href="https://mailtrap.io/" target="_blank">MailTrap.io</a></p>
+                                    </div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="mail_port" class="form-label shadowify">Mail Port</label> <input
@@ -47,7 +50,9 @@
                                             echo MAIL_PORT;
                                         }
                                         ?>" required>
-                                    <div class="form-text text-muted small">Common ports: 25, 465, 587, 2525</div>
+                                        <div class="form-text">
+                                        <p class="text-muted small">Common ports: 25, 465, 587, 2525</p>
+                                    </div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="mail_username" class="form-label shadowify">Mail's Username:</label>
@@ -227,5 +232,17 @@
         padding: 0.75rem 0.75rem;
         font-size: 1rem;
         height: auto;
+    }
+
+    .text-muted.small {
+        color: #ddd;
+        text-shadow: 1px 1px 2px rgba(71, 71, 71, 0.8);
+        margin: 0;
+    }
+
+    .text-muted {
+        color: #ddd;
+        text-shadow: 1px 2px 2px rgba(95, 95, 95, 0.8);
+        margin: 0;
     }
 </style>
