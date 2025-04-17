@@ -9,7 +9,8 @@ require 'App/Helpers/mailer/PHPMailer/src/SMTP.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-class Mailer {
+class Mailer
+{
 
     private $phpmailer;
     private $host = '';
@@ -17,14 +18,16 @@ class Mailer {
     private $username = '';
     private $password = '';
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->host = MAIL_HOST;
         $this->port = MAIL_PORT;
         $this->username = MAIL_USERNAME;
         $this->password = MAIL_PASSWORD;
     }
 
-    public function checkConnection($host, $port, $username, $password) {
+    public function checkConnection($host, $port, $username, $password)
+    {
         $this->phpmailer = new PHPMailer(true);
 
         try {
@@ -57,11 +60,12 @@ class Mailer {
         }
     }
 
-    public function sendMail($to, $subject, $body, $from = 'delivery@system.com') {
+    public function sendMail($to, $subject, $body, $from = 'delivery@system.com')
+    {
         $this->connect();
 
         try {
-            $this->phpmailer->setFrom($from, 'DeliveryMS');
+            $this->phpmailer->setFrom($from, 'Elec-Transport');
             $this->phpmailer->addAddress($to);
             $this->phpmailer->Subject = $subject;
             $this->phpmailer->Body = $body;
@@ -73,7 +77,8 @@ class Mailer {
         }
     }
 
-    private function connect() {
+    private function connect()
+    {
         $this->phpmailer = new PHPMailer(true);
 
         try {
