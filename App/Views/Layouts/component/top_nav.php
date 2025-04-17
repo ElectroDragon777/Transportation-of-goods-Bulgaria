@@ -72,14 +72,36 @@ if (!empty($tpl['notifications'])) {
                         </a>
                     </div>
                 </li> -->
-                <li class="nav-item d-none d-lg-block">
-                    <div id="datepicker-popup" class="input-group date datepicker navbar-date-picker">
-                        <span class="input-group-addon input-group-prepend border-right">
-                            <span class="icon-calendar input-group-text calendar-icon"></span>
-                        </span>
-                        <input type="text" class="form-control">
+                <li class="nav-item d-lg-block d-flex">
+                    <div id="current-date-container" class="navbar-date-picker">
+                        <span id="current-date" class="text-muted"></span>
                     </div>
                 </li>
+                <?php
+                // Get the current date in the desired format
+                $currentDate = date($tpl['date_format']);
+                ?>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        // Inject the formatted date into the container
+                        const currentDateContainer = document.getElementById('current-date');
+                        if (currentDateContainer) {
+                            currentDateContainer.textContent = "<?php echo $currentDate; ?>";
+                        }
+                    });
+                </script>
+                <style>
+                    #current-date-container {
+                        display: flex;
+                        align-items: center;
+                        gap: 5px;
+                    }
+
+                    #current-date {
+                        font-weight: bold;
+                        color: #333;
+                    }
+                </style>
                 <!-- <li class="nav-item">
                     <form class="search-form" action="#">
                         <i class="icon-search"></i>
@@ -99,9 +121,9 @@ if (!empty($tpl['notifications'])) {
                             </a>
                         </div>
                     </a>
-                    <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0"
-                        aria-labelledby="notificationDropdown">
-                        <!-- <a class="dropdown-item py-3 border-bottom">
+                    <!-- <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0"
+                        aria-labelledby="notificationDropdown"> -->
+                    <!-- <a class="dropdown-item py-3 border-bottom">
                             <p class="mb-0 font-weight-medium float-left">You have 4 new notifications </p>
                             <span class="badge badge-pill badge-primary float-right">View all</span>
                         </a>
@@ -132,7 +154,7 @@ if (!empty($tpl['notifications'])) {
                                 <p class="fw-light small-text mb-0"> 2 days ago </p>
                             </div>
                         </a> -->
-                    </div>
+                    <!-- </div> -->
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link count-indicator" id="countDropdown" href="#" data-bs-toggle="dropdown"
@@ -187,7 +209,7 @@ if (!empty($tpl['notifications'])) {
                 </li>
 
                 <!-- User Profile -->
-                <li class="nav-item dropdown d-none d-lg-block user-dropdown">
+                <li class="nav-item dropdown d-lg-block user-dropdown">
                     <a class="nav-link" id="UserDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
                         <?php if (!empty($_SESSION['user']['photo_path'])): ?>
                             <img id="profileImage" src="<?php echo htmlspecialchars($_SESSION['user']['photo_path']); ?>"
