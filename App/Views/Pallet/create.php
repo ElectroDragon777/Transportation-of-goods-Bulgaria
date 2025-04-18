@@ -82,29 +82,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    function formatBilllanding(input) {
-        // Don't format if the field is readonly
-        if (input.readOnly) return;
-
-        let value = input.value;
-        if (value.length > 10) {
-            value = value.slice(0, 10); // Truncate to 10 digits if longer
-        }
-        input.value = value.padStart(10, '0'); // Pad with leading zeros
-
-        // Prevent value from becoming 10 zeros
-        if (input.value === '0000000000') {
-            input.value = ''; // Clear the input field
-        }
-    }
-
-    // Add event listener to format the initial value if any
-    document.addEventListener('DOMContentLoaded', function () {
-        const billlandingInput = document.getElementById('code_billlanding');
-        if (billlandingInput && billlandingInput.value && !billlandingInput.readOnly) {
-            formatBilllanding(billlandingInput);
-        }
-    });
-</script>
