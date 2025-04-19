@@ -1192,15 +1192,31 @@
 
                                     <!-- Form --> <!-- Put $root when checked. -->
                                     <?php if ($_SESSION['user']['name'] == $root['name']): ?>
-                                        <p class="card-description">You are the super admin, this is for DEBUG purposes, not
+                                        <p class="card-description">Hey, You are the super admin, this is for DEBUG
+                                            purposes, not
                                             to text yourself.</p>
                                         <p>Writing as <strong><?php echo htmlspecialchars($root['name']); ?></strong></p>
-                                        <p class="text-muted">Root-Admin (You) cannot use this contact form. Otherwise, why?
-                                            People use it to ask you, will you really ask yourself?</p>
+
+                                        <?php if ($root['name'] == "Chara Dreemurr"): ?>
+                                            <p class="text-muted">Root-Admin (You,
+                                                <?php echo htmlspecialchars($root['name']); ?>)... Hey, it is me! I am
+                                                Chara Dreemurr, the Root-Admin of this system! This is my DEBUG-ger! This will
+                                                simulate receiving messages from users to me by well... sending messages myself.
+                                                But as long as it works!
+                                            </p>
+                                        <?php else: ?>
+                                            <p class="text-muted">Root-Admin (You,
+                                                <?php echo htmlspecialchars($root['name']); ?>) cannot use this contact form.
+                                                Otherwise, why?
+                                                People use it to ask you, will you really ask yourself?
+                                            </p>
+                                        <?php endif ?>
+
                                         <form id="contactForm">
                                             <div class="form-group">
                                                 <label for="message">Message</label>
-                                                <textarea class="form-control" id="message" rows="5" required></textarea>
+                                                <textarea class="form-control" id="message" rows="5"
+                                                    style="width: 100%; min-height: 150px;" required></textarea>
                                             </div>
                                             <button type="button" class="btn btn-primary mr-2"
                                                 onclick="sendMessage()">Send</button>
@@ -1212,10 +1228,11 @@
                                         <p class="card-description">Feel free to reach out to us using the contact
                                             information below or by sending us a message.</p>
                                         <div class="row d-flex align-items-stretch">
-                                            <div class="col-md-6 d-flex-column justify-content-center">
+                                            <div class="col-md-6 d-flex flex-column justify-content-center">
                                                 <div class="admin-contact-card">
                                                     <div class="text-center text-content">
-                                                        <h4 class="text-light font-weight-bold mb-3">Administrator Contact
+                                                        <h4 class="text-light font-weight-bold mb-3">Super-Administrator
+                                                            Contact
                                                         </h4>
 
                                                         <?php if (!empty($root['photo_path'])): ?>
@@ -1262,431 +1279,440 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-6">
+                                            <div class="col-md-6 d-flex flex-column justify-content-center">
                                                 <h4>Send us a Message:</h4>
                                                 <form id="guestContactForm">
-                                                    <div class="form-group">
-                                                        <label for="name">Name</label>
-                                                        <input type="text" class="form-control" id="name" required>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="email">Email</label>
-                                                        <input type="email" class="form-control" id="email" required>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="phone">Phone</label>
-                                                        <input type="tel" class="form-control" id="phone">
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="guestMessage">Message</label>
-                                                        <textarea class="form-control" id="guestMessage" rows="5"
-                                                            required></textarea>
-                                                    </div>
-                                                    <button type="button" class="btn btn-primary mr-2"
-                                                        onclick="sendGuestMessage()">Send</button>
-                                                    <button type="reset" class="btn btn-light">Clear</button>
-                                                    <div id="guestMessageSentAlert" class="alert alert-success mt-3"
-                                                        style="display:none;">Message sent!</div>
+                                                    <p>Writing as:
+                                                        <strong><?php echo htmlspecialchars($_SESSION['user']['name']); ?></strong>
+                                                    </p>
+                                                    <p>Role:
+                                                        <i><?php echo htmlspecialchars($_SESSION['user']['role']); ?></i>
+                                                    </p>
+                                                    <p class="text-muted">Heya, it is me again, Chara Dreemurr, the
+                                                        Root-Admin/Super-Administrator of this system! I am here to help you
+                                                        with
+                                                        everything you need!
+                                                        If you have any questions or need assistance, feel free to reach out
+                                                        to me. I am
+                                                        here to make your experience as smooth as possible. Let's work
+                                                        together to make
+                                                        this system even better!
+                                                    </p>
+                                                    <form id="contactForm">
+                                                        <div class="form-group">
+                                                            <label for="message">Message</label>
+                                                            <textarea class="form-control" id="message" rows="5"
+                                                                style="width: 100%; min-height: 150px;" required></textarea>
+                                                        </div>
+                                                        <button type="button" class="btn btn-primary mr-2"
+                                                            onclick="sendMessage()">Send</button>
+                                                        <button type="reset" class="btn btn-light">Clear</button>
+                                                        <div id="messageSentAlert" class="alert alert-success mt-3"
+                                                            style="display:none;">Message sent!</div>
+                                                    </form>
                                                 </form>
                                             </div>
                                         </div>
                                     <?php endif; ?>
-
+                                    </di>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <script>
-                    function sendMessage() {
-                        const message = document.getElementById('message').value;
-                        if (message.trim() !== '') {
-                            // In a real application, you would send this message to the server (e.g., via AJAX)
-                            console.log("Message from registered user:", message);
-                            document.getElementById('messageSentAlert').style.display = 'block';
-                            document.getElementById('contactForm').reset();
-                            setTimeout(() => {
-                                document.getElementById('messageSentAlert').style.display = 'none';
-                            }, 3000); // Hide alert after 3 seconds
-                        } else {
-                            alert('Please enter your message.');
-                        }
-                    }
-
-                    function sendGuestMessage() {
-                        const name = document.getElementById('name').value;
-                        const email = document.getElementById('email').value;
-                        const phone = document.getElementById('phone').value;
-                        const message = document.getElementById('guestMessage').value;
-
-                        if (name.trim() !== '' && email.trim() !== '' && message.trim() !== '') {
-                            // In a real application, you would send this message to the server (e.g., via AJAX)
-                            console.log("Message from guest:", { name, email, phone, message });
-                            document.getElementById('guestMessageSentAlert').style.display = 'block';
-                            document.getElementById('guestContactForm').reset();
-                            setTimeout(() => {
-                                document.getElementById('guestMessageSentAlert').style.display = 'none';
-                            }, 3000); // Hide alert after 3 seconds
-                        } else {
-                            alert('Please fill in the required fields (Name, Email, Message).');
-                        }
-                    }
-                </script>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- For About's Counters animation -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const counters = document.querySelectorAll('.display-4');
-            const aboutSection = document.getElementById('about');
-            const targets = {
-                'offices-BG': 26,
-                'kilometers-covered': 1928,
-                'people-team': 6,
-                'clients': 9
-            };
-            const animationDuration = 2000; // Total animation time in milliseconds
-            const frameRate = 60; // Updates per second (higher for smoother animation)
-            const totalFrames = Math.ceil(animationDuration / (1000 / frameRate)); // Total number of animation frames
+<!-- For About's Counters animation -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const counters = document.querySelectorAll('.display-4');
+        const aboutSection = document.getElementById('about');
+        const targets = {
+            'offices-BG': 26,
+            'kilometers-covered': 1928,
+            'people-team': 6,
+            'clients': 9
+        };
+        const animationDuration = 2000; // Total animation time in milliseconds
+        const frameRate = 60; // Updates per second (higher for smoother animation)
+        const totalFrames = Math.ceil(animationDuration / (1000 / frameRate)); // Total number of animation frames
 
-            const observer = new IntersectionObserver(entries => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        counters.forEach(counter => {
-                            const targetId = counter.id;
-                            if (targets.hasOwnProperty(targetId)) {
-                                const targetValue = targets[targetId];
-                                const increment = targetValue / totalFrames; // Calculate increment per frame
-                                let currentValue = 0;
-                                let frameCount = 0;
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    counters.forEach(counter => {
+                        const targetId = counter.id;
+                        if (targets.hasOwnProperty(targetId)) {
+                            const targetValue = targets[targetId];
+                            const increment = targetValue / totalFrames; // Calculate increment per frame
+                            let currentValue = 0;
+                            let frameCount = 0;
 
-                                const interval = setInterval(() => {
-                                    frameCount++;
-                                    currentValue += increment;
-                                    counter.textContent = Math.ceil(currentValue); // Display rounded value
+                            const interval = setInterval(() => {
+                                frameCount++;
+                                currentValue += increment;
+                                counter.textContent = Math.ceil(currentValue); // Display rounded value
 
-                                    if (frameCount >= totalFrames) {
-                                        counter.textContent = targetValue; // Ensure final value is exact
-                                        clearInterval(interval);
-                                    }
-                                }, 1000 / frameRate);
-                            }
-                        });
-                        observer.unobserve(aboutSection);
-                    }
-                });
-            }, { threshold: 0.5 });
-
-            observer.observe(aboutSection);
-        });
-    </script>
-
-    <!-- Header Styles -->
-    <style>
-        .price-table thead th {
-            background-color: #aaa;
-            /* Replace with your desired color */
-            color: white;
-            /* Optional: change text color for better contrast */
-            border: 1px solid #ddd;
-            /* Optional: add borders to header cells */
-        }
-
-        .price-table,
-        .price-table th,
-        .price-table td {
-            border: 1px solid #ddd;
-            /* Add borders to the entire table and its cells */
-            border-collapse: collapse;
-            /* Optional: collapse borders into a single line */
-        }
-    </style>
-    <!-- For the table in Price-decision -->
-    <style>
-        .sort-icon {
-            display: inline-block;
-            margin-left: 5px;
-            vertical-align: middle;
-            opacity: 0.5;
-            /* Slightly faded initially */
-        }
-
-        .sort-icon.sort-asc {
-            font-size: 0.8em;
-            color: #212529;
-        }
-
-        .sort-icon.sort-desc {
-            font-size: 0.8em;
-            color: #212529;
-        }
-
-        /* Initially show both arrows, but slightly faded */
-        thead th[data-sortable="true"] .sort-asc,
-        thead th[data-sortable="true"] .sort-desc {
-            display: inline-block;
-        }
-
-        /* Highlight the active sort direction and dim the other */
-        thead th[data-sort="asc"] .sort-asc {
-            opacity: 1;
-            font-weight: bold;
-            /* Make the active arrow more prominent */
-        }
-
-        thead th[data-sort="asc"] .sort-desc {
-            opacity: 0.2;
-            /* Dim the inactive arrow */
-            font-weight: normal;
-        }
-
-        thead th[data-sort="desc"] .sort-desc {
-            opacity: 1;
-            font-weight: bold;
-            /* Make the active arrow more prominent */
-        }
-
-        thead th[data-sort="desc"] .sort-asc {
-            opacity: 0.2;
-            /* Dim the inactive arrow */
-            font-weight: normal;
-        }
-
-        /* Style the header to indicate it's sortable */
-        thead th[data-sortable="true"] {
-            cursor: pointer;
-        }
-    </style>
-
-    <script>
-        function sortTableEnhanced(table, columnIndex, ascending = true) {
-            const tbody = table.tBodies[0];
-            const rows = Array.from(tbody.querySelectorAll("tr"));
-            const headerCells = table.querySelectorAll("thead th");
-
-            // Identify section headers and group rows
-            const sections = [];
-            let currentSection = { headerRow: null, contentRows: [] };
-            let normalRows = [];
-
-            rows.forEach(row => {
-                // Check if this is a section header row (has colspan or th elements)
-                const hasTh = row.querySelector("th");
-                const hasColspan = Array.from(row.querySelectorAll("td, th")).some(cell =>
-                    cell.hasAttribute("colspan") && parseInt(cell.getAttribute("colspan")) > 1);
-
-                if (hasTh || hasColspan) {
-                    // This is a section header
-                    if (currentSection.contentRows.length > 0 || currentSection.headerRow) {
-                        sections.push({ ...currentSection });
-                    }
-                    currentSection = { headerRow: row, contentRows: [] };
-                } else {
-                    // This is a content row
-                    currentSection.contentRows.push(row);
-                    normalRows.push(row);
+                                if (frameCount >= totalFrames) {
+                                    counter.textContent = targetValue; // Ensure final value is exact
+                                    clearInterval(interval);
+                                }
+                            }, 1000 / frameRate);
+                        }
+                    });
+                    observer.unobserve(aboutSection);
                 }
             });
+        }, { threshold: 0.5 });
 
-            // Add the last section
-            if (currentSection.contentRows.length > 0 || currentSection.headerRow) {
-                sections.push(currentSection);
+        observer.observe(aboutSection);
+    });
+</script>
+
+<!-- Header Styles -->
+<style>
+    .price-table thead th {
+        background-color: #aaa;
+        /* Replace with your desired color */
+        color: white;
+        /* Optional: change text color for better contrast */
+        border: 1px solid #ddd;
+        /* Optional: add borders to header cells */
+    }
+
+    .price-table,
+    .price-table th,
+    .price-table td {
+        border: 1px solid #ddd;
+        /* Add borders to the entire table and its cells */
+        border-collapse: collapse;
+        /* Optional: collapse borders into a single line */
+    }
+</style>
+<!-- For the table in Price-decision -->
+<style>
+    .sort-icon {
+        display: inline-block;
+        margin-left: 5px;
+        vertical-align: middle;
+        opacity: 0.5;
+        /* Slightly faded initially */
+    }
+
+    .sort-icon.sort-asc {
+        font-size: 0.8em;
+        color: #212529;
+    }
+
+    .sort-icon.sort-desc {
+        font-size: 0.8em;
+        color: #212529;
+    }
+
+    /* Initially show both arrows, but slightly faded */
+    thead th[data-sortable="true"] .sort-asc,
+    thead th[data-sortable="true"] .sort-desc {
+        display: inline-block;
+    }
+
+    /* Highlight the active sort direction and dim the other */
+    thead th[data-sort="asc"] .sort-asc {
+        opacity: 1;
+        font-weight: bold;
+        /* Make the active arrow more prominent */
+    }
+
+    thead th[data-sort="asc"] .sort-desc {
+        opacity: 0.2;
+        /* Dim the inactive arrow */
+        font-weight: normal;
+    }
+
+    thead th[data-sort="desc"] .sort-desc {
+        opacity: 1;
+        font-weight: bold;
+        /* Make the active arrow more prominent */
+    }
+
+    thead th[data-sort="desc"] .sort-asc {
+        opacity: 0.2;
+        /* Dim the inactive arrow */
+        font-weight: normal;
+    }
+
+    /* Style the header to indicate it's sortable */
+    thead th[data-sortable="true"] {
+        cursor: pointer;
+    }
+</style>
+
+<script>
+    function sortTableEnhanced(table, columnIndex, ascending = true) {
+        const tbody = table.tBodies[0];
+        const rows = Array.from(tbody.querySelectorAll("tr"));
+        const headerCells = table.querySelectorAll("thead th");
+
+        // Identify section headers and group rows
+        const sections = [];
+        let currentSection = { headerRow: null, contentRows: [] };
+        let normalRows = [];
+
+        rows.forEach(row => {
+            // Check if this is a section header row (has colspan or th elements)
+            const hasTh = row.querySelector("th");
+            const hasColspan = Array.from(row.querySelectorAll("td, th")).some(cell =>
+                cell.hasAttribute("colspan") && parseInt(cell.getAttribute("colspan")) > 1);
+
+            if (hasTh || hasColspan) {
+                // This is a section header
+                if (currentSection.contentRows.length > 0 || currentSection.headerRow) {
+                    sections.push({ ...currentSection });
+                }
+                currentSection = { headerRow: row, contentRows: [] };
+            } else {
+                // This is a content row
+                currentSection.contentRows.push(row);
+                normalRows.push(row);
+            }
+        });
+
+        // Add the last section
+        if (currentSection.contentRows.length > 0 || currentSection.headerRow) {
+            sections.push(currentSection);
+        }
+
+        // Sort function for comparing row values
+        const compare = (rowA, rowB) => {
+            const cellsA = rowA.querySelectorAll("td");
+            const cellsB = rowB.querySelectorAll("td");
+
+            if (cellsA.length === 0 || cellsB.length === 0) {
+                return 0;
             }
 
-            // Sort function for comparing row values
-            const compare = (rowA, rowB) => {
-                const cellsA = rowA.querySelectorAll("td");
-                const cellsB = rowB.querySelectorAll("td");
+            const cellA = cellsA[columnIndex] ? cellsA[columnIndex].textContent.trim() : '';
+            const cellB = cellsB[columnIndex] ? cellsB[columnIndex].textContent.trim() : '';
 
-                if (cellsA.length === 0 || cellsB.length === 0) {
+            // Special handling for weight column (column 0)
+            if (columnIndex === 0) {
+                // Extract numeric value from weight strings like "Up to 10 kg" or "20 kg - 50 kg"
+                const extractWeight = (text) => {
+                    if (text.includes("Up to")) {
+                        const match = text.match(/Up to (\d+)/);
+                        return match ? parseInt(match[1]) : 0;
+                    } else if (text.includes("Over")) {
+                        const match = text.match(/Over (\d+)/);
+                        return match ? parseInt(match[1]) + 1000 : 2000; // Add 1000 to push "Over" items to the end
+                    } else if (text.includes("-")) {
+                        const match = text.match(/(\d+) kg - (\d+)/);
+                        return match ? parseInt(match[1]) : 0;
+                    } else if (text.includes("Cash on Delivery")) {
+                        return 3000; // Push special items to the very end
+                    }
                     return 0;
+                };
+
+                const weightA = extractWeight(cellA);
+                const weightB = extractWeight(cellB);
+
+                if (weightA !== weightB) {
+                    return ascending ? weightA - weightB : weightB - weightA;
                 }
+            }
 
-                const cellA = cellsA[columnIndex] ? cellsA[columnIndex].textContent.trim() : '';
-                const cellB = cellsB[columnIndex] ? cellsB[columnIndex].textContent.trim() : '';
+            // Special handling for price column (column 1)
+            if (columnIndex === 1) {
+                // Handle formula-based prices
+                const isFormulaA = cellA.includes("K *") || cellA.includes("* K");
+                const isFormulaB = cellB.includes("K *") || cellB.includes("* K");
 
-                // Special handling for weight column (column 0)
-                if (columnIndex === 0) {
-                    // Extract numeric value from weight strings like "Up to 10 kg" or "20 kg - 50 kg"
-                    const extractWeight = (text) => {
-                        if (text.includes("Up to")) {
-                            const match = text.match(/Up to (\d+)/);
-                            return match ? parseInt(match[1]) : 0;
-                        } else if (text.includes("Over")) {
-                            const match = text.match(/Over (\d+)/);
-                            return match ? parseInt(match[1]) + 1000 : 2000; // Add 1000 to push "Over" items to the end
-                        } else if (text.includes("-")) {
-                            const match = text.match(/(\d+) kg - (\d+)/);
-                            return match ? parseInt(match[1]) : 0;
-                        } else if (text.includes("Cash on Delivery")) {
-                            return 3000; // Push special items to the very end
-                        }
-                        return 0;
-                    };
-
-                    const weightA = extractWeight(cellA);
-                    const weightB = extractWeight(cellB);
-
-                    if (weightA !== weightB) {
-                        return ascending ? weightA - weightB : weightB - weightA;
+                if (isFormulaA && !isFormulaB) {
+                    return ascending ? 1 : -1;
+                } else if (!isFormulaA && isFormulaB) {
+                    return ascending ? -1 : 1;
+                } else if (isFormulaA && isFormulaB) {
+                    const prefixA = cellA.match(/^(\d+)\s*\*/);
+                    const prefixB = cellB.match(/^(\d+)\s*\*/);
+                    if (prefixA && prefixB) {
+                        return ascending ?
+                            parseInt(prefixA[1]) - parseInt(prefixB[1]) :
+                            parseInt(prefixB[1]) - parseInt(prefixA[1]);
                     }
                 }
 
-                // Special handling for price column (column 1)
-                if (columnIndex === 1) {
-                    // Handle formula-based prices
-                    const isFormulaA = cellA.includes("K *") || cellA.includes("* K");
-                    const isFormulaB = cellB.includes("K *") || cellB.includes("* K");
+                // Handle special cases for "+" in price
+                if (cellA.includes("+") && cellB.includes("+")) {
+                    const baseA = parseFloat(cellA.split("+")[0]);
+                    const baseB = parseFloat(cellB.split("+")[0]);
 
-                    if (isFormulaA && !isFormulaB) {
-                        return ascending ? 1 : -1;
-                    } else if (!isFormulaA && isFormulaB) {
-                        return ascending ? -1 : 1;
-                    } else if (isFormulaA && isFormulaB) {
-                        const prefixA = cellA.match(/^(\d+)\s*\*/);
-                        const prefixB = cellB.match(/^(\d+)\s*\*/);
-                        if (prefixA && prefixB) {
-                            return ascending ?
-                                parseInt(prefixA[1]) - parseInt(prefixB[1]) :
-                                parseInt(prefixB[1]) - parseInt(prefixA[1]);
-                        }
-                    }
-
-                    // Handle special cases for "+" in price
-                    if (cellA.includes("+") && cellB.includes("+")) {
-                        const baseA = parseFloat(cellA.split("+")[0]);
-                        const baseB = parseFloat(cellB.split("+")[0]);
-
-                        if (!isNaN(baseA) && !isNaN(baseB) && baseA !== baseB) {
-                            return ascending ? baseA - baseB : baseB - baseA;
-                        }
+                    if (!isNaN(baseA) && !isNaN(baseB) && baseA !== baseB) {
+                        return ascending ? baseA - baseB : baseB - baseA;
                     }
                 }
+            }
 
-                // Default handling for numeric values
-                const numA = parseFloat(cellA.replace(/[^0-9.,]/g, '').replace(',', '.'));
-                const numB = parseFloat(cellB.replace(/[^0-9.,]/g, '').replace(',', '.'));
+            // Default handling for numeric values
+            const numA = parseFloat(cellA.replace(/[^0-9.,]/g, '').replace(',', '.'));
+            const numB = parseFloat(cellB.replace(/[^0-9.,]/g, '').replace(',', '.'));
 
-                if (!isNaN(numA) && !isNaN(numB)) {
-                    return ascending ? numA - numB : numB - numA;
+            if (!isNaN(numA) && !isNaN(numB)) {
+                return ascending ? numA - numB : numB - numA;
+            }
+
+            // Fallback to string comparison
+            const strA = cellA.toLowerCase();
+            const strB = cellB.toLowerCase();
+
+            return ascending ?
+                strA.localeCompare(strB) :
+                strB.localeCompare(strA);
+        };
+
+        // For sorting by weight/dimensions or price, we need to maintain section boundaries
+        if (columnIndex === 0 || columnIndex === 1) {
+            // Sort rows within each section
+            sections.forEach(section => {
+                section.contentRows.sort(compare);
+            });
+
+            // Clear table and rebuild
+            while (tbody.firstChild) {
+                tbody.removeChild(tbody.firstChild);
+            }
+
+            // Reconstruct table with sorted sections
+            sections.forEach(section => {
+                if (section.headerRow) {
+                    tbody.appendChild(section.headerRow);
                 }
-
-                // Fallback to string comparison
-                const strA = cellA.toLowerCase();
-                const strB = cellB.toLowerCase();
-
-                return ascending ?
-                    strA.localeCompare(strB) :
-                    strB.localeCompare(strA);
-            };
-
-            // For sorting by weight/dimensions or price, we need to maintain section boundaries
-            if (columnIndex === 0 || columnIndex === 1) {
-                // Sort rows within each section
-                sections.forEach(section => {
-                    section.contentRows.sort(compare);
-                });
-
-                // Clear table and rebuild
-                while (tbody.firstChild) {
-                    tbody.removeChild(tbody.firstChild);
-                }
-
-                // Reconstruct table with sorted sections
-                sections.forEach(section => {
-                    if (section.headerRow) {
-                        tbody.appendChild(section.headerRow);
-                    }
-                    section.contentRows.forEach(row => {
-                        tbody.appendChild(row);
-                    });
-                });
-            } else {
-                // For other columns, use simpler sorting
-                normalRows.sort(compare);
-
-                // Clear table and rebuild
-                while (tbody.firstChild) {
-                    tbody.removeChild(tbody.firstChild);
-                }
-
-                // Add all rows back in sorted order
-                normalRows.forEach(row => {
+                section.contentRows.forEach(row => {
                     tbody.appendChild(row);
                 });
+            });
+        } else {
+            // For other columns, use simpler sorting
+            normalRows.sort(compare);
+
+            // Clear table and rebuild
+            while (tbody.firstChild) {
+                tbody.removeChild(tbody.firstChild);
             }
 
-            // Update sort icons and data-sort attribute
-            headerCells.forEach((th, index) => {
-                if (th.getAttribute("data-sortable") === "true") {
-                    if (index === columnIndex) {
-                        th.setAttribute("data-sort", ascending ? "asc" : "desc");
-                    } else {
-                        th.removeAttribute("data-sort");
-                    }
-                }
+            // Add all rows back in sorted order
+            normalRows.forEach(row => {
+                tbody.appendChild(row);
             });
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const priceTable = document.querySelector("#price_decision .table");
-            if (priceTable) {
-                const sortableHeaders = priceTable.querySelectorAll("thead th[data-sortable='true']");
-                sortableHeaders.forEach((th, index) => {
-                    th.addEventListener("click", () => {
-                        const currentSort = th.getAttribute("data-sort");
-                        const ascending = currentSort !== "asc";
-                        sortTableEnhanced(priceTable, index, ascending);
-                    });
-                });
-
-                // Initial sort (by the first sortable column, ascending)
-                if (sortableHeaders.length > 0) {
-                    sortTableEnhanced(priceTable, 0, true); // Sort by the first column (index 0), ascending
+        // Update sort icons and data-sort attribute
+        headerCells.forEach((th, index) => {
+            if (th.getAttribute("data-sortable") === "true") {
+                if (index === columnIndex) {
+                    th.setAttribute("data-sort", ascending ? "asc" : "desc");
+                } else {
+                    th.removeAttribute("data-sort");
                 }
             }
         });
-    </script>
+    }
 
-    <!-- Root PFP BG for Contacts -->
-    <!-- Extras/Dashboard/ContactsBG/BG.png -->
-    <style>
-        .admin-contact-card {
-            position: relative;
-            background: url('Extras/Dashboard/ContactsBG/BG.png') no-repeat center;
-            background-size: cover;
-            opacity: 0.85;
-            padding: 20px;
-            border-radius: 8px;
-            color: #ffffff;
-            /* Ensures text remains bright */
-        }
+    document.addEventListener('DOMContentLoaded', () => {
+        const priceTable = document.querySelector("#price_decision .table");
+        if (priceTable) {
+            const sortableHeaders = priceTable.querySelectorAll("thead th[data-sortable='true']");
+            sortableHeaders.forEach((th, index) => {
+                th.addEventListener("click", () => {
+                    const currentSort = th.getAttribute("data-sort");
+                    const ascending = currentSort !== "asc";
+                    sortTableEnhanced(priceTable, index, ascending);
+                });
+            });
 
-        /* Soft transparent background behind the text for contrast */
-        .admin-contact-card .text-content {
-            position: relative;
-            background: rgba(255, 255, 255, 0.15);
-            /* Light background for better readability */
-            padding: 10px;
-            border-radius: 8px;
+            // Initial sort (by the first sortable column, ascending)
+            if (sortableHeaders.length > 0) {
+                sortTableEnhanced(priceTable, 0, true); // Sort by the first column (index 0), ascending
+            }
         }
+    });
+</script>
 
-        /* Ensure link contrast */
-        .admin-contact-card a {
-            color: #ffffff;
-            font-weight: bold;
-        }
+<!-- Root PFP BG for Contacts -->
+<!-- Extras/Dashboard/ContactsBG/BG.png -->
+<style>
+    .admin-contact-card {
+        position: relative;
+        background: url('Extras/Dashboard/ContactsBG/BG.png') no-repeat center;
+        background-size: cover;
+        opacity: 0.85;
+        padding: 20px;
+        border-radius: 8px;
+        color: #ffffff;
+        /* Ensures text remains bright */
+    }
 
-        /* Flexbox for layout */
-        .admin-contact-card,
-        .guest-contact-form {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 100%;
-            /* Ensures both halves stretch equally */
+    /* Soft transparent background behind the text for contrast */
+    .admin-contact-card .text-content {
+        position: relative;
+        background: rgba(255, 255, 255, 0.15);
+        /* Light background for better readability */
+        padding: 10px;
+        border-radius: 8px;
+    }
+
+    /* Ensure link contrast */
+    .admin-contact-card a {
+        color: #ffffff;
+        font-weight: bold;
+    }
+
+    /* Flexbox for layout */
+    .admin-contact-card,
+    .guest-contact-form {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+        /* Ensures both halves stretch equally */
+    }
+</style>
+
+<!-- For Message Sending -->
+<script>
+    function sendMessage() {
+        const message = document.getElementById('message').value;
+        if (message.trim() !== '') {
+            // AJAX request to send the message
+            $.ajax({
+                url: '<?php echo INSTALL_URL; ?>?controller=Messages&action=sendMessage', // URL to your sendMessage action
+                type: 'POST',
+                dataType: 'json', // Expect JSON response
+                data: { message: message }, // Send the message data
+                success: function (response) {
+                    if (response.status === 'success') {
+                        // Display success message
+                        $('#messageSentAlert').text(response.message).fadeIn().delay(3000).fadeOut();
+                        $('#contactForm')[0].reset(); // Clear the form
+                    } else {
+                        // Display error message
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    // Handle AJAX errors
+                    console.error('AJAX Error:', status, error);
+                    alert('An error occurred while sending the message. Please try again.');
+                }
+            });
+        } else {
+            alert('Please enter your message.');
         }
-    </style>
+    }
+
+    // This is to prevent form submission from reloading the page (if it's still happening)
+    $('#contactForm').submit(function (event) {
+        event.preventDefault();
+    });
+</script>

@@ -72,7 +72,7 @@ if (!empty($tpl['notifications'])) {
                         </a>
                     </div>
                 </li> -->
-                <li class="nav-item d-lg-block d-flex">
+                <li class="nav-item">
                     <div id="current-date-container" class="navbar-date-picker">
                         <span id="current-date" class="text-muted"></span>
                     </div>
@@ -86,7 +86,7 @@ if (!empty($tpl['notifications'])) {
                             // Inject the formatted date into the container
                             const currentDateContainer = document.getElementById('current-date');
                             if (currentDateContainer) {
-                                currentDateContainer.textContent = "== <?php echo $currentDate; ?> ==";
+                                currentDateContainer.textContent = "<?php echo $currentDate; ?>";
                             }
                         });
                     </script>
@@ -103,15 +103,16 @@ if (!empty($tpl['notifications'])) {
                         }
                     </style>
                 </li>
-                <!-- <li class="nav-item">
-                    <form class="search-form" action="#">
+                <!-- Search (TO-DO) -->
+                <li class="nav-item d-lg-block">
+                    <form class="search-form d-flex" action="#">
                         <i class="icon-search"></i>
-                        <input type="search" class="form-control" placeholder="Search Here" title="Search here">
+                        <input type="search" class="form-control" placeholder="Search" title="Search">
                     </form>
-                </li> -->
+                </li>
 
                 <!-- Messages -->
-                <li class="nav-item dropdown">
+                <!-- <li class="nav-item dropdown">
                     <a class="nav-link count-indicator" id="notificationDropdown" href="#" data-bs-toggle="dropdown">
                         <i class="icon-mail icon-lg"></i>
                         <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0"
@@ -122,41 +123,42 @@ if (!empty($tpl['notifications'])) {
                             </a>
                         </div>
                     </a>
-                    <!-- <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0"
-                        aria-labelledby="notificationDropdown"> -->
-                    <!-- <a class="dropdown-item py-3 border-bottom">
+                    <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list pb-0"
+                        aria-labelledby="notificationDropdown">
+                        <<a class="dropdown-item py-3 border-bottom">
                             <p class="mb-0 font-weight-medium float-left">You have 4 new notifications </p>
                             <span class="badge badge-pill badge-primary float-right">View all</span>
-                        </a>
-                        <a class="dropdown-item preview-item py-3">
-                            <div class="preview-thumbnail">
-                                <i class="mdi mdi-alert m-auto text-primary"></i>
-                            </div>
-                            <div class="preview-item-content">
-                                <h6 class="preview-subject fw-normal text-dark mb-1">Application Error</h6>
-                                <p class="fw-light small-text mb-0"> Just now </p>
-                            </div>
-                        </a>
-                        <a class="dropdown-item preview-item py-3">
-                            <div class="preview-thumbnail">
-                                <i class="mdi mdi-settings m-auto text-primary"></i>
-                            </div>
-                            <div class="preview-item-content">
-                                <h6 class="preview-subject fw-normal text-dark mb-1">Settings</h6>
-                                <p class="fw-light small-text mb-0"> Private message </p>
-                            </div>
-                        </a>
-                        <a class="dropdown-item preview-item py-3">
-                            <div class="preview-thumbnail">
-                                <i class="mdi mdi-airballoon m-auto text-primary"></i>
-                            </div>
-                            <div class="preview-item-content">
-                                <h6 class="preview-subject fw-normal text-dark mb-1">New user registration</h6>
-                                <p class="fw-light small-text mb-0"> 2 days ago </p>
-                            </div>
-                        </a> -->
-                    <!-- </div> -->
-                </li>
+                            </a>
+                            <a class="dropdown-item preview-item py-3">
+                                <div class="preview-thumbnail">
+                                    <i class="mdi mdi-alert m-auto text-primary"></i>
+                                </div>
+                                <div class="preview-item-content">
+                                    <h6 class="preview-subject fw-normal text-dark mb-1">Application Error</h6>
+                                    <p class="fw-light small-text mb-0"> Just now </p>
+                                </div>
+                            </a>
+                            <a class="dropdown-item preview-item py-3">
+                                <div class="preview-thumbnail">
+                                    <i class="mdi mdi-settings m-auto text-primary"></i>
+                                </div>
+                                <div class="preview-item-content">
+                                    <h6 class="preview-subject fw-normal text-dark mb-1">Settings</h6>
+                                    <p class="fw-light small-text mb-0"> Private message </p>
+                                </div>
+                            </a>
+                            <a class="dropdown-item preview-item py-3">
+                                <div class="preview-thumbnail">
+                                    <i class="mdi mdi-airballoon m-auto text-primary"></i>
+                                </div>
+                                <div class="preview-item-content">
+                                    <h6 class="preview-subject fw-normal text-dark mb-1">New user registration</h6>
+                                    <p class="fw-light small-text mb-0"> 2 days ago </p>
+                                </div>
+                            </a>
+                    </div>
+                </li> -->
+                <!-- Notifications -->
                 <li class="nav-item dropdown">
                     <a class="nav-link count-indicator" id="countDropdown" href="#" data-bs-toggle="dropdown"
                         aria-expanded="false">
@@ -242,7 +244,7 @@ if (!empty($tpl['notifications'])) {
                         <a class="dropdown-item"
                             href="<?php echo INSTALL_URL; ?>?controller=User&action=profile&id=<?php echo $_SESSION['user']['id']; ?>"><i
                                 class="dropdown-item-icon mdi mdi-account-outline text-primary me-2"></i> My Profile</a>
-                        <a class="dropdown-item"><i
+                        <a class="dropdown-item" href="<?php echo INSTALL_URL; ?>?controller=Messages&action=index"><i
                                 class="dropdown-item-icon mdi mdi-message-text-outline text-primary me-2"></i> Messages</a>
                         <a class="dropdown-item"><i
                                 class="dropdown-item-icon mdi mdi-calendar-check-outline text-primary me-2"></i>

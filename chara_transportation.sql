@@ -39,26 +39,6 @@ CREATE TABLE `notifications` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `messages`
---
-
-CREATE TABLE `messages` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `sender_id` int(11) NOT NULL,
-  `recipient_id` int(11) NOT NULL,
-  `message` text NOT NULL,
-  `is_read` tinyint(1) DEFAULT 0,
-  `created_at` bigint(20) DEFAULT unix_timestamp(),
-  PRIMARY KEY (`id`),
-  KEY `sender_id` (`sender_id`),
-  KEY `recipient_id` (`recipient_id`),
-  CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`),
-  CONSTRAINT `messages_ibfk_2` FOREIGN KEY (`recipient_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `orders`
 --
 
@@ -129,14 +109,14 @@ CREATE TABLE `settings` (
 
 INSERT INTO `settings` (`id`, `key`, `value`) VALUES
 (1, 'email_sending', 'disabled'),
-(2, 'date_format', 'd/m/Y'),
+(2, 'date_format', 'dd/mm/Y'),
 (3, 'opening_time', '08:00'),
 (4, 'closing_time', '18:00'),
 (5, 'weekend_operation', '0'),
 (6, 'weekend_opening_time', '10:00'),
 (7, 'weekend_closing_time', '17:00'),
-(8, 'order_cut_off_time', '18:00'),
-(9, 'default_order_status', 'pending'),
+(8, 'order_cut_off_time', '17:00'),
+(9, 'default_order_status', 'Pending'),
 (10, 'timezone', 'Europe/Sofia'),
 (11, 'currency', 'BGN');
 
@@ -159,6 +139,36 @@ CREATE TABLE `users` (
   `photo_path` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `messages`
+--
+
+CREATE TABLE `messages` (
+  `id` int(11) NOT NULL,
+  `sender_id` int(11) NOT NULL,
+  `recipient_id` int(11) NOT NULL,
+  `message` text NOT NULL,
+  `is_read` tinyint(1) DEFAULT 0,
+  `created_at` bigint(20) DEFAULT unix_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `couriers`
+--
+CREATE TABLE `couriers` (
+  `id` INT(11) NOT NULL,
+  `name` VARCHAR(100) NOT NULL,
+  `phone_number` VARCHAR(20) DEFAULT NULL,
+  `email` VARCHAR(100) DEFAULT NULL,
+  `is_busy` TINYINT(1) DEFAULT 0,  -- Added is_busy status (0=false, 1=true)
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 --
 -- Dumping data for table `users`
 --
@@ -166,8 +176,9 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `name`, `email`, `phone_number`, `password_hash`, `created_at`, `role`, `address`, `region`, `photo_path`) VALUES
 (1, 'Chara Dreemurr', 'chara@abv.bg', '0882872569', '$2y$10$SzepIhkBjgGu7USFhcIajOf6INf1T9tFMvKxgrCkBzZRIt0IUWUWy', 1743619906, 'root', '', '', 'web/upload/profile_1_67fb7114f4035.jpg'),
 (2, 'Hakane', 'hakane.hoshino@yahoo.com', '0886777106', '$2y$10$ziUyifPVgfFHNBiN/hT5MOOzOsAbsFO400vRw0u2d2qmW1OJw/cfW', 1743620055, 'user', '', '', 'web/upload/profile_2_67ed885239962.png'),
-(3, 'Monika', 'monika@gmail.com', '0883878982', '$2y$10$Xl7uKdPNbXLRbDgJQeTxCuO532QZLoPcCU5LzIFje/fMef9qSn/aK', 1743620068, 'courier', '', '', 'web/upload/profile_3_67ed8803c86f5.jpg');
-
+(3, 'Monika', 'monika@gmail.com', '0883878982', '$2y$10$Xl7uKdPNbXLRbDgJQeTxCuO532QZLoPcCU5LzIFje/fMef9qSn/aK', 1743620068, 'courier', '', '', 'web/upload/profile_3_67ed8803c86f5.jpg'),
+(4, 'Shinano', 'shinano.azurship@gmail.com', '0889876728', '$2y$10$3J9U.m9zNCad8vPH4w5IH./Hq5psbKs7EN3NTEtvCgYscxqyibD3K', 1744996451, 'courier', NULL, NULL, NULL),
+(5, 'Ran Yakumo', 'ran-yakumo.the_bulgarianfoxie@abv.bg', '0881928372', '$2y$10$d3irtl06XZN8YGOoGfGI4u6FmkNIUtDVI20zrijE24CbN/vXzscoK', 1744997473, 'admin', NULL, NULL, NULL);
 --
 -- Indexes for dumped tables
 --
@@ -211,6 +222,12 @@ ALTER TABLE `users`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `messages`
+--
+ALTER TABLE `messages`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -248,7 +265,7 @@ ALTER TABLE `settings`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -70,6 +70,7 @@ CREATE TABLE IF NOT EXISTS `order_pallets` (
   `name` VARCHAR(100) NOT NULL,
   `phone_number` VARCHAR(20) DEFAULT NULL,
   `email` VARCHAR(100) DEFAULT NULL,
+  `is_busy` TINYINT(1) DEFAULT 0,  -- Added is_busy status (0=false, 1=true)
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;*/
 
