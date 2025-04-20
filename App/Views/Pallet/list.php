@@ -78,12 +78,12 @@
                                             <input type="number" class="form-control" id="filter-weight"
                                                 placeholder="Weight">
                                         </div>
-                                        <div class="col-md-6 mb-3">
+                                        <!-- <div class="col-md-6 mb-3">
                                             <label for="filter-code-billlanding" class="form-label">Code
                                                 Billlanding</label>
                                             <input type="number" class="form-control" id="filter-code-billlanding"
                                                 placeholder="Code Billlanding" oninput="formatBilllanding(this)">
-                                        </div>
+                                        </div> -->
                                     </div>
 
                                     <div class="d-flex justify-content-end gap-2 mt-3">
@@ -190,7 +190,7 @@
 </div>
 
 <!-- Format Billlanding to have leading 0s -->
-<script>
+<!-- <script>
     function formatBilllanding(input) {
         let value = input.value;
         if (value.length > 10) {
@@ -211,4 +211,4 @@
             formatBilllanding(billlandingInput);
         }
     });
-</script>
+</script> -->

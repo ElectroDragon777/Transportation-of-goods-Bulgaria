@@ -16,18 +16,17 @@
             <div class="list-group list-group-flush">
                 <?php foreach ($messages as $message): ?>
                     <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-start
-                        <?= $message['is_read'] ? 'bg-light' : 'list-group-item-warning' ?>"
-                        data-message-id="<?= $message['id'] ?>">
+        <?= $message['is_read'] ? 'bg-light' : 'list-group-item-warning' ?>" data-message-id="<?= $message['id'] ?>">
                         <div class="ms-2 me-auto">
                             <div class="fw-bold">
-                                Sender: <?= htmlspecialchars($message['sender_id']) ?>
+                                Sender: <?= htmlspecialchars($message['sender_name'] ?? 'Unknown User') ?>
                             </div>
                             <p class="mb-1">
                                 <?= htmlspecialchars($message['message']) ?>
                             </p>
                             <small class="text-muted">
                                 <i class="mdi mdi-clock-outline"></i>
-                                <?= date($tpl['date_format'] . ' H:i', strtotime($message['created_at'])) ?>
+                                <?= date($tpl['date_format'] . ' H:i', $message['created_at']) ?>
                             </small>
                         </div>
                         <?php if (!$message['is_read']): ?>

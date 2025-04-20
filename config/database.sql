@@ -32,7 +32,6 @@ CREATE TABLE IF NOT EXISTS `pallets` (
   `size_y_cm` INT(3) NOT NULL,
   `size_z_cm` INT(3) NOT NULL,
   `weight_kg` DECIMAL(3, 1) NOT NULL,
-  `code_billlanding` INT(10) NOT NULL UNIQUE,
   `created_at` BIGINT DEFAULT UNIX_TIMESTAMP(),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

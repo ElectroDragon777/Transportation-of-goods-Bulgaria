@@ -15,16 +15,16 @@
 
                         <div class="row">
                             <div class="col-12">
-                                <h5>General Information</h5>
+                                <h5>General Information (Name and Weight)</h5>
                             </div>
                             <div class="form-group col-md-6 mb-3">
                                 <label for="name" class="form-label">Pallet Name</label>
                                 <input type="text" class="form-control" id="name" name="name" required>
                             </div>
                             <div class="form-group col-md-6 mb-3">
-                                <label for="description" class="form-label">Description</label>
-                                <textarea class="form-control" id="description" name="description" rows="3"
-                                    style="resize: vertical;"></textarea>
+                                <label for="weight_kg" class="form-label">Weight (kg)</label>
+                                <input type="number" step="0.1" min="0.1" class="form-control" id="weight_kg"
+                                    name="weight_kg" required>
                             </div>
                         </div>
 
@@ -51,21 +51,22 @@
 
                         <div class="row">
                             <div class="col-12">
-                                <h5>Weight and Code</h5>
+                                <h5>Extra Information</h5>
                             </div>
-                            <div class="form-group col-md-6 mb-3">
-                                <label for="weight_kg" class="form-label">Weight (kg)</label>
-                                <input type="number" step="0.1" min="0.1" class="form-control" id="weight_kg"
-                                    name="weight_kg" required>
-                            </div>
-                            <div class="form-group col-md-6 mb-3">
+
+                            <!-- <div class="form-group col-md-6 mb-3">
                                 <label for="code_billlanding" class="form-label">Code Billlanding
                                     (Auto-assigned)</label>
                                 <input type="text" class="form-control" id="code_billlanding" name="code_billlanding"
-                                    value="<?php echo isset($next_billlanding_code) ? $next_billlanding_code : ''; ?>"
+                                    value="</*?php echo isset($next_billlanding_code) ? $next_billlanding_code : ''; */?>"
                                     readonly style="background-color: #f8f9fa;">
                                 <small class="form-text text-muted">This code is automatically assigned by the
                                     system.</small>
+                            </div> -->
+                            <div class="form-group col-md-12 mb-12">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" name="description" rows="3"
+                                    style="resize: vertical;"></textarea>
                             </div>
                         </div>
 

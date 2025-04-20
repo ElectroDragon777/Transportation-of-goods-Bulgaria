@@ -17,7 +17,7 @@
                             foreach ($tpl['settings'] as $setting):
                                 // Skip Timezone
                                 if ($setting['key'] === 'timezone') continue;
-
+                                if ($setting['key'] === 'currency') continue;
                                 // Start a new row for every two settings
                                 if ($counter % 2 === 0): ?>
                                     </div><div class="row">

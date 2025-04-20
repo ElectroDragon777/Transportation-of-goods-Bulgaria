@@ -7,7 +7,6 @@ use Core\Controller;
 
 class MessagesController extends Controller
 {
-
     var $layout = 'admin';
 
     public function __construct()
@@ -20,51 +19,57 @@ class MessagesController extends Controller
 
     function index()
     {
-        // Fetch all messages for the current user (recipient)
         $messageModel = new \App\Models\Message();
         $messages = $messageModel->getAll(['recipient_id' => $_SESSION['user']['id']]);
+        $userModel = new \App\Models\User();
+        // Use sender_name from the database
+        foreach ($messages as &$message) {
+            $sender = $userModel->getFirstBy(['id' => $message['sender_id']]);
+            $message['sender_name'] = $sender ? htmlspecialchars($sender['name']) : 'Unknown User';
+        }
 
         $this->view($this->layout, ['messages' => $messages]);
     }
 
     function sendMessage()
     {
-        // This will handle sending a message from the contact form
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $messageModel = new \App\Models\Message();
+            $userModel = new \App\Models\User();
 
-            //Get sender ID
-            $sender_id = $_SESSION['user']['id'] ?? null; // Get sender ID from session or null if not logged in
+            $sender_id = $_SESSION['user']['id'] ?? null;
 
-            // Get recipient ID (always 1 for root)
+            $sender = $userModel->getFirstBy(['id' => $sender_id]);
+            $sender_name = $sender ? htmlspecialchars($sender['name']) : 'Unknown User';
+
+            $data['sender_name'] = $sender_name;
+
             $recipient_id = 1;
 
             $data = [
                 'sender_id' => $sender_id,
                 'recipient_id' => $recipient_id,
-                'message' => $_POST['message']
+                'message' => $_POST['message'],
+                'created_at' => time(), // Get the current Unix timestamp
+                'sender_name' => $sender_name,
             ];
 
             if ($messageModel->save($data)) {
-                // Optionally return a success message (e.g., for AJAX)
                 echo json_encode(['status' => 'success', 'message' => 'Message sent!']);
             } else {
-                // Optionally return an error message
                 echo json_encode(['status' => 'error', 'message' => 'Failed to send message.']);
             }
         } else {
-            // If it's not a POST request, redirect or show an error
-            header("Location: " . INSTALL_URL, true, 302); // Redirect back
+            header("Location: " . INSTALL_URL, true, 302);
             exit;
         }
     }
 
     function markAsRead()
     {
-        // Corrected method name to "markAsRead" to align with "is_read"
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
             $messageModel = new \App\Models\Message();
-            $messageModel->update(['id' => $_POST['id'], 'is_read' => 1]); // Updated to is_read
+            $messageModel->update(['id' => $_POST['id'], 'is_read' => 1]); // DO NOT update created_at
 
             echo json_encode(["status" => "success"]);
         } else {
@@ -74,10 +79,9 @@ class MessagesController extends Controller
 
     function markAllRead()
     {
-        // Corrected method name to "markAllRead" to align with "is_read"
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $messageModel = new \App\Models\Message();
-            $messageModel->updateBy(['is_read' => 1], ['recipient_id' => $_SESSION['user']['id']]); // Updated to recipient_id and is_read
+            $messageModel->updateBy(['is_read' => 1], ['recipient_id' => $_SESSION['user']['id']]); // DO NOT update created_at
 
             echo json_encode(["status" => "success"]);
         } else {

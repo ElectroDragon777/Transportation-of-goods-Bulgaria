@@ -87,7 +87,6 @@ CREATE TABLE `pallets` (
   `size_y_cm` int(3) NOT NULL,
   `size_z_cm` int(3) NOT NULL,
   `weight_kg` decimal(3,1) NOT NULL,
-  `code_billlanding` int(10) NOT NULL,
   `created_at` bigint(20) DEFAULT unix_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
@@ -205,8 +204,7 @@ ALTER TABLE `order_pallets`
 -- Indexes for table `pallets`
 --
 ALTER TABLE `pallets`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `code_billlanding` (`code_billlanding`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `settings`

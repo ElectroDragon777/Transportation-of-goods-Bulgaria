@@ -8,7 +8,6 @@ class Utility
     static $order_status = [
         'pending' => 'Pending',
         'shipped' => 'Shipped',
-        'out_for_delivery' => 'Out for Delivery',
         'delivered' => 'Delivered',
         'cancelled' => 'Cancelled',
         'returned' => 'Returned'
@@ -18,11 +17,6 @@ class Utility
         '€' => 'EUR',
         '£' => 'GBP',
         'lv' => 'BGN',
-        'C$' => 'CAD',
-        'A$' => 'AUD',
-        '¥' => 'JPY',
-        '元' => 'CNY',
-        '₣' => 'CHF'
     ];
     static $dateFormats = [
         'm/d/Y' => '03/24/2025', // MM/DD/YYYY
@@ -44,7 +38,7 @@ class Utility
         $currency = $settingModel->getFirstBy(['key' => 'currency_code'])['value'];
 
         // Currencies that go before the amount
-        $prefixCurrencies = ['$', '£', '¥', '₣'];
+        $prefixCurrencies = ['$', '£'];
 
         // Remove any commas and cast to float
         $amount = floatval(str_replace(',', '', $amount));

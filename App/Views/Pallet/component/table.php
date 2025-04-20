@@ -17,7 +17,7 @@
             <th>Size Y (cm)</th>
             <th>Size Z (cm)</th>
             <th>Weight (kg)</th>
-            <th>Code Billlanding</th>
+            <!-- <th>Code Billlanding</th> -->
             <th style="text-align: right;"></th>
         </tr>
     </thead>
@@ -41,7 +41,7 @@
                 <td><?php echo htmlspecialchars($pallet['size_y_cm']); ?></td>
                 <td><?php echo htmlspecialchars($pallet['size_z_cm']); ?></td>
                 <td><?php echo htmlspecialchars($pallet['weight_kg']); ?></td>
-                <td><?php echo htmlspecialchars($pallet['code_billlanding']); ?></td>
+                <!-- <td><?/*php echo htmlspecialchars($pallet['code_billlanding']); */ ?></td> -->
                 <td style="text-align: right;">
                     <a class="btn btn-info btn-circle mdc-ripple-upgraded"
                         href="<?php echo INSTALL_URL; ?>?controller=Pallet&action=edit&id=<?php echo $pallet['id'] ?>"> <i
