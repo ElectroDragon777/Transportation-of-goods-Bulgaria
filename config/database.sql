@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS `order_pallets`; -- Updated from order_products
 DROP TABLE IF EXISTS `couriers`;
 DROP TABLE IF EXISTS `settings`;
 DROP TABLE IF EXISTS `notifications`;
+DROP TABLE IF EXISTS `messages`;
 
 -- Create the `users` table
 CREATE TABLE IF NOT EXISTS `users` (
@@ -92,6 +93,20 @@ CREATE TABLE `notifications` (
   `created_at` BIGINT DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Create the `messages` table
+CREATE TABLE IF NOT EXISTS `messages` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `sender_id` INT(11) NOT NULL,
+  `recipient_id` INT(11) NOT NULL,
+  `message` TEXT NOT NULL,
+  `is_read` TINYINT(1) DEFAULT 0, -- 0 = unread, 1 = read
+  `created_at` BIGINT DEFAULT UNIX_TIMESTAMP(),
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`sender_id`) REFERENCES `users`(`id`), -- Add foreign key for sender
+  FOREIGN KEY (`recipient_id`) REFERENCES `users`(`id`) -- Add foreign key for recipient
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 INSERT INTO `settings` (`key`, `value`)
 VALUES ('email_sending', 'disabled'), -- Updated to match the current settings

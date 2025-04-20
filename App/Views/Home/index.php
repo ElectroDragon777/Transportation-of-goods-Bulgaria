@@ -1190,25 +1190,22 @@
                                     $root = $userModel->getFirstBy(['role' => 'root']);
                                     ?>
 
-                                    <!-- Form --> <!-- Put $root when checked. -->
                                     <?php if ($_SESSION['user']['name'] == $root['name']): ?>
-                                        <p class="card-description">Hey, You are the super admin, this is for DEBUG
-                                            purposes, not
-                                            to text yourself.</p>
+                                        <p class="card-description">This form is for debugging purposes. Messages sent here
+                                            are for testing and will not be sent to other users.</p>
                                         <p>Writing as <strong><?php echo htmlspecialchars($root['name']); ?></strong></p>
 
                                         <?php if ($root['name'] == "Chara Dreemurr"): ?>
                                             <p class="text-muted">Root-Admin (You,
-                                                <?php echo htmlspecialchars($root['name']); ?>)... Hey, it is me! I am
-                                                Chara Dreemurr, the Root-Admin of this system! This is my DEBUG-ger! This will
+                                                <?php echo htmlspecialchars($root['name']); ?>)... Hey, it is me! I am Chara
+                                                Dreemurr, the Root-Admin of this system! This is my DEBUG-ger! This will
                                                 simulate receiving messages from users to me by well... sending messages myself.
                                                 But as long as it works!
                                             </p>
                                         <?php else: ?>
                                             <p class="text-muted">Root-Admin (You,
-                                                <?php echo htmlspecialchars($root['name']); ?>) cannot use this contact form.
-                                                Otherwise, why?
-                                                People use it to ask you, will you really ask yourself?
+                                                <?php echo htmlspecialchars($root['name']); ?>) cannot use this contact form. It
+                                                is intended for users to contact you.
                                             </p>
                                         <?php endif ?>
 
@@ -1218,9 +1215,10 @@
                                                 <textarea class="form-control" id="message" rows="5"
                                                     style="width: 100%; min-height: 150px;" required></textarea>
                                             </div>
-                                            <button type="button" class="btn btn-primary mr-2"
-                                                onclick="sendMessage()">Send</button>
-                                            <button type="reset" class="btn btn-light">Clear</button>
+                                            <button type="button" class="btn btn-primary mr-2" onclick="sendMessage()"
+                                                aria-label="Send Message">Send</button>
+                                            <button type="reset" class="btn btn-light"
+                                                aria-label="Clear Message">Clear</button>
                                             <div id="messageSentAlert" class="alert alert-success mt-3"
                                                 style="display:none;">Message sent!</div>
                                         </form>
@@ -1281,40 +1279,38 @@
 
                                             <div class="col-md-6 d-flex flex-column justify-content-center">
                                                 <h4>Send us a Message:</h4>
-                                                <form id="guestContactForm">
-                                                    <p>Writing as:
-                                                        <strong><?php echo htmlspecialchars($_SESSION['user']['name']); ?></strong>
-                                                    </p>
-                                                    <p>Role:
-                                                        <i><?php echo htmlspecialchars($_SESSION['user']['role']); ?></i>
-                                                    </p>
-                                                    <p class="text-muted">Heya, it is me again, Chara Dreemurr, the
-                                                        Root-Admin/Super-Administrator of this system! I am here to help you
-                                                        with
-                                                        everything you need!
-                                                        If you have any questions or need assistance, feel free to reach out
-                                                        to me. I am
-                                                        here to make your experience as smooth as possible. Let's work
-                                                        together to make
-                                                        this system even better!
-                                                    </p>
-                                                    <form id="contactForm">
-                                                        <div class="form-group">
-                                                            <label for="message">Message</label>
-                                                            <textarea class="form-control" id="message" rows="5"
-                                                                style="width: 100%; min-height: 150px;" required></textarea>
-                                                        </div>
-                                                        <button type="button" class="btn btn-primary mr-2"
-                                                            onclick="sendMessage()">Send</button>
-                                                        <button type="reset" class="btn btn-light">Clear</button>
-                                                        <div id="messageSentAlert" class="alert alert-success mt-3"
-                                                            style="display:none;">Message sent!</div>
-                                                    </form>
+                                                <p>Writing as:
+                                                    <strong><?php echo htmlspecialchars($_SESSION['user']['name']); ?></strong>
+                                                </p>
+                                                <p>Role:
+                                                    <i><?php echo htmlspecialchars($_SESSION['user']['role']); ?></i>
+                                                </p>
+                                                <p class="text-muted">Heya, it is me again, Chara Dreemurr, the
+                                                    Root-Admin/Super-Administrator of this system! I am here to help you
+                                                    with
+                                                    everything you need!
+                                                    If you have any questions or need assistance, feel free to reach out
+                                                    to me. I am
+                                                    here to make your experience as smooth as possible. Let's work
+                                                    together to make
+                                                    this system even better!
+                                                </p>
+                                                <form id="contactForm">
+                                                    <div class="form-group">
+                                                        <label for="message">Message</label>
+                                                        <textarea class="form-control" id="message" rows="5"
+                                                            style="width: 100%; min-height: 150px;" required></textarea>
+                                                    </div>
+                                                    <button type="button" class="btn btn-primary mr-2"
+                                                        onclick="sendMessage()" aria-label="Send Message">Send</button>
+                                                    <button type="reset" class="btn btn-light"
+                                                        aria-label="Clear Message">Clear</button>
+                                                    <div id="messageSentAlert" class="alert alert-success mt-3"
+                                                        style="display:none;">Message sent!</div>
                                                 </form>
                                             </div>
                                         </div>
                                     <?php endif; ?>
-                                    </di>
                                 </div>
                             </div>
                         </div>

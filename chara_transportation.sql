@@ -109,7 +109,7 @@ CREATE TABLE `settings` (
 
 INSERT INTO `settings` (`id`, `key`, `value`) VALUES
 (1, 'email_sending', 'disabled'),
-(2, 'date_format', 'dd/mm/Y'),
+(2, 'date_format', 'd/m/Y'),
 (3, 'opening_time', '08:00'),
 (4, 'closing_time', '18:00'),
 (5, 'weekend_operation', '0'),
@@ -267,6 +267,12 @@ ALTER TABLE `settings`
 ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 COMMIT;
+
+--
+-- AUTO_INCREMENT for table `messages`
+--
+ALTER TABLE `messages`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
