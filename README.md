@@ -39,7 +39,7 @@ Mentor meeting, she said I could use Google Maps API and for the tracking - Varn
 ==== April 8th 2025 ====
 Looks better, Contacts almost done. A lot of early issues are fixed! Now, time to modify!
 
-==== April 14th 2024 ====
+==== April 14th 2025 ====
 A lot of progress and fixes. Another mentor meeting today, got some more directions.
 
 --- Notes: (Copied from the Notepad I wrote) ---
@@ -55,10 +55,15 @@ Highscores for couriers. (km/packets/clients(--))
 --Can make discounts after every 3 orders by 1.5% with cap of 12%.
 Couriers to be tracked - all when ADMIN/Root, relevant by User.
 Status for being busy for couriers.
-Activity Section - how much time is spent on site; how many orders/how many log ins and all sorts of statistics for the user. Make history of orders per user and show the time it took to arrive.
+--Activity Section - how much time is spent on site; how many orders/how many log ins and all sorts of statistics for the user. Make history of orders per user and show the time it took to arrive.
 Another reminder for pallete one day prior. [-- means "eventually" in these Notes!]
 Add Start and End Point (both with Address or Office)!! (And it means make the PHP values in a DB to extract them .w.)
 == For Site ^ ==
-==== April 20th 2024 ====
+
+==== April 20th 2025 ====
 Changes are slower. Looking up the changes mentioned for the site, this will be time-consuming. I need to fix the currency bug. I need to focus on my thesis' 30 pages too...
+
+==== April 21st 2025 ====
+Currency bug is fixed. To add - Start/End points and their choices (address (postcodes) or at office directly), should be done soon. Also, my silly self on a single braincell has written 2024 instead of 2025 in some dates in the README, oof. Map will be the biggest challenge yet.
+
 ------------ End of current logs ------------
