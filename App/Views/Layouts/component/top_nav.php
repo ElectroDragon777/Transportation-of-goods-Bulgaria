@@ -244,8 +244,10 @@ if (!empty($tpl['notifications'])) {
                         <a class="dropdown-item"
                             href="<?php echo INSTALL_URL; ?>?controller=User&action=profile&id=<?php echo $_SESSION['user']['id']; ?>"><i
                                 class="dropdown-item-icon mdi mdi-account-outline text-primary me-2"></i> My Profile</a>
+                                <?php if ($_SESSION['user']['role'] === 'root'): ?>
                         <a class="dropdown-item" href="<?php echo INSTALL_URL; ?>?controller=Messages&action=index"><i
                                 class="dropdown-item-icon mdi mdi-message-text-outline text-primary me-2"></i> Messages</a>
+                                <?php endif; ?>
                         <a class="dropdown-item"><i
                                 class="dropdown-item-icon mdi mdi-calendar-check-outline text-primary me-2"></i>
                             Activity</a>

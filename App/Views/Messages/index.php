@@ -92,9 +92,6 @@
                                 <?php
                                     endif;
                                 endforeach;
-                                if (!$hasRead) {
-                                    echo '<div class="list-group-item">No read messages.</div>';
-                                }
                                 ?>
                             </div>
                         </div>
@@ -218,14 +215,26 @@
         }
 
         function updateMessageCounts() {
-            // Get the number of unread and read messages
-            const unreadCount = unreadMessagesList.querySelectorAll('.list-group-item-warning').length;
-            const readCount = readMessagesList.querySelectorAll('.list-group-item-action').length - (readMessagesList.querySelector('.list-group-item') ? 1 : 0) + 1;
+    // Get the number of unread and read messages
+    const unreadCount = unreadMessagesList.querySelectorAll('.list-group-item-warning').length;
+    const readCount = readMessagesList.querySelectorAll('.list-group-item-action').length - (readMessagesList.querySelector('.list-group-item') ? 1 : 0) + 1;
 
-            // Update the tab links with the counts
-            unreadTabLink.textContent = `Unread Messages (${unreadCount})`;
-            readTabLink.textContent = `Read Messages (${readCount})`;
-        }
+    // Update the tab links with the counts
+    unreadTabLink.textContent = `Unread Messages (${unreadCount})`;
+    readTabLink.textContent = `Read Messages (${readCount})`;
+
+    // Return the counts
+    return { unreadCount, readCount };
+}
+
+// Call updateMessageCounts and check readCount
+const counts = updateMessageCounts();
+if (counts.readCount > 0) {
+    const noReadMessagesText = readMessagesList.querySelector('.list-group-item');
+    if (noReadMessagesText && noReadMessagesText.textContent === 'No read messages.') {
+        readMessagesList.removeChild(noReadMessagesText);
+    }
+}
         updateMessageCounts();
     });
 </script>

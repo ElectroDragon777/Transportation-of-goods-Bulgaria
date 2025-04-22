@@ -35,7 +35,7 @@ class Utility
     static function getDisplayableAmount($amount)
     {
         $settingModel = new Setting();
-        $currency = $settingModel->getFirstBy(['key' => 'currency_code'])['value'];
+        $currency = $settingModel->getFirstBy(['key' => 'currency'])['value'];
 
         // Currencies that go before the amount
         $prefixCurrencies = ['$', '£'];

@@ -802,7 +802,7 @@
                 </div>
 
 
-                <!-- About Page :: Also, keep in mind, show active is for HOME only. Do not add to "tab-pane fade" the "show active" unless it is HOME-->
+                <!-- About Page : Also, keep in mind, show active is for HOME only. Do not add to "tab-pane fade" the "show active" unless it is HOME-->
                 <div class="tab-pane fade" id="about" role="tabpanel" aria-labelledby="about">
                     <div class="row flex-grow">
                         <div class="col-12 grid-margin stretch-card">
@@ -1225,6 +1225,7 @@
                                     <?php else: ?>
                                         <p class="card-description">Feel free to reach out to us using the contact
                                             information below or by sending us a message.</p>
+                                        <!-- Left Column with Root Profile -->
                                         <div class="row d-flex align-items-stretch">
                                             <div class="col-md-6 d-flex flex-column justify-content-center">
                                                 <div class="admin-contact-card">
@@ -1276,7 +1277,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-
+                                            <!-- Right Column with Message Form -->
                                             <div class="col-md-6 d-flex flex-column justify-content-center">
                                                 <h4>Send us a Message:</h4>
                                                 <p>Writing as:
