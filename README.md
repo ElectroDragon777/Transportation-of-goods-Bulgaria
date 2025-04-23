@@ -66,4 +66,7 @@ Changes are slower. Looking up the changes mentioned for the site, this will be 
 ==== April 21st 2025 ====
 Currency bug is fixed. To add - Start/End points and their choices (address (postcodes) or at office directly), should be done soon. Also, my silly self on a single braincell has written 2024 instead of 2025 in some dates in the README, oof. Map will be the biggest challenge yet.
 
+==== April 23rd 2025 ====
+No Postal codes. Focus on Address conversion. And the DBs.
+
 ------------ End of current logs ------------
