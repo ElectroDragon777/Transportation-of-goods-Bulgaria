@@ -55,19 +55,19 @@
                         aria-expanded="<?php echo ($currentController == 'Pallet') ? 'true' : 'false'; ?>"
                         aria-controls="pallets">
                         <i class="menu-icon mdi mdi-cube-outline"></i>
-                        <span class="menu-title">Pallets</span> <i class="menu-arrow"></i>
+                        <span class="menu-title">Parcels</span> <i class="menu-arrow"></i>
                     </a>
                     <div class="collapse <?php if ($currentController == 'Pallet')
                         echo 'show'; ?>" id="pallets">
                         <ul class="nav flex-column sub-menu">
                             <li class="nav-item <?php if ($currentController == 'Pallet' && $currentAction == 'list')
                                 echo 'active'; ?>">
-                                <a class="nav-link" href="<?php INSTALL_URL; ?>?controller=Pallet&action=list">List Pallets</a>
+                                <a class="nav-link" href="<?php INSTALL_URL; ?>?controller=Pallet&action=list">List Parcels</a>
                             </li>
                             <li class="nav-item <?php if ($currentController == 'Pallet' && $currentAction == 'create')
                                 echo 'active'; ?>">
                                 <a class="nav-link" href="<?php INSTALL_URL; ?>?controller=Pallet&action=create">Create
-                                    Pallet</a>
+                                Parcels</a>
                             </li>
                         </ul>
                     </div>

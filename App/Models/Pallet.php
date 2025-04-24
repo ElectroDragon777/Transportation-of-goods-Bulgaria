@@ -12,7 +12,9 @@ class Pallet extends Model
     var $schema = array(
         array('name' => 'id', 'type' => 'int', 'default' => ':NULL'),
         array('name' => 'name', 'type' => 'varchar', 'default' => ''),
+        array('name' => 'category', 'type' => 'varchar', 'default' => ''), // Documents, packages, pallets.
         array('name' => 'description', 'type' => 'text', 'default' => ':NULL'),
+        array('name' => 'stock', 'type' => 'int', 'default' => '0'), // Number of pallets in stock
         array('name' => 'price', 'type' => 'decimal', 'default' => ':NULL'),
         array('name' => 'size_x_cm', 'type' => 'int', 'default' => ':NULL'), // Length
         array('name' => 'size_y_cm', 'type' => 'int', 'default' => ':NULL'), // Width

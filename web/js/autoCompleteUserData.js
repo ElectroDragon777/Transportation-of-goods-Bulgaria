@@ -7,17 +7,17 @@
             if ($(this).val() !== '') {
                 // Get data from data attributes
                 const address = selectedOption.data('address') || '';
-                const country = selectedOption.data('country') || '';
+                // const country = selectedOption.data('country') || '';
                 const region = selectedOption.data('region') || '';
 
                 // Set the form field values
                 $('#address').val(address);
-                $('#country').val(country);
+                // $('#country').val(country);
                 $('#region').val(region);
             } else {
                 // Clear the fields if no user is selected
                 $('#address').val('');
-                $('#country').val('');
+                // $('#country').val('');
                 $('#region').val('');
             }
         });

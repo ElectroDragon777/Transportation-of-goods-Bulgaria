@@ -11,13 +11,14 @@
             <?php } ?>
             <th>Pallet ID</th>
             <th>Pallet Name</th>
+            <th>Type</th> <!-- Added Type column -->
             <th>Pallet Description</th>
-            <th>Price</th>
+            <th>Count</th> <!-- Renamed from Stock for clarity -->
+            <!-- <th>Price</th> -->
             <th>Size X (cm)</th>
             <th>Size Y (cm)</th>
             <th>Size Z (cm)</th>
             <th>Weight (kg)</th>
-            <!-- <th>Code Billlanding</th> -->
             <th style="text-align: right;"></th>
         </tr>
     </thead>
@@ -35,14 +36,17 @@
                 <?php } ?>
                 <td><?php echo htmlspecialchars($pallet['id']); ?></td>
                 <td><?php echo htmlspecialchars($pallet['name']); ?></td>
+                <td><?php echo ucfirst(htmlspecialchars($pallet['category'])); ?></td> <!-- Display Type -->
                 <td><?php echo htmlspecialchars($pallet['description']); ?></td>
-                <td><?php echo Utility::getDisplayableAmount(htmlspecialchars($pallet['price'])); ?></td>
+                <td><?php echo htmlspecialchars($pallet['stock']); ?></td>
+                <!-- <td><?/*php echo Utility::getDisplayableAmount(htmlspecialchars($pallet['price'])); */ ?></td> -->
                 <td><?php echo htmlspecialchars($pallet['size_x_cm']); ?></td>
                 <td><?php echo htmlspecialchars($pallet['size_y_cm']); ?></td>
                 <td><?php echo htmlspecialchars($pallet['size_z_cm']); ?></td>
-                <td><?php echo htmlspecialchars($pallet['weight_kg']); ?></td>
-                <!-- <td><?/*php echo htmlspecialchars($pallet['code_billlanding']); */ ?></td> -->
+                <td><?php echo htmlspecialchars($pallet['weight_kg'] ?: 'N/A'); ?></td>
+                <!-- Show N/A if null (for Documents) -->
                 <td style="text-align: right;">
+                    <!-- Buttons remain the same -->
                     <a class="btn btn-info btn-circle mdc-ripple-upgraded"
                         href="<?php echo INSTALL_URL; ?>?controller=Pallet&action=edit&id=<?php echo $pallet['id'] ?>"> <i
                             class="fa fa-pencil-square-o" aria-hidden="true"></i>

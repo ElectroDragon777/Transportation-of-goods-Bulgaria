@@ -10,7 +10,7 @@
                             <a id="print-pallets" class="btn btn-outline-dark align-items-center"><i
                                     class="icon-printer"></i> Print</a>
                             <a href="<?php echo INSTALL_URL . "?controller=Pallet&action=create"; ?>"
-                                class="btn btn-primary text-white me-0"><i class="icon-plus"></i>New Pallet</a>
+                                class="btn btn-primary text-white me-3"><i class="icon-plus"></i> New Parcel</a>
                         </div>
                     </div>
                 </div>
@@ -34,18 +34,23 @@
                                 <div class="card p-4">
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label for="filter-name" class="form-label">Pallet Name</label>
+                                            <label for="filter-name" class="form-label">Name</label>
                                             <input type="text" class="form-control" id="filter-name"
                                                 placeholder="Search by name">
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label for="filter-description" class="form-label">Pallet
+                                            <label for="filter-description" class="form-label">
                                                 Description</label>
                                             <input type="text" class="form-control" id="filter-description"
                                                 placeholder="Search by description">
                                         </div>
-
                                         <div class="col-md-6 mb-3">
+                                            <label for="filter-description" class="form-label">Category</label>
+                                            <input type="text" class="form-control" id="filter-category"
+                                                placeholder="Search by description">
+                                        </div>
+
+                                        <!-- <div class="col-md-6 mb-3">
                                             <label for="filter-price-min" class="form-label">Min Price
                                                 (inclusive)</label>
                                             <input type="number" class="form-control" id="filter-price-min"
@@ -56,7 +61,7 @@
                                                 (inclusive)</label>
                                             <input type="number" class="form-control" id="filter-price-max"
                                                 placeholder="Max price">
-                                        </div>
+                                        </div> -->
 
                                         <div class="col-md-6 mb-3">
                                             <label for="filter-size-x" class="form-label">Size X (cm)</label>
@@ -126,12 +131,12 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Delete Pallet</h5>
+                <h5 class="modal-title">Delete Parcel</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                 </button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to delete this pallet?</p>
+                <p>Are you sure you want to delete this parcel?</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-id="" id="delete-btn-pallet-id">Delete</button>
@@ -146,12 +151,12 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Delete Pallets</h5>
+                <h5 class="modal-title">Delete Parcels</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                 </button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to delete these pallets?</p>
+                <p>Are you sure you want to delete these parcels?</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-ids="" id="delete-btn-pallets-ids">Delete</button>
@@ -166,7 +171,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Export Pallets</h5>
+                <h5 class="modal-title">Export Parcels</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">

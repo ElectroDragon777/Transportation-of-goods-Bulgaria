@@ -47,15 +47,19 @@ class PalletController extends Controller
             if (!empty($_POST['name'])) {
                 $opts["name LIKE '%" . $_POST['name'] . "%' AND 1 "] = "1";
             }
+            if (!empty($_POST['category'])) {
+                $opts["category LIKE '%" . $_POST['category'] . "%' AND 1 "] = "1";
+            }
             if (!empty($_POST['description'])) {
                 $opts["description LIKE '%" . $_POST['description'] . "%' AND 1 "] = "1";
             }
-            if (!empty($_POST['minPrice'])) {
-                $opts["price >= " . $_POST['minPrice'] . " AND 1 "] = "1";
-            }
-            if (!empty($_POST['maxPrice'])) {
-                $opts["price <= " . $_POST['maxPrice'] . " AND 1 "] = "1";
-            }
+            // if (!empty($_POST['minPrice'])) {
+            //     $opts["price >= " . $_POST['minPrice'] . " AND 1 "] = "1";
+            // }
+            // if (!empty($_POST['maxPrice'])) {
+            //     $opts["price <= " . $_POST['maxPrice'] . " AND 1 "] = "1";
+            // }
+            // No need for Stock, since, like Econt, you select count, but you order them all. No remnants.
             if (!empty($_POST['size_x_cm'])) {
                 $opts["size_x_cm = " . $_POST['size_x_cm'] . " AND 1 "] = "1";
             }
@@ -67,9 +71,6 @@ class PalletController extends Controller
             }
             if (!empty($_POST['weight_kg'])) {
                 $opts["weight_kg = " . $_POST['weight_kg'] . " AND 1 "] = "1";
-            }
-            if (!empty($_POST['code_billlanding'])) {
-                $opts["code_billlanding = " . $_POST['code_billlanding'] . " AND 1 "] = "1";
             }
         }
 
@@ -98,7 +99,7 @@ class PalletController extends Controller
                 exit;
             } else {
                 // If saving fails, set an error message
-                $error_message = "Failed to create the pallet. Please try again.";
+                $error_message = "Failed to create the packet. Please try again.";
             }
         }
 
@@ -273,7 +274,7 @@ class PalletController extends Controller
             }
         } else {
             // Fallback for no data
-            $html .= '<th>No Data Available</th></tr></thead><tbody><tr><td>No pallets found</td></tr>'; // Updated to pallets
+            $html .= '<th>No Data Available</th></tr></thead><tbody><tr><td>No packets found</td></tr>'; // Updated to pallets
         }
 
         $html .= '</tbody></table>';
@@ -309,7 +310,7 @@ class PalletController extends Controller
         } else {
             // Fallback for no data
             $data[] = ['No Data Available'];
-            $data[] = ['No pallets found']; // Updated to pallets
+            $data[] = ['No packets found']; // Updated to pallets
         }
 
         // Create and send file

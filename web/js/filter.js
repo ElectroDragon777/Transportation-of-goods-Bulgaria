@@ -7,7 +7,7 @@
                 phone: $('#filter-phone').val(),
                 email: $('#filter-email').val(),
                 address: $('#filter-address').val(),
-                country: $('#filter-country').val(),
+                // country: $('#filter-country').val(),
                 region: $('#filter-region').val()
             };
 
@@ -33,7 +33,7 @@
             $('#filter-phone').val('');
             $('#filter-email').val('');
             $('#filter-address').val('');
-            $('#filter-country').val('');
+            // $('#filter-country').val('');
             $('#filter-region').val('');
 
 
@@ -58,7 +58,7 @@
                 email: $('#filter-email').val(),
                 roles: roles,
                 address: $('#filter-address').val(),
-                country: $('#filter-country').val(),
+                // country: $('#filter-country').val(),
                 region: $('#filter-region').val()
             };
 
@@ -84,7 +84,7 @@
             $('#filter-email').val('');
             $('#filter-role').val('');
             $('#filter-address').val('');
-            $('#filter-country').val('');
+            // $('#filter-country').val('');
             $('#filter-region').val('');
             $('.form-check-input').prop('checked', true);
 
@@ -137,7 +137,7 @@
                 courierName: $('#filter-courier').val(),
                 status: $('#filter-status').val(),
                 trackingNumber: $('#filter-tracking').val(),
-                country: $('#filter-country').val(),
+                // country: $('#filter-country').val(),
                 region: $('#filter-region').val(),
                 orderDateFrom: $('#filter-date-from').val(),
                 orderDateTo: $('#filter-date-to').val(),
@@ -165,7 +165,7 @@
             $('#filter-courier').val('');
             $('#filter-status').val('');
             $('#filter-tracking').val('');
-            $('#filter-country').val('');
+            // $('#filter-country').val('');
             $('#filter-region').val('');
             $('#filter-date-from').val('');
             $('#filter-date-to').val('');

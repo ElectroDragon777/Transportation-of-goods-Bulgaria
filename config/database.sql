@@ -26,8 +26,9 @@ CREATE TABLE IF NOT EXISTS `users` (
 CREATE TABLE IF NOT EXISTS `pallets` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(100) NOT NULL,
+  `category` VARCHAR(50) NOT NULL,
   `description` TEXT DEFAULT NULL,
-  `price` DECIMAL(10, 2) NOT NULL,
+  `stock` INT NOT NULL DEFAULT 0,
   `size_x_cm` INT(3) NOT NULL,
   `size_y_cm` INT(3) NOT NULL,
   `size_z_cm` INT(3) NOT NULL,
@@ -40,8 +41,8 @@ CREATE TABLE IF NOT EXISTS `pallets` (
 CREATE TABLE IF NOT EXISTS `orders` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `user_id` INT(11) NOT NULL,
-  `address` VARCHAR(255) NOT NULL,
-  `region` VARCHAR(255) NOT NULL,
+  `start_point` VARCHAR(255) NOT NULL,
+  `end_destination` VARCHAR(255) NOT NULL,
   `status` VARCHAR(50) NOT NULL,
   `product_price` DECIMAL(10, 2) NOT NULL,
   `total_amount` DECIMAL(10, 2) NOT NULL,
