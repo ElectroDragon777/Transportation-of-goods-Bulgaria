@@ -51,19 +51,19 @@
                                         ?> -->
                                     </select>
                                 </div>
-                                <div class="mb-3">
+                                <!-- <div class="mb-3">
                                     <label for="address" class="form-label">Address</label>
                                     <input type="text" class="form-control" id="address" name="address" required>
-                                </div>
+                                </div> -->
                                 <!-- Not required -->
                                 <!-- <div class="mb-3">
                                     <label for="country" class="form-label">Country</label>
                                     <input type="text" class="form-control" id="country" name="country" required>
                                 </div> -->
-                                <div class="mb-3">
+                                <!-- <div class="mb-3">
                                     <label for="region" class="form-label">Region</label>
                                     <input type="text" class="form-control" id="region" name="region" required>
-                                </div>
+                                </div> -->
                                 <div class="mb-3">
                                     <label for="courierId" class="form-label">Courier</label>
                                     <select name="courier_id" id="courierId" class="form-select" required>
@@ -130,15 +130,15 @@
                                         */?>
                                     </select>
                                 </div> -->
-                                <div id="productRows">
-                                    <div class="row align-items-end mb-3 product-row">
+                                <div id="parcelRows">
+                                    <div class="row align-items-end mb-3 parcel-row">
                                         <div class="col-md-12">
-                                            <label for="productIds" class="form-label">Pallet</label>
-                                            <select name="product_id[]" id="productIds" class="form-select" required>
+                                            <label for="parcelIds" class="form-label">Pallet</label>
+                                            <select name="parcel_id[]" id="parcelIds" class="form-select" required>
                                                 <option value="">---</option>
                                                 <?php
-                                                foreach ($tpl['products'] as $product) {
-                                                    echo "<option value=\"{$product['id']}\" data-max-quantity=\"{$product['stock']}\">{$product['name']}</option>";
+                                                foreach ($tpl['pallets'] as $item) {
+                                                    echo "<option value=\"{$item['id']}\" data-max-quantity=\"{$item['stock']}\">{$item['name']}</option>";
                                                 }
                                                 ?>
                                             </select>
