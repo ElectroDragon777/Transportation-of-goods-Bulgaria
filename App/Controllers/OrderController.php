@@ -116,7 +116,7 @@ class OrderController extends Controller
         $currency = $this->settings['currency']; // $this->settings['currency_code'], set manually to currency, since local+modded.
 
         if (!empty($_POST['send'])) {
-            $palletIds = $_POST['pallet_id'];
+            $palletIds = $_POST['parcel_id'];
             $quantities = $_POST['quantity'];
 
             // Validate quantities against available pallet quantities
@@ -125,14 +125,24 @@ class OrderController extends Controller
 
             foreach ($palletIds as $key => $palletId) {
                 $pallet = $palletModel->get($palletId);
-                if ($quantities[$key] > $pallet['stock']) {
+                if ($quantities[$key] > $pallet['quantity']) {
                     $error_message = "Quantity for {$pallet['name']} exceeds available stock.";
                     $quantityError = true;
                     break;
                 }
             }
 
-            if (!$quantityError) {
+            // Check delivery date
+            $deliveryDate = strtotime($_POST['delivery_date']);
+            $today = strtotime(date('Y-m-d')); // Get today's date without the time
+            // $oneDayLater = strtotime('+1 day', $today);
+
+            if ($deliveryDate < $today) {
+                $error_message = "Delivery date must be at least today - " . date($this->settings['date_format'], $today);
+                $quantityError = true; // Use the quantityError flag for consistency
+            }
+
+            if (!$quantityError && !$error_message) { // Added check for $error_message
                 $priceDetails = $this->calculateOrderTotal($palletIds, $quantities);
                 $orderData = [
                     'last_processed' => time(),
@@ -177,12 +187,23 @@ class OrderController extends Controller
                     }
 
                     if (!isset($error_message)) {
+                        // Send notifications
+                        // Notify user and courier
                         $notificationModel->save([
                             'user_id' => $_POST['user_id'],
-                            'message' => "Your order #$orderId has been created successfully!",
+                            'message' => "Your order #{$orderId} has been created successfully! Total amount: {$priceDetails['total']}",
                             'link' => INSTALL_URL . "?controller=Order&action=details&id=$orderId",
                             'created_at' => time()
                         ]);
+
+                        $notificationModel->save([
+                            'user_id' => $_POST['courier_id'],
+                            'message' => "New delivery assigned to you. Order #{$orderId}",
+                            'link' => INSTALL_URL . "?controller=Order&action=details&id=$orderId",
+                            'created_at' => time()
+                        ]);
+
+                        //
                         if ($this->settings['email_sending'] == 'enabled') {
                             $order = $orderModel->get($orderId);
                             $customer = $userModel->get($order['user_id']);
@@ -216,6 +237,8 @@ class OrderController extends Controller
         ];
         $this->view($this->layout, $arr);
     }
+
+    // Add for Status Change stuff later
 
     function details()
     {

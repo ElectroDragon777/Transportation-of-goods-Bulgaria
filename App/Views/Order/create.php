@@ -68,7 +68,7 @@
                                         value="">
                                 </div>
                             </div>
-                            <form id="orderCreationForm" action="process_order.php" method="post">
+                            <div id="orderCreationForm" action="process_order.php" method="post">
                                 <!-- Start Destination Section -->
                                 <div class="card mb-4">
                                     <div class="card-header bg-primary text-white">
@@ -186,12 +186,7 @@
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- Submit Button -->
-                                <div class="form-group">
-                                    <button type="submit" class="btn btn-primary" id="submitOrder">Create Order</button>
-                                </div>
-                            </form>
+                            </div>
                             <!-- Right Column -->
                             <div class="col-md-6">
                                 <div class="mb-3">
@@ -245,7 +240,7 @@
                                 <div id="parcelRows">
                                     <div class="row align-items-end mb-3 parcel-row">
                                         <div class="col-md-12">
-                                            <label for="parcelIds" class="form-label">Pallet</label>
+                                            <label for="parcelIds" class="form-label">Parcels</label>
                                             <select name="parcel_id[]" id="parcelIds" class="form-select" required>
                                                 <option value="">---</option>
                                                 <?php
@@ -255,7 +250,28 @@
                                                 ?>
                                             </select>
                                         </div>
-
+                                        <div class="col-md-6" id="parcelRows">
+                                            <div class="row align-items-end mb-3 parcel-row">
+                                                <div class="col-md-8">
+                                                    <label for="parcelIds" class="form-label">Packet</label>
+                                                    <select name="parcel_id[]" id="parcelIds" class="form-select"
+                                                        required>
+                                                        <option value="">---</option>
+                                                        <?php foreach ($tpl['pallets'] as $item) { ?>
+                                                            <option value="<?php echo $item['id']; ?>"
+                                                                data-max-quantity="<?php echo $item['stock']; ?>">
+                                                                <?php echo htmlspecialchars($item['name']); ?>
+                                                            </option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="quantities" class="form-label">Quantity</label>
+                                                    <input type="number" step="1" min="1" class="form-control"
+                                                        id="quantities" name="quantity[]" required>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <!-- Not a plan yet, but can be enhanced for pallets vvv -->
                                         <!-- <div class="col-md-4">
                                             <label for="quantities" class="form-label">Quantity</label>
@@ -315,6 +331,7 @@
         </div>
     </div>
 </div>
+
 
 <!-- Visual appeal for notes -->
 <style>
@@ -790,8 +807,8 @@
                     // Update end marker popup with route info
                     if (endMarker) {
                         endMarker.setPopupContent(`End Location<br>
-                        Distance: ${distance} km<br>
-                        Estimated time: ${duration} min`);
+                            Distance: ${distance} km<br>
+                            Estimated time: ${duration} min`);
                         endMarker.openPopup();
                     }
                 }
