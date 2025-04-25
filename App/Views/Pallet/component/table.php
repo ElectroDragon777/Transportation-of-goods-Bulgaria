@@ -9,10 +9,10 @@
                     </div>
                 </th>
             <?php } ?>
-            <th>Pallet ID</th>
-            <th>Pallet Name</th>
-            <th>Type</th> <!-- Added Type column -->
-            <th>Pallet Description</th>
+            <th>Packet ID</th>
+            <th>Packet Name</th>
+            <th>Category</th> <!-- Added Type column -->
+            <th>Packet Description</th>
             <th>Count</th> <!-- Renamed from Stock for clarity -->
             <!-- <th>Price</th> -->
             <th>Size X (cm)</th>

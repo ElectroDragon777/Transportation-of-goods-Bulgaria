@@ -15,20 +15,6 @@
 
                         <div class="row">
                             <div class="col-12">
-                                <h5 class="with-line">General Information (Name, Category and Weight)</h5>
-                            </div>
-                            <div class="form-group col-md-6 mb-3">
-                                <label for="name" class="form-label">Parcel Name</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
-                            </div>
-                            <div class="form-group col-md-6 mb-3">
-                                <label for="weight_kg" class="form-label">Weight (kg)</label>
-                                <input type="number" step="0.1" min="0.1" class="form-control" id="weight_kg"
-                                    name="weight_kg" required>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">
                                 <h5 class="with-line">Parcel Category</h5>
                             </div>
                             <div class="form-group col-md-4 mb-3 d-flex">
@@ -44,6 +30,22 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <h5 class="with-line">General Information (Name, Category and Weight)</h5>
+                            </div>
+                            <div class="form-group col-md-6 mb-3">
+                                <label for="name" class="form-label">Parcel Name</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+                            <div class="form-group col-md-6 mb-3">
+                                <label for="weight_kg" class="form-label">Weight (kg)</label>
+                                <input type="number" step="0.1" min="0.1" class="form-control" id="weight_kg"
+                                    name="weight_kg" required>
+                            </div>
+                        </div>
+
 
                         <div class="row">
                             <div class="col-12">
@@ -168,6 +170,7 @@
     }
 </style>
 
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const documentRadio = document.getElementById('typeDocument');
@@ -196,7 +199,7 @@
                 // NameInput.disabled = true;
                 NameInput.value = 'Documents'; // Default name for documents
             } else {
-                // Pallet is selected
+                // Packet is selected
                 weightInput.disabled = false;
                 sizeXInput.disabled = false;
                 sizeYInput.disabled = false;
