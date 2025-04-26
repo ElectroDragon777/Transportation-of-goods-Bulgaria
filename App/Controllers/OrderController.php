@@ -125,7 +125,7 @@ class OrderController extends Controller
 
             foreach ($palletIds as $key => $palletId) {
                 $pallet = $palletModel->get($palletId);
-                if ($quantities[$key] > $pallet['quantity']) {
+                if ($quantities[$key] > $pallet['stock']) {
                     $error_message = "Quantity for {$pallet['name']} exceeds available stock.";
                     $quantityError = true;
                     break;
@@ -143,28 +143,84 @@ class OrderController extends Controller
             }
 
             if (!$quantityError && !$error_message) { // Added check for $error_message
-                $priceDetails = $this->calculateOrderTotal($palletIds, $quantities);
+                // Calculate total price using the new pricing method
+                $productPrice = 0;
+                $total = 0;
+                $cashOnDelivery = isset($_POST['cash_on_delivery']) && $_POST['cash_on_delivery'] == '1';
+                $codFee = 0;
+
                 $orderData = [
                     'last_processed' => time(),
                     'tracking_number' => \Utility::generateRandomString(),
                     'delivery_date' => strtotime($_POST['delivery_date']),
-                    'total_amount' => $priceDetails['total'],
+                    'cash_on_delivery' => $cashOnDelivery ? 1 : 0,
                     'created_at' => time()
                 ];
+
+                // Calculate the total price
+                foreach ($palletIds as $key => $palletId) {
+                    $pallet = $palletModel->get($palletId);
+                    $quantity = $quantities[$key];
+
+                    // Get weight and dimensions from pallet
+                    $weight = $pallet['weight'] ?? 0;
+                    $length = $pallet['size_x_cm'] ?? 0;
+                    $width = $pallet['size_y_cm'] ?? 0;
+                    $height = $pallet['size_z_cm'] ?? 0;
+
+                    // Calculate price based on weight/dimensions
+                    $itemPrice = $this->calculatePalletPrice($weight, $length, $width, $height);
+
+                    // For document category, quantity is always 1
+                    if ($pallet['category'] === 'document') {
+                        $quantity = 1;
+                    }
+
+                    // Calculate subtotal for this item
+                    $itemTotal = $itemPrice * $quantity;
+                    $total += $itemTotal;
+                }
+
+                // Add COD fee if applicable
+                if ($cashOnDelivery) {
+                    $codFee = $productPrice * 0.015; // 1.5% of product price
+                    $total = $productPrice + $codFee; // Total includes product price and COD fee
+                } else {
+                    $total = $productPrice; // Total is just the product price
+                }
+
+                $orderData['product_price'] = $productPrice; // Assign the product price
+                $orderData['total_amount'] = $total; // Assign the total amount
 
                 $orderId = $orderModel->save($orderData + $_POST);
 
                 if ($orderId) {
                     // Save order pallets and update pallet quantities
                     foreach ($palletIds as $key => $palletId) {
-                        $palletDetails = $palletModel->get($palletId);
-                        $subtotal = $palletDetails['price'] * $quantities[$key];
+                        $pallet = $palletModel->get($palletId);
+                        $quantity = $quantities[$key];
+
+                        // Get weight and dimensions from pallet
+                        $weight = $pallet['weight'] ?? 0;
+                        $length = $pallet['size_x_cm'] ?? 0; // Length
+                        $width = $pallet['size_y_cm'] ?? 0; // Width
+                        $height = $pallet['size_z_cm'] ?? 0; // Height
+
+                        // Calculate price based on weight/dimensions
+                        $price = $this->calculatePalletPrice($weight, $length, $width, $height);
+
+                        // For document category, quantity is always 1
+                        if ($pallet['category'] === 'document') {
+                            $quantity = 1;
+                        }
+
+                        $subtotal = $price * $quantity;
 
                         $orderpalletData = [
                             'order_id' => $orderId,
                             'pallet_id' => $palletId,
-                            'quantity' => $quantities[$key],
-                            'price' => $palletDetails['price'],
+                            'quantity' => $quantity,
+                            'price' => $price,
                             'subtotal' => $subtotal,
                         ];
 
@@ -174,14 +230,14 @@ class OrderController extends Controller
                         }
 
                         // Update pallet quantity after order pallet is saved
-                        $updatedQuantity = $palletDetails['stock'] - $quantities[$key];
+                        $updatedQuantity = $pallet['stock'] - $quantity;
                         $updateSuccess = $palletModel->update([
                             'id' => $palletId,
                             'stock' => $updatedQuantity
                         ]);
 
                         if (!$updateSuccess) {
-                            $error_message = "Failed to update pallet stock for {$palletDetails['name']}. Please try again.";
+                            $error_message = "Failed to update pallet stock for {$pallet['name']}. Please try again.";
                             break;
                         }
                     }
@@ -191,7 +247,7 @@ class OrderController extends Controller
                         // Notify user and courier
                         $notificationModel->save([
                             'user_id' => $_POST['user_id'],
-                            'message' => "Your order #{$orderId} has been created successfully! Total amount: {$priceDetails['total']}",
+                            'message' => "Your order #{$orderId} has been created successfully! Total amount: {$total}",
                             'link' => INSTALL_URL . "?controller=Order&action=details&id=$orderId",
                             'created_at' => time()
                         ]);
@@ -574,9 +630,9 @@ class OrderController extends Controller
 
                     // Get weight and dimensions from pallet
                     $weight = $pallet['weight'] ?? 0;
-                    $length = $pallet['length'] ?? 0;
-                    $width = $pallet['width'] ?? 0;
-                    $height = $pallet['height'] ?? 0;
+                    $length = $pallet['size_x_cm'] ?? 0;
+                    $width = $pallet['size_y_cm'] ?? 0;
+                    $height = $pallet['size_z_cm'] ?? 0;
 
                     // Calculate price based on weight/dimensions
                     $itemPrice = $this->calculatePalletPrice($weight, $length, $width, $height);
@@ -618,9 +674,9 @@ class OrderController extends Controller
 
                     // Calculate price based on dimensions and weight
                     $weight = $palletDetails['weight'] ?? 0;
-                    $length = $palletDetails['length'] ?? 0;
-                    $width = $palletDetails['width'] ?? 0;
-                    $height = $palletDetails['height'] ?? 0;
+                    $length = $palletDetails['size_x_cm'] ?? 0;
+                    $width = $palletDetails['size_y_cm'] ?? 0;
+                    $height = $palletDetails['size_z_cm'] ?? 0;
                     $price = $this->calculatePalletPrice($weight, $length, $width, $height);
 
                     // Check for document category
@@ -717,9 +773,9 @@ class OrderController extends Controller
 
             // Get weight and dimensions from pallet
             $weight = $pallet['weight'] ?? 0; // Assuming weight is stored in kg
-            $length = $pallet['length'] ?? 0; // Assuming dimensions are in cm
-            $width = $pallet['width'] ?? 0;
-            $height = $pallet['height'] ?? 0;
+            $length = $pallet['size_x_cm'] ?? 0; // Assuming dimensions are in cm
+            $width = $pallet['size_y_cm'] ?? 0;
+            $height = $pallet['size_z_cm'] ?? 0;
 
             // Calculate price based on weight/dimensions
             $itemPrice = $this->calculatePalletPrice($weight, $length, $width, $height);
