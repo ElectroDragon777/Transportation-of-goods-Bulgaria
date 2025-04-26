@@ -239,21 +239,10 @@
                                 </div> -->
                                 <div id="parcelRows">
                                     <div class="row align-items-end mb-3 parcel-row">
-                                        <div class="col-md-12">
-                                            <label for="parcelIds" class="form-label">Parcels</label>
-                                            <select name="parcel_id[]" id="parcelIds" class="form-select" required>
-                                                <option value="">---</option>
-                                                <?php
-                                                foreach ($tpl['pallets'] as $item) {
-                                                    echo "<option value=\"{$item['id']}\" data-max-quantity=\"{$item['stock']}\">{$item['name']}</option>";
-                                                }
-                                                ?>
-                                            </select>
-                                        </div>
                                         <div class="col-md-6" id="parcelRows">
                                             <div class="row align-items-end mb-3 parcel-row">
                                                 <div class="col-md-8">
-                                                    <label for="parcelIds" class="form-label">Packet</label>
+                                                    <label for="parcelIds" class="form-label">Parcel</label>
                                                     <select name="parcel_id[]" id="parcelIds" class="form-select"
                                                         required>
                                                         <option value="">---</option>

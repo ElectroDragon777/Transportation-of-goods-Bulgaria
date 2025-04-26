@@ -20,7 +20,7 @@ class Pallet extends Model
         array('name' => 'size_y_cm', 'type' => 'int', 'default' => ':NULL'), // Width
         array('name' => 'size_z_cm', 'type' => 'int', 'default' => ':NULL'), // Height
         array('name' => 'weight_kg', 'type' => 'decimal', 'default' => ':NULL'),
-        array('name' => 'code_billlanding', 'type' => 'int', 'default' => '0000000000'), // 10-digit code
+        // array('name' => 'code_billlanding', 'type' => 'int', 'default' => '0000000000'), // 10-digit code
         array('name' => 'created_at', 'type' => 'timestamp', 'default' => 'CURRENT_TIMESTAMP')
     );
 }

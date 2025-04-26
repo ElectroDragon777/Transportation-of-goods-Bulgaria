@@ -564,13 +564,44 @@ class OrderController extends Controller
             }
 
             if (!$quantityError) {
-                $priceDetails = $this->calculateOrderTotal(array_keys($newQuantities), array_values($newQuantities));
+                // Calculate the total amount using the new pricing method
+                $total = 0;
+                $cashOnDelivery = isset($_POST['cash_on_delivery']) && $_POST['cash_on_delivery'] == '1';
+                $codFee = 0;
+
+                foreach ($newQuantities as $palletId => $quantity) {
+                    $pallet = $palletData[$palletId] ?? $palletModel->get($palletId);
+
+                    // Get weight and dimensions from pallet
+                    $weight = $pallet['weight'] ?? 0;
+                    $length = $pallet['length'] ?? 0;
+                    $width = $pallet['width'] ?? 0;
+                    $height = $pallet['height'] ?? 0;
+
+                    // Calculate price based on weight/dimensions
+                    $itemPrice = $this->calculatePalletPrice($weight, $length, $width, $height);
+
+                    // For document category, quantity is always 1
+                    if ($pallet['category'] === 'document') {
+                        $quantity = 1;
+                    }
+
+                    // Calculate total for this item
+                    $itemTotal = $itemPrice * $quantity;
+                    $total += $itemTotal;
+                }
+
+                if ($cashOnDelivery) {
+                    $codFee = $total * 0.015; // 1.5% of total amount
+                    $total += $codFee;
+                }
 
                 $orderData = [
                     'last_processed' => time(),
                     'tracking_number' => $order['tracking_number'],
                     'delivery_date' => strtotime($_POST['delivery_date']),
-                    'total_amount' => $priceDetails['total']
+                    'total_amount' => $total,
+                    'cash_on_delivery' => $cashOnDelivery ? 1 : 0
                 ];
 
                 if (!$orderModel->update(['id' => $orderId] + $orderData + $_POST)) {
@@ -584,13 +615,26 @@ class OrderController extends Controller
                     $palletId = $orderpallet['pallet_id'];
                     $quantity = $orderpallet['quantity'];
                     $palletDetails = $palletData[$palletId] ?? $palletModel->get($palletId);
-                    $subtotal = $palletDetails['price'] * $quantity;
+
+                    // Calculate price based on dimensions and weight
+                    $weight = $palletDetails['weight'] ?? 0;
+                    $length = $palletDetails['length'] ?? 0;
+                    $width = $palletDetails['width'] ?? 0;
+                    $height = $palletDetails['height'] ?? 0;
+                    $price = $this->calculatePalletPrice($weight, $length, $width, $height);
+
+                    // Check for document category
+                    if ($palletDetails['category'] === 'document') {
+                        $quantity = 1;
+                    }
+
+                    $subtotal = $price * $quantity;
 
                     $OrderPalletsModel->save([
                         'order_id' => $orderId,
                         'pallet_id' => $palletId,
                         'quantity' => $quantity,
-                        'price' => $palletDetails['price'],
+                        'price' => $price,
                         'subtotal' => $subtotal
                     ]);
                 }
@@ -663,32 +707,97 @@ class OrderController extends Controller
 
     function calculatePrice()
     {
-        $price_arr = $this->calculateOrderTotal($_POST['pallet_id'], $_POST['quantity']);
-        header('Content-Type: application/json');
-
-        echo json_encode($price_arr);
-    }
-
-    private function calculateOrderTotal(array $palletIds, array $quantities): array
-    {
         $palletModel = new \App\Models\Pallet();
-        $palletPrice = 0;
+        $total = 0;
+        $items = [];
 
-        foreach ($palletIds as $key => $palletId) {
+        foreach ($_POST['pallet_id'] as $key => $palletId) {
             $pallet = $palletModel->get($palletId);
-            $palletPrice += $pallet['price'] * $quantities[$key];
+            $quantity = $_POST['quantity'][$key];
+
+            // Get weight and dimensions from pallet
+            $weight = $pallet['weight'] ?? 0; // Assuming weight is stored in kg
+            $length = $pallet['length'] ?? 0; // Assuming dimensions are in cm
+            $width = $pallet['width'] ?? 0;
+            $height = $pallet['height'] ?? 0;
+
+            // Calculate price based on weight/dimensions
+            $itemPrice = $this->calculatePalletPrice($weight, $length, $width, $height);
+
+            // For document category, quantity is always 1
+            if ($pallet['category'] === 'document') {
+                $quantity = 1;
+            }
+
+            // Calculate total for this item
+            $itemTotal = $itemPrice * $quantity;
+            $total += $itemTotal;
+
+            $items[] = [
+                'name' => $pallet['name'],
+                'price' => number_format($itemPrice, 2),
+                'quantity' => $quantity,
+                'subtotal' => number_format($itemTotal, 2)
+            ];
         }
 
-        $shippingPrice = ($palletPrice * $this->settings['shipping_rate']) / 100;
-        $tax = ($palletPrice * $this->settings['tax_rate']) / 100;
-        $total = $palletPrice + $tax + $shippingPrice;
+        // Check if cash on delivery is selected
+        $cashOnDelivery = isset($_POST['cash_on_delivery']) && $_POST['cash_on_delivery'] == '1';
+        $codFee = 0;
 
-        return [
-            'pallet_price' => number_format($palletPrice, 2),
-            'shipping_price' => number_format($shippingPrice, 2),
-            'tax' => number_format($tax, 2),
+        if ($cashOnDelivery) {
+            $codFee = $total * 0.015; // 1.5% of total amount
+            $total += $codFee;
+        }
+
+        $response = [
+            'pallet_price' => number_format($total - $codFee, 2),
+            'cod_fee' => number_format($codFee, 2),
             'total' => number_format($total, 2),
+            'items' => $items
         ];
+
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
+
+    /**
+     * Calculate price for a pallet based on weight and dimensions
+     */
+    private function calculatePalletPrice($weight, $length, $width, $height)
+    {
+        // Check if this is a large dimension package
+        $maxDimension = max($length, $width, $height);
+        $minDimension = min($length, $width, $height);
+
+        if ($length > 80 || $width > 120 || $height > 90) {
+            // Large dimension calculation
+            $k = ($maxDimension / 100) * ($minDimension / 100) / 0.96; // Convert cm to meters
+
+            if ($weight <= 15) {
+                return $k * 150;
+            } else {
+                return 2 * $k * 150;
+            }
+        }
+
+        // Regular pricing based on weight
+        if ($weight <= 3) {
+            return 10;
+        } elseif ($weight <= 6) {
+            return 15;
+        } elseif ($weight <= 10) {
+            return 20;
+        } elseif ($weight <= 20) {
+            return 35;
+        } elseif ($weight <= 50) {
+            $extraKg = max(0, $weight - 20);
+            return 35 + ($extraKg * 1);
+        } else {
+            // Over 50kg
+            $extraKg = max(0, $weight - 50);
+            return 30 + ($extraKg * 0.9);
+        }
     }
 
     function export()

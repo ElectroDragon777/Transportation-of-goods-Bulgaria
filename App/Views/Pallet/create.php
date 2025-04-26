@@ -25,8 +25,8 @@
                                 </div>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="category" id="typePallet"
-                                        value="pallet">
-                                    <label class="form-check-label" for="typePallet">Packet</label>
+                                        value="parcel" required>
+                                    <label class="form-check-label" for="typePallet">Parcel</label>
                                 </div>
                             </div>
                         </div>
@@ -96,7 +96,7 @@
 
                         <div class="row">
                             <div class="col-12">
-                                <button type="submit" class="btn btn-primary text-white me-0">Create Pallet</button>
+                                <button type="submit" class="btn btn-primary text-white me-0">Create Parcel</button>
                                 <a href="<?php echo $_SERVER['HTTP_REFERER']; ?>"
                                     class="btn btn-outline-dark">Cancel</a>
                             </div>
@@ -199,7 +199,7 @@
                 // NameInput.disabled = true;
                 NameInput.value = 'Documents'; // Default name for documents
             } else {
-                // Packet is selected
+                // Parcel is selected
                 weightInput.disabled = false;
                 sizeXInput.disabled = false;
                 sizeYInput.disabled = false;
