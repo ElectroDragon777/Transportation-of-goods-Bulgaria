@@ -69,4 +69,7 @@ Currency bug is fixed. To add - Start/End points and their choices (address (pos
 ==== April 23rd 2025 ====
 No Postal codes. Focus on Address conversion. And the DBs.
 
+==== April 27th 2025 ====
+Orders almost reworked. Struggling still. But better in terms of understanding!
+
 ------------ End of current logs ------------
