@@ -46,9 +46,6 @@ class OrderController extends Controller
             if (!empty($_POST['trackingNumber'])) {
                 $opts["tracking_number LIKE '%" . $_POST['trackingNumber'] . "%' AND 1 "] = "1";
             }
-            if (!empty($_POST['region'])) {
-                $opts["region LIKE '%" . $_POST['region'] . "%' AND 1 "] = "1";
-            }
             if (!empty($_POST['orderDateFrom'])) {
                 $opts["delivery_date >= '" . strtotime($_POST['orderDateFrom']) . "'"] = "1";
             }
@@ -767,7 +764,18 @@ class OrderController extends Controller
         $total = 0;
         $items = [];
 
-        foreach ($_POST['pallet_id'] as $key => $palletId) {
+        // Check if any products are selected
+        if (empty($_POST['parcel_id'])) {
+            $response = [
+                'error' => 'Please select at least one product before calculating the price.'
+            ];
+
+            header('Content-Type: application/json');
+            echo json_encode($response);
+            return;
+        }
+
+        foreach ($_POST['parcel_id'] as $key => $palletId) {
             $pallet = $palletModel->get($palletId);
             $quantity = $_POST['quantity'][$key];
 
@@ -807,7 +815,7 @@ class OrderController extends Controller
         }
 
         $response = [
-            'pallet_price' => number_format($total - $codFee, 2),
+            'product_price' => number_format($total - $codFee, 2),
             'cod_fee' => number_format($codFee, 2),
             'total' => number_format($total, 2),
             'items' => $items
@@ -826,7 +834,10 @@ class OrderController extends Controller
         $maxDimension = max($length, $width, $height);
         $minDimension = min($length, $width, $height);
 
-        if ($length > 80 || $width > 120 || $height > 90) {
+        $volume = $length * $width * $height; // Volume in cm^3
+        $minDimensionforPallets = 80 * 120 * 90; // Minimum volume for large pallets in cm^3
+
+        if ($volume >= $minDimensionforPallets) {
             // Large dimension calculation
             $k = ($maxDimension / 100) * ($minDimension / 100) / 0.96; // Convert cm to meters
 
@@ -835,24 +846,24 @@ class OrderController extends Controller
             } else {
                 return 2 * $k * 150;
             }
-        }
-
-        // Regular pricing based on weight
-        if ($weight <= 3) {
-            return 10;
-        } elseif ($weight <= 6) {
-            return 15;
-        } elseif ($weight <= 10) {
-            return 20;
-        } elseif ($weight <= 20) {
-            return 35;
-        } elseif ($weight <= 50) {
-            $extraKg = max(0, $weight - 20);
-            return 35 + ($extraKg * 1);
         } else {
-            // Over 50kg
-            $extraKg = max(0, $weight - 50);
-            return 30 + ($extraKg * 0.9);
+            // Regular pricing based on weight
+            if ($weight <= 3) {
+                return 10;
+            } elseif ($weight <= 6) {
+                return 15;
+            } elseif ($weight <= 10) {
+                return 20;
+            } elseif ($weight <= 20) {
+                return 35;
+            } elseif ($weight <= 50) {
+                $extraKg = max(0, $weight - 20);
+                return 35 + ($extraKg * 1);
+            } else {
+                // Over 50kg
+                $extraKg = max(0, $weight - 50);
+                return 30 + ($extraKg * 0.9);
+            }
         }
     }
 
@@ -931,8 +942,8 @@ class OrderController extends Controller
             'courier_name' => 'Courier',
             'delivery_date' => 'Delivery Date',
             'formatted_total' => 'Total Price',
-            'address' => 'Address',
-            'region' => 'Region',
+            'start_point' => 'Start Point',
+            'end_destination' => 'End Destination',
             'status_text' => 'Status'
         ];
 
@@ -1194,5 +1205,66 @@ class OrderController extends Controller
         </html>
         <?php
         return ob_get_clean();
+    }
+    public function checkDeliveryTime()
+    {
+        // Get closing time from settings
+        $closingTime = isset($this->settings['closing_time']) ? $this->settings['closing_time'] : '17:00';
+        list($closingHour, $closingMinute) = explode(':', $closingTime);
+
+        // Get the desired date format from template settings
+        $dateFormat = isset($this->settings['date_format']) ? $this->settings['date_format'] : 'Y-m-d';
+
+        // Handle both direct page loading and POST requests - use today's date by default
+        $today = date('Y-m-d'); // Today's date in Y-m-d format
+        $selectedDate = isset($_POST['selected_date']) ? $_POST['selected_date'] : $today;
+        $currentTime = isset($_POST['current_time']) ? $_POST['current_time'] : date('H:i');
+
+        // Create DateTime objects for proper time manipulation
+        $currentDateTime = new \DateTime("$selectedDate $currentTime");
+        $closingDateTime = new \DateTime("$selectedDate $closingTime");
+
+        // Estimated delivery time in minutes
+        $deliveryTimeMinutes = isset($_POST['delivery_time']) ? intval($_POST['delivery_time']) : 0; // Default none
+
+        // Calculate estimated delivery completion time
+        $estimatedCompletionDateTime = clone $currentDateTime;
+        $estimatedCompletionDateTime->modify("+$deliveryTimeMinutes minutes");
+
+        // Format the estimated delivery time for display
+        $estimatedDeliveryTime = $estimatedCompletionDateTime->format('H:i');
+
+        // Use today's date as the estimated delivery date for HTML input
+        // This will ensure the 27th is shown initially instead of the 28th
+        $estimatedDeliveryDateHtml = $today;
+
+        // Format the date according to the template setting
+        $estimatedDeliveryDateFormatted = (new \DateTime($today))->format($dateFormat);
+
+        // Check if we can deliver before closing time
+        $canDeliver = $estimatedCompletionDateTime <= $closingDateTime;
+
+        // If we can't deliver today, we'll suggest tomorrow
+        if (!$canDeliver && $selectedDate === $today) {
+            // Calculate tomorrow's date
+            $tomorrow = new \DateTime('tomorrow');
+            $estimatedDeliveryDateHtml = $tomorrow->format('Y-m-d');
+            $estimatedDeliveryDateFormatted = $tomorrow->format($dateFormat);
+        }
+
+        // Return result as JSON
+        header('Content-Type: application/json');
+        echo json_encode([
+            'canDeliver' => $canDeliver,
+            'closingTime' => $closingTime,
+            'estimatedDeliveryTime' => $estimatedDeliveryTime,
+            'estimatedDeliveryDateHtml' => $estimatedDeliveryDateHtml,
+            'estimatedDeliveryDateFormatted' => $estimatedDeliveryDateFormatted,
+            'currentDateTime' => $currentDateTime->format('Y-m-d H:i'),
+            'crossesMidnight' => $selectedDate !== $estimatedDeliveryDateHtml,
+            'dateFormat' => $dateFormat,
+            'today' => $today // Include today's date for reference
+        ]);
+        exit;
     }
 }

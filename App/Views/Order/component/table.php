@@ -16,8 +16,8 @@
             <th>Courier</th>
             <th>Delivery Date</th>
             <th>Total Price</th>
-            <th>Address</th>
-            <th>Region</th>
+            <th>Start Point</th>
+            <th>End Destination</th>
             <th>Status</th>
             <th style="text-align: right;">Actions</th>
         </tr>
@@ -41,8 +41,8 @@
                 <td><?php echo htmlspecialchars($order['courier_name']); ?></td>
                 <td><?php echo htmlspecialchars($order['delivery_date']); ?></td>
                 <td><?php echo Utility::getDisplayableAmount(htmlspecialchars($order['total_amount'])); ?></td>
-                <td><?php echo htmlspecialchars($order['address']); ?></td>
-                <td><?php echo htmlspecialchars($order['region']); ?></td>
+                <td><?php echo htmlspecialchars($order['start_point']); ?></td>
+                <td><?php echo htmlspecialchars($order['end_destination']); ?></td>
                 <td><?php
                 foreach (Utility::$order_status as $k => $v) {
                     if ($k == $order['status']) {

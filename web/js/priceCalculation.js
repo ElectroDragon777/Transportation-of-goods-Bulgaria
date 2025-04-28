@@ -10,10 +10,13 @@
                 dataType: "json",
                 data: frm.serialize(),
                 success: function (data) {
-                    $("#productPrice").val(data.product_price || '');
-                    $("#shippingPrice").val(data.shipping_price || '');
-                    $("#totalPrice").val(data.total || '');
-                    $("#tax").val(data.tax || '');
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        $("#productPrice").val(data.product_price || '0.00');
+                        $("#totalPrice").val(data.total || '0.00');
+                        updateTotalPrice(); // Update total price based on payment method
+                    }
                 }
             });
         });

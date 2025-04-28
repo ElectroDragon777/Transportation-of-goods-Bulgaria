@@ -12,8 +12,8 @@ class Order extends Model
     var $schema = array(
         array('name' => 'id', 'type' => 'int', 'default' => ':NULL'),
         array('name' => 'user_id', 'type' => 'int', 'default' => ':NULL'),
-        array('name' => 'address', 'type' => 'varchar', 'default' => ''),
-        array('name' => 'region', 'type' => 'varchar', 'default' => ''),
+        array('name' => 'start_point', 'type' => 'varchar', 'default' => ''),
+        array('name' => 'end_destination', 'type' => 'varchar', 'default' => ''),
         array('name' => 'status', 'type' => 'varchar', 'default' => ''),
         array('name' => 'product_price', 'type' => 'decimal', 'default' => ':NULL'),
         array('name' => 'total_amount', 'type' => 'decimal', 'default' => ':NULL'),

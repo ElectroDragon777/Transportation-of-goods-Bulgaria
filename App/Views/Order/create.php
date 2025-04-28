@@ -28,28 +28,14 @@
                         <input type="hidden" name="send" value="1" />
                         <div class="row">
                             <div class="col-md-6">
+                                <!-- Replace Customer Dropdown with Current User Info -->
                                 <div class="mb-3">
-                                    <label for="customer" class="form-label">Customer</label>
-                                    <select name="user_id" id="userId" class="form-select" required>
-                                        <option value=''>---</option>
-                                        <?php
-                                        foreach ($tpl['users'] as $user) {
-                                            echo "<option value=\"{$user['id']}\" 
-                                                data-address=\"" . htmlspecialchars($user['address']) . "\" 
-                                                data-region=\"" . htmlspecialchars($user['region']) . "\">
-                                                {$user['name']}</option>";
-                                        }
-                                        ?>
-                                        <!-- Not required -->
-                                        <!-- <?php
-                                        foreach ($tpl['users'] as $user) {
-                                            echo "<option value=\"{$user['id']}\" 
-                                                data-address=\"" . htmlspecialchars($user['address']) . "\" 
-                                                data-region=\"" . htmlspecialchars($user['region']) . "\">
-                                                {$user['name']}</option>";
-                                        }
-                                        ?> -->
-                                    </select>
+                                    <label class="form-label">Customer</label>
+                                    <p class="form-control-static">
+                                        Ordering as: <strong><?php echo $_SESSION['user']['name']; ?></strong>
+                                        <input type="hidden" name="user_id"
+                                            value="<?php echo $_SESSION['user']['id']; ?>">
+                                    </p>
                                 </div>
                                 <div class="mb-3">
                                     <label for="courierId" class="form-label">Courier</label>
@@ -64,8 +50,9 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="deliveryDate" class="form-label">Date of Delivery</label>
-                                    <input type="date" class="form-control" id="deliveryDate" name="delivery_date"
-                                        value="">
+                                    <input type="text" class="form-control" id="deliveryDate" name="delivery_date"
+                                        autocomplete="off">
+                                    <span id="dynamic-late-note-2"></span>
                                 </div>
                             </div>
                             <div id="orderCreationForm" action="process_order.php" method="post">
@@ -187,8 +174,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- Right Column -->
-                            <div class="col-md-6">
+                            <!-- Payment Column -->
+                            <div class="col-md-12">
+                                <!-- Unneeded. -->
                                 <div class="mb-3">
                                     <label for="productPrice" class="form-label">Product Price</label>
                                     <div class="input-group">
@@ -197,123 +185,172 @@
                                             readonly>
                                     </div>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="tax" class="form-label">Tax</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><?php echo $tpl['currency']; ?></span>
-                                        <input type="text" class="form-control" id="tax" name="tax" required readonly>
+
+                                <!-- Payment Method Styling Enhancements -->
+                                <div class="payment-methods card mb-4">
+                                    <div class="mb-6">
+                                        <div class="card-header bg-warning text-white">
+                                            <h5>Payment Method</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="payment_method"
+                                                    id="paymentOnline" value="online" checked>
+                                                <label class="form-check-label" for="paymentOnline">
+                                                    Online Payment (PayPal)
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="payment_method"
+                                                    id="paymentCash" value="cash">
+                                                <label class="form-check-label" for="paymentCash">
+                                                    Cash on Delivery (+1.5% fee)
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <!-- <label for=" paymentMethod" class="form-label">Payment Method</label>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="payment_method"
+                                                        id="paymentOnline" value="online" checked>
+                                                    <label class="form-check-label" for="paymentOnline">
+                                                        Online Payment (PayPal)
+                                                    </label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="payment_method"
+                                                        id="paymentCash" value="cash">
+                                                    <label class="form-check-label" for="paymentCash">
+                                                        Cash on Delivery (+1.5% fee)
+                                                    </label>
+                                                </div> -->
                                     </div>
                                 </div>
 
-                                <!-- Unneeded. -->
                                 <!-- <div class="mb-3">
-                                    <label for="shippingPrice" class="form-label">Shipping Price</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"></* ?php echo $tpl['currency']; */ ?></span>
-                                        <input type="text" class="form-control" id="shippingPrice"  name="shipping_price" required readonly>
-                                    </div>
-                                </div>  -->
-
-                                <div class="mb-3">
-                                    <label for="totalPrice" class="form-label">Total Price</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><?php echo $tpl['currency']; ?></span>
-                                        <input type="text" class="form-control" id="totalPrice" name="total_price"
-                                            readonly>
-                                    </div>
-                                </div>
+                                                    <label for="totalPrice" class="form-label">Total Price</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-text"><.*?php echo $tpl['currency']; ?^.></span>
+                                                        <input type="text" class="form-control" id="totalPrice" name="total_price" readonly>
+                                                    </div>
+                                                </div> -->
 
                                 <!-- Admins set orders to started or pending automatically, depending on delivery date. Write code later. -->
                                 <!-- <div class="mb-3">
-                                    <label for="status" class="form-label">Order Status</label>
-                                    <select class="form-select" id="status" name="status" required>
-                                        <option value=''>---</option>
-                                        </*?php
-                                        foreach (Utility::$order_status as $k => $v) {
-                                            ?>
-                                            <option value="</*?php echo $k; ?>"></*?php echo $v; */?></option>
-                                            </*?php
-                                        }
-                                        */?>
-                                    </select>
-                                </div> -->
+                                                                                <label for="status" class="form-label">Order Status</label>
+                                                                                <select class="form-select" id="status" name="status" required>
+                                                                                    <option value=''>---</option>
+                                                                                    </*?php
+                                                                                    foreach (Utility::$order_status as $k => $v) {
+                                                                                        ?>
+                                                                                        <option value="</*?php echo $k; ?>"></*?php echo $v; */?></option>
+                                                                                        </*?php
+                                                                                    }
+                                                                                    */?>
+                                                                                </select>
+                                                                            </div> -->
+
+                                <!--  Parcel Selection -->
                                 <div id="parcelRows">
-                                    <div class="row align-items-end mb-3 parcel-row">
-                                        <div class="col-md-6" id="parcelRows">
+                                    <div class="row align-items-end mb-12 parcel-row">
+                                        <div class="col-md-12" id="parcelRows">
                                             <div class="row align-items-end mb-3 parcel-row">
-                                                <div class="col-md-8">
+                                                <div class="col-md-6">
                                                     <label for="parcelIds" class="form-label">Parcel</label>
                                                     <select name="parcel_id[]" id="parcelIds" class="form-select"
                                                         required>
                                                         <option value="">---</option>
-                                                        <?php foreach ($tpl['pallets'] as $item) { ?>
-                                                            <option value="<?php echo $item['id']; ?>"
-                                                                data-max-quantity="<?php echo $item['stock']; ?>">
-                                                                <?php echo htmlspecialchars($item['name']); ?>
-                                                            </option>
-                                                        <?php } ?>
+                                                        <?php
+                                                        foreach ($tpl['pallets'] as $item) {
+                                                            // Only show products with stock greater than zero
+                                                            if ($item['stock'] > 0) {
+                                                                ?>
+                                                                <option value="<?php echo $item['id']; ?>"
+                                                                    data-max-quantity="<?php echo $item['stock']; ?>">
+                                                                    <?php echo htmlspecialchars($item['name']); ?>
+                                                                    (Available:
+                                                                    <?php echo $item['stock']; ?>)
+                                                                </option>
+                                                                <?php
+                                                            }
+                                                        }
+                                                        ?>
                                                     </select>
+                                                    <div class="invalid-feedback">Please select a product with
+                                                        available
+                                                        stock.</div>
                                                 </div>
-                                                <div class="col-md-4">
+                                                <div class="col-md-6">
                                                     <label for="quantities" class="form-label">Quantity</label>
                                                     <input type="number" step="1" min="1" class="form-control"
                                                         id="quantities" name="quantity[]" required>
+                                                    <div class="invalid-feedback">Please enter a valid quantity
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <!-- Not a plan yet, but can be enhanced for pallets vvv -->
-                                        <!-- <div class="col-md-4">
+                                            <!-- Not a plan yet, but can be enhanced for pallets vvv -->
+                                            <!-- <div class="col-md-4">
                                             <label for="quantities" class="form-label">Quantity</label>
                                             <input type="number" step="1" min="1" class="form-control" id="quantities"
                                                    name="quantity[]" required>
                                         </div> -->
 
-                                        <!-- <div class="col-md-1 text-center d-flex justify-content-center align-items-center">
+                                            <!-- <div class="col-md-1 text-center d-flex justify-content-center align-items-center">
                                             <button type="button" class="btn btn-light d-flex justify-content-center align-items-center rounded-circle add-row" style="width: 36px; height: 36px;">+</button>
                                         </div> -->
-                                        <!-- Not a plan yet, but can be enhanced for pallets ^^^ -->
+                                            <!-- Not a plan yet, but can be enhanced for pallets ^^^ -->
+                                        </div>
                                     </div>
-                                </div>
 
-                                <!-- Time of Delivery -->
-                                <div class="mb-3">
-                                    <label for="timeOfDelivery" class="form-label">Time of Delivery: <span
-                                            id="currentTimeLabel"></span></label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="mdi mdi-clock text-primary"></i></span>
-                                        <input type="text" class="form-control" id="timeOfDelivery"
-                                            name="time_of_delivery" readonly autocomplete="off">
+                                    <!-- Time of Delivery -->
+                                    <div class="mb-3">
+                                        <label for="timeOfDelivery" class="form-label">Time of Delivery: <span
+                                                id="currentTimeLabel"></span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i
+                                                    class="mdi mdi-clock text-primary"></i></span>
+                                            <input type="text" class="form-control" id="timeOfDelivery"
+                                                name="time_of_delivery" readonly autocomplete="off">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div>
-                            <p class="text-muted mt-3">
-                                <strong>Please note:</strong><br>
-                                <span class="note-indicator"></span>
-                                If delivery is far from current date (04/08/2025), e.g., in 7 days, we will notify via
-                                email and in-site messages 3 days prior that your delivery will be processed soon. On
-                                the day of the delivery, we will notify again that the palette is on its way.
-                                <br>
-                                <span class="note-indicator"></span>
-                                If you see your time differing from the order delivery time, it is that you are making
-                                it out of working hours.
-                                <span id="dynamic-late-note"></span>
-                                <br>
-                                <strong>Reminder:</strong> You can keep track of couriers if you feel anxious (for just
-                                curious), via the map tracking!
-                            </p>
-                        </div>
-                        <!-- Reminder for paragraph, add link once map tracking is done. ^^^  -->
-                        <div class="row">
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-primary text-white me-0">Create Order</button>
-                                <a href="javascript:" id="calculate-price-btn-id"
-                                    class="btn btn-primary text-white me-0">Calculate Price</a>
-                                <a href="<?php echo $_SERVER['HTTP_REFERER']; ?>"
-                                    class="btn btn-outline-dark">Cancel</a>
+                            <div>
+                                <p class="text-muted mt-3">
+                                    <strong>Please note:</strong><br>
+                                    <span class="note-indicator"></span>
+                                    If delivery is far from current date
+                                    (<?php echo date($tpl['date_format']) ?>), e.g., in 7 days, we will
+                                    notify via
+                                    email and in-site messages 3 days prior that your delivery will be processed
+                                    soon.
+                                    On
+                                    the day of the delivery, we will notify again that the palette is on its
+                                    way.
+                                    <br>
+                                    <span class="note-indicator"></span>
+                                    If you see your time differing from the order delivery time, it is that you
+                                    are
+                                    making
+                                    it out of working hours.
+                                    <span id="dynamic-late-note"></span>
+                                    <br>
+                                    <strong>Reminder:</strong> You can keep track of couriers if you feel
+                                    anxious (for
+                                    just
+                                    curious), via the map tracking!
+                                </p>
                             </div>
-                        </div>
+                            <!-- Reminder for paragraph, add link once map tracking is done. ^^^  -->
+                            <div class="row">
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary text-white me-0">Create
+                                        Order</button>
+                                    <a href="javascript:" id="calculate-price-btn-id"
+                                        class="btn btn-primary text-white me-0">Calculate Price</a>
+                                    <a href="<?php echo $_SERVER['HTTP_REFERER']; ?>"
+                                        class="btn btn-outline-dark">Cancel</a>
+                                </div>
+                            </div>
                     </form>
                 </div>
             </div>
@@ -966,3 +1003,608 @@
         z-index: 1000 !important;
     }
 </style>
+
+<!-- Payment -->
+<script>
+    // Payment method handling
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get payment method radio buttons
+        const paymentOnline = document.getElementById('paymentOnline');
+        const paymentCash = document.getElementById('paymentCash');
+
+        // Add event listeners to payment method radios
+        if (paymentOnline && paymentCash) {
+            paymentOnline.addEventListener('change', updateTotalPrice);
+            paymentCash.addEventListener('change', updateTotalPrice);
+        }
+
+        // Get the form and add submit event listener
+        const orderForm = document.getElementById('booking-frm-id');
+        if (orderForm) {
+            orderForm.addEventListener('submit', handleFormSubmit);
+        }
+
+        // Set up the calculate price button
+        const calculatePriceBtn = document.getElementById('calculate-price-btn-id');
+        if (calculatePriceBtn) {
+            calculatePriceBtn.addEventListener('click', calculatePrice);
+        }
+    });
+
+    // Function to update total price based on payment method
+    function updateTotalPrice() {
+        const productPrice = parseFloat(document.getElementById('productPrice').value) || 0;
+        const cashSelected = document.getElementById('paymentCash').checked;
+
+        let totalPrice = productPrice;
+
+        // Add 1.5% fee if cash payment is selected
+        if (cashSelected) {
+            totalPrice = productPrice * 1.015;
+        }
+
+        // Update total price field
+        document.getElementById('totalPrice').value = totalPrice.toFixed(2);
+    }
+
+    // Price calculation function (call this from your existing calculate price functionality)
+    // function calculatePrice() {
+    //     // Check if any products are selected
+    //     const parcelSelects = document.querySelectorAll('select[name="parcel_id[]"]');
+    //     let anyProductSelected = false;
+
+    //     parcelSelects.forEach(select => {
+    //         if (select.value !== '') {
+    //             anyProductSelected = true;
+    //         }
+    //     });
+
+    //     if (!anyProductSelected) {
+    //         alert('Please select at least one product before calculating the price.');
+    //         return;
+    //     }
+
+    //     // This is where you would implement your price calculation logic
+    //     var calculatedPrice;
+
+    //     // Set the product price
+    //     document.getElementById('productPrice').value = calculatedPrice.toFixed(2);
+
+    //     // Update the total price based on payment method
+    //     updateTotalPrice();
+    // }
+
+
+    // Handle form submission
+    function handleFormSubmit(event) {
+        event.preventDefault();
+
+        // Perform form validation (you can add your own validation logic here)
+        if (!validateOrderForm()) {
+            return;
+        }
+
+        // Check which payment method is selected
+        const isOnlinePayment = document.getElementById('paymentOnline').checked;
+
+        if (isOnlinePayment) {
+            // Show online payment popup
+            showPaymentPopup();
+        } else {
+            // Show cash confirmation popup
+            showCashConfirmationPopup();
+        }
+    }
+
+    // Validate the order form
+    function validateOrderForm() {
+        // Add your validation logic here
+        // Return false if validation fails
+        return true;
+    }
+
+    // Show online payment popup
+    function showPaymentPopup() {
+        // Create the payment popup overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'payment-overlay';
+
+        // Create popup content
+        const popup = document.createElement('div');
+        popup.className = 'payment-popup';
+        popup.innerHTML = `
+        <div class="payment-popup-header">
+            <h3>Online Payment</h3>
+            <button type="button" class="close-popup">&times;</button>
+        </div>
+        <div class="payment-popup-body">
+            <div class="mb-3">
+                <label for="cardNumber" class="form-label">Card Number</label>
+                <input type="text" class="form-control" id="cardNumber" placeholder="1234 5678 9012 3456">
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="expDate" class="form-label">Expiration Date</label>
+                    <input type="text" class="form-control" id="expDate" placeholder="MM/YY">
+                </div>
+                <div class="col-md-6">
+                    <label for="cvv" class="form-label">CVV</label>
+                    <input type="text" class="form-control" id="cvv" placeholder="123">
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="cardName" class="form-label">Cardholder Name</label>
+                <input type="text" class="form-control" id="cardName" placeholder="John Doe">
+            </div>
+            <div class="payment-amount">
+                <strong>Total Amount: </strong>
+                <span>${document.getElementById('totalPrice').value} ${document.querySelector('.input-group-text').textContent}</span>
+            </div>
+        </div>
+        <div class="payment-popup-footer">
+            <button type="button" class="btn btn-secondary cancel-payment">Cancel</button>
+            <button type="button" class="btn btn-primary process-payment">Process Payment</button>
+        </div>
+    `;
+
+        // Add popup to overlay
+        overlay.appendChild(popup);
+
+        // Add overlay to document
+        document.body.appendChild(overlay);
+
+        // Add event listeners to buttons
+        const closeButton = overlay.querySelector('.close-popup');
+        const cancelButton = overlay.querySelector('.cancel-payment');
+        const processButton = overlay.querySelector('.process-payment');
+
+        closeButton.addEventListener('click', () => {
+            document.body.removeChild(overlay);
+        });
+
+        cancelButton.addEventListener('click', () => {
+            document.body.removeChild(overlay);
+        });
+
+        processButton.addEventListener('click', () => {
+            // Here you would normally process the payment
+            // For this example, we'll just show a success message and redirect
+            alert('Payment processed successfully!');
+            document.body.removeChild(overlay);
+
+            // Submit the form and redirect to homepage
+            const form = document.getElementById('booking-frm-id');
+            form.submit();
+            // This is where you would normally redirect to homepage after form submission
+            // window.location.href = "index.php";
+        });
+    }
+
+    // Show cash confirmation popup
+    function showCashConfirmationPopup() {
+        // Create the confirmation overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'payment-overlay';
+
+        // Create popup content
+        const popup = document.createElement('div');
+        popup.className = 'payment-popup';
+        popup.innerHTML = `
+        <div class="payment-popup-header">
+            <h3>Cash Payment Confirmation</h3>
+            <button type="button" class="close-popup">&times;</button>
+        </div>
+        <div class="payment-popup-body">
+            <p>You have selected Cash on Delivery as your payment method.</p>
+            <p>A 1.5% fee has been added to your total amount.</p>
+            <div class="payment-amount">
+                <strong>Total Amount to Pay on Delivery: </strong>
+                <span>${document.getElementById('totalPrice').value} ${document.querySelector('.input-group-text').textContent}</span>
+            </div>
+        </div>
+        <div class="payment-popup-footer">
+            <button type="button" class="btn btn-secondary cancel-payment">Cancel</button>
+            <button type="button" class="btn btn-primary confirm-order">Confirm Order</button>
+        </div>
+    `;
+
+        // Add popup to overlay
+        overlay.appendChild(popup);
+
+        // Add overlay to document
+        document.body.appendChild(overlay);
+
+        // Add event listeners to buttons
+        const closeButton = overlay.querySelector('.close-popup');
+        const cancelButton = overlay.querySelector('.cancel-payment');
+        const confirmButton = overlay.querySelector('.confirm-order');
+
+        closeButton.addEventListener('click', () => {
+            document.body.removeChild(overlay);
+        });
+
+        cancelButton.addEventListener('click', () => {
+            document.body.removeChild(overlay);
+        });
+
+        confirmButton.addEventListener('click', () => {
+            // Submit the form directly for cash payment
+            document.body.removeChild(overlay);
+
+            // Submit the form and redirect to homepage
+            const form = document.getElementById('booking-frm-id');
+            form.submit();
+            // This is where you would normally redirect to homepage after form submission
+            // window.location.href = "index.php";
+        });
+    }
+</script>
+<style>
+    /* Payment Popup Styles */
+    .payment-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+
+    .payment-popup {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        width: 100%;
+        max-width: 500px;
+        overflow: hidden;
+    }
+
+    .payment-popup-header {
+        background-color: #f8f9fa;
+        padding: 15px 20px;
+        border-bottom: 1px solid #dee2e6;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .payment-popup-header h3 {
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 500;
+    }
+
+    .close-popup {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
+    }
+
+    .payment-popup-body {
+        padding: 20px;
+    }
+
+    .payment-popup-footer {
+        padding: 15px 20px;
+        background-color: #f8f9fa;
+        border-top: 1px solid #dee2e6;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .payment-amount {
+        background-color: #f8f9fa;
+        padding: 10px 15px;
+        border-radius: 5px;
+        margin-top: 15px;
+    }
+</style>
+
+<!-- Quantity and Parcels -->
+<script>
+    // Improved quantity validation with consistent error styling
+    document.addEventListener('DOMContentLoaded', function () {
+        const parcelSelect = document.getElementById('parcelIds');
+        const quantityInput = document.getElementById('quantities');
+        const quantityContainer = quantityInput.parentElement;
+
+        // Add invalid feedback div if it doesn't exist
+        let invalidFeedback = quantityContainer.querySelector('.invalid-feedback');
+        if (!invalidFeedback) {
+            invalidFeedback = document.createElement('div');
+            invalidFeedback.className = 'invalid-feedback';
+            quantityContainer.appendChild(invalidFeedback);
+        }
+
+        // Set max quantity when product is selected
+        if (parcelSelect && quantityInput) {
+            parcelSelect.addEventListener('change', function () {
+                const selectedOption = this.options[this.selectedIndex];
+
+                // Reset validation state
+                quantityInput.classList.remove('is-invalid');
+                quantityInput.classList.remove('is-valid');
+
+                if (selectedOption && selectedOption.value !== '') {
+                    const maxQuantity = selectedOption.getAttribute('data-max-quantity');
+
+                    // Set max attribute and clear current value
+                    quantityInput.max = maxQuantity;
+                    quantityInput.value = '1'; // Default to 1
+
+                    // Add placeholder showing max available quantity
+                    quantityInput.placeholder = `Max: ${maxQuantity}`;
+
+                    // Make sure the input is no longer disabled
+                    quantityInput.disabled = false;
+                } else {
+                    // No product selected, disable quantity input
+                    quantityInput.disabled = true;
+                    quantityInput.value = '';
+                    quantityInput.placeholder = 'Select a product first!';
+                }
+            });
+
+            // Validate input on change and input events
+            quantityInput.addEventListener('input', validateQuantity);
+            quantityInput.addEventListener('change', validateQuantity);
+
+            // Initially disable quantity input until a product is selected
+            quantityInput.disabled = true;
+            quantityInput.placeholder = 'Select a product first!';
+        }
+
+        // Validation function
+        function validateQuantity() {
+            const maxQuantity = parseInt(this.max, 10);
+            const value = parseInt(this.value, 10);
+
+            // Remove previous validation state
+            this.classList.remove('is-invalid');
+            this.classList.remove('is-valid');
+
+            if (isNaN(value) || value === '') {
+                // Empty or not a number
+                this.classList.add('is-invalid');
+                invalidFeedback.textContent = 'Please enter a valid quantity';
+                return false;
+            } else if (value <= 0) {
+                // Negative or zero
+                this.classList.add('is-invalid');
+                invalidFeedback.textContent = 'Quantity must be greater than zero';
+                this.value = '';
+                return false;
+            } else if (value > maxQuantity) {
+                // Exceeds maximum
+                this.classList.add('is-invalid');
+                invalidFeedback.textContent = `Maximum available quantity is ${maxQuantity}`;
+                this.value = maxQuantity;
+                return false;
+            } else {
+                // Valid
+                this.classList.add('is-valid');
+                return true;
+            }
+        }
+
+        // Add validation to the form submission
+        const orderForm = document.getElementById('booking-frm-id');
+        if (orderForm) {
+            const originalValidateOrderForm = validateOrderForm || function () { return true; };
+
+            validateOrderForm = function () {
+                let isValid = originalValidateOrderForm();
+
+                // Check if product is selected
+                if (parcelSelect.value === '') {
+                    parcelSelect.classList.add('is-invalid');
+                    isValid = false;
+                }
+
+                // Check quantity if product is selected
+                if (parcelSelect.value !== '' && quantityInput.disabled === false) {
+                    if (!validateQuantity.call(quantityInput)) {
+                        isValid = false;
+                    }
+                }
+
+                return isValid;
+            };
+        }
+    });
+</script>
+
+<!-- Date of Delivery stuff -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get the date input element
+        const deliveryDateInput = document.getElementById('deliveryDate');
+
+        // Initialize the date picker
+        initializeDatePicker();
+
+        function initializeDatePicker() {
+            // Get today's date
+            const today = new Date();
+
+            // Fetch the delivery date information from the server
+            fetch('<?php echo INSTALL_URL; ?>?controller=Order&action=checkDeliveryTime', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'current_time=' + today.getHours() + ':' + today.getMinutes()
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Set up datepicker with the correct format
+                    $(deliveryDateInput).datepicker({
+                        format: convertPhpToDatepickerFormat(data.dateFormat || 'Y-m-d'),
+                        startDate: today,
+                        autoclose: true,
+                        todayHighlight: true
+                    }).on('changeDate', function (e) {
+                        validateDeliveryDate(e.date);
+                    });
+
+                    // Set initial date - use the date from server or default to today
+                    const initialDate = data.estimatedDeliveryDateHtml ?
+                        new Date(data.estimatedDeliveryDateHtml) :
+                        today;
+
+                    // Update the datepicker with proper date
+                    $(deliveryDateInput).datepicker('update', initialDate);
+
+                    // Set the value directly for the display format
+                    if (data.estimatedDeliveryDateFormatted) {
+                        deliveryDateInput.value = data.estimatedDeliveryDateFormatted;
+                    }
+
+                    // Check if today's delivery is possible
+                    if (!data.canDeliver) {
+                        const tomorrow = new Date();
+                        tomorrow.setDate(today.getDate() + 1);
+
+                        // Update the datepicker with tomorrow's date
+                        $(deliveryDateInput).datepicker('update', tomorrow);
+
+                        // Show notification
+                        showLateNotification();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error initializing delivery date:', error);
+                    // Fallback to today's date
+                    $(deliveryDateInput).datepicker('update', today);
+                });
+        }
+
+        function convertPhpToDatepickerFormat(phpFormat) {
+            // Map of PHP date format to Bootstrap datepicker format
+            const formatMap = {
+                'd': 'dd',    // Day of the month, 2 digits with leading zeros
+                'j': 'd',     // Day of the month without leading zeros
+                'm': 'mm',    // Month, 2 digits with leading zeros
+                'n': 'm',     // Month without leading zeros
+                'Y': 'yyyy',  // Year, 4 digits
+                'y': 'yy',    // Year, 2 digits
+                'F': 'MM',    // Month name, long
+                'M': 'M'      // Month name, short
+            };
+
+            // Simple conversion for common formats
+            const commonFormats = {
+                'd-m-Y': 'dd-mm-yyyy',
+                'Y-m-d': 'yyyy-mm-dd',
+                'm/d/Y': 'mm/dd/yyyy',
+                'd/m/Y': 'dd/mm/yyyy',
+                'Y/m/d': 'yyyy/mm/dd',
+                'M d, Y': 'M d, yyyy'
+            };
+
+            // Check if it's a common format
+            if (commonFormats[phpFormat]) {
+                return commonFormats[phpFormat];
+            }
+
+            // Otherwise, convert character by character
+            let datepickerFormat = phpFormat;
+            for (const [phpChar, pickerChar] of Object.entries(formatMap)) {
+                // Use regex with global flag to replace all occurrences
+                const regex = new RegExp(phpChar, 'g');
+                datepickerFormat = datepickerFormat.replace(regex, pickerChar);
+            }
+
+            return datepickerFormat;
+        }
+
+        function validateDeliveryDate(selectedDate) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Reset time part for proper comparison
+
+            // Format selectedDate for server
+            const formattedDate = formatDateForServer(selectedDate);
+
+            // Reset to today if past date is selected
+            if (selectedDate < today) {
+                $(deliveryDateInput).datepicker('update', today);
+                alert("You cannot select a past date. Today's date has been set.");
+                return;
+            }
+
+            // Check if current time + delivery time exceeds closing time for today's date
+            if (isSameDay(selectedDate, today)) {
+                checkTimeConstraints(formattedDate);
+            }
+        }
+
+        function formatDateForServer(date) {
+            return date.getFullYear() + '-' +
+                String(date.getMonth() + 1).padStart(2, '0') + '-' +
+                String(date.getDate()).padStart(2, '0');
+        }
+
+        function isSameDay(date1, date2) {
+            return date1.getFullYear() === date2.getFullYear() &&
+                date1.getMonth() === date2.getMonth() &&
+                date1.getDate() === date2.getDate();
+        }
+
+        function checkTimeConstraints(formattedDate) {
+            const today = new Date();
+
+            // AJAX call to check against server time constraints
+            fetch('<?php echo INSTALL_URL; ?>?controller=Order&action=checkDeliveryTime', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'selected_date=' + formattedDate + '&current_time=' + today.getHours() + ':' + today.getMinutes()
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.canDeliver) {
+                        // Set to next day if delivery not possible today
+                        const tomorrow = new Date();
+                        tomorrow.setDate(today.getDate() + 1);
+
+                        // Update the datepicker with tomorrow's date
+                        $(deliveryDateInput).datepicker('update', tomorrow);
+
+                        // Show notification
+                        showLateNotification();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking delivery time:', error);
+                });
+        }
+
+        function showLateNotification() {
+            const noteElement = document.getElementById('dynamic-late-note-2');
+            if (noteElement) {
+                noteElement.textContent = " It's too late for delivery today. Your order has been scheduled for tomorrow.";
+                noteElement.style.color = "#dc3545";
+
+                // Fade out the notification after 5 seconds
+                setTimeout(() => {
+                    noteElement.style.transition = "opacity 1s";
+                    noteElement.style.opacity = 0;
+                    setTimeout(() => {
+                        noteElement.textContent = "";
+                        noteElement.style.opacity = 1;
+                        noteElement.style.transition = "";
+                    }, 1000);
+                }, 5000);
+            }
+        }
+    });
+</script>
