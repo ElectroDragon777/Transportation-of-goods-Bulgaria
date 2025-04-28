@@ -165,7 +165,7 @@ CREATE TABLE `couriers` (
   `phone_number` VARCHAR(20) DEFAULT NULL,
   `email` VARCHAR(100) DEFAULT NULL,
   `is_busy` TINYINT(1) DEFAULT 0,  -- Added is_busy status (0=false, 1=true)
-  `allowed_tracking` TINYINT(1) DEFAULT 0,  -- Added allowed_tracking status (0=false, 1=true)
+  `allowed_tracking` TINYINT(1) DEFAULT 1,  -- Added allowed_tracking status (0=false, 1=true)
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -180,6 +180,18 @@ INSERT INTO `users` (`id`, `name`, `email`, `phone_number`, `password_hash`, `cr
 (3, 'Monika', 'monika@gmail.com', '0883878982', '$2y$10$Xl7uKdPNbXLRbDgJQeTxCuO532QZLoPcCU5LzIFje/fMef9qSn/aK', 1743620068, 'courier', '', '', 'web/upload/profile_3_67ed8803c86f5.jpg'),
 (4, 'Shinano', 'shinano.azurship@gmail.com', '0889876728', '$2y$10$3J9U.m9zNCad8vPH4w5IH./Hq5psbKs7EN3NTEtvCgYscxqyibD3K', 1744996451, 'courier', NULL, NULL, NULL),
 (5, 'Ran Yakumo', 'ran-yakumo.the_bulgarianfoxie@abv.bg', '0881928372', '$2y$10$d3irtl06XZN8YGOoGfGI4u6FmkNIUtDVI20zrijE24CbN/vXzscoK', 1744997473, 'admin', NULL, NULL, NULL);
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Dumping data for table `couriers`
+--
+
+INSERT INTO `couriers` (`id`, `name`, `phone_number`, `email`, `is_busy`, `allowed_tracking`) VALUES
+(1, 'Monika', '0883878982', 'monika@gmail.com', 0, 1),
+(2, 'Shinano', '0889876728', 'shinano.azurship@gmail.com', 0, 1);
+
 --
 -- Indexes for dumped tables
 --
@@ -266,6 +278,13 @@ ALTER TABLE `settings`
 --
 ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+COMMIT;
+
+--
+-- AUTO_INCREMENT for table `couriers`
+--
+ALTER TABLE `couriers`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 COMMIT;
 
 --

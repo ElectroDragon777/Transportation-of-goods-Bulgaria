@@ -7,7 +7,8 @@
                     <h4 class="card-title">Message Navigation</h4>
                     <ul class="nav nav-pills flex-column">
                         <li class="nav-item">
-                            <a class="nav-link active" id="unread-tab" data-bs-toggle="tab" href="#unread">Unread Messages</a>
+                            <a class="nav-link active" id="unread-tab" data-bs-toggle="tab" href="#unread">Unread
+                                Messages</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="read-tab" data-bs-toggle="tab" href="#read">Read Messages</a>
@@ -25,11 +26,12 @@
                             <div class="list-group list-group-flush" id="unread-messages-list">
                                 <?php
                                 $hasUnread = false;
-                                foreach ($messages as $message) :
-                                    if (!$message['is_read']) :
+                                foreach ($messages as $message):
+                                    if (!$message['is_read']):
                                         $hasUnread = true;
-                                ?>
-                                        <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-start list-group-item-warning" data-message-id="<?= $message['id'] ?>">
+                                        ?>
+                                        <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-start list-group-item-warning"
+                                            data-message-id="<?= $message['id'] ?>">
                                             <div class="ms-2 me-auto">
                                                 <div class="fw-bold">
                                                     Sender: <?= htmlspecialchars($message['sender_name'] ?? 'Unknown User') ?>
@@ -46,7 +48,7 @@
                                                 <i class="mdi mdi-check"></i> Mark Read
                                             </button>
                                         </div>
-                                <?php
+                                        <?php
                                     endif;
                                 endforeach;
                                 if (!$hasUnread) {
@@ -54,7 +56,7 @@
                                 }
                                 ?>
                             </div>
-                            <?php if ($hasUnread) : ?>
+                            <?php if ($hasUnread): ?>
                                 <div class="d-flex justify-content-end mt-3">
                                     <button id="markAllRead" class="btn btn-primary">
                                         <i class="mdi mdi-check-all"></i> Mark All as Read
@@ -71,11 +73,12 @@
                             <div class="list-group list-group-flush" id="read-messages-list">
                                 <?php
                                 $hasRead = false;
-                                foreach ($messages as $message) :
-                                    if ($message['is_read']) :
+                                foreach ($messages as $message):
+                                    if ($message['is_read']):
                                         $hasRead = true;
-                                ?>
-                                        <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-start bg-light" data-message-id="<?= $message['id'] ?>">
+                                        ?>
+                                        <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-start bg-light"
+                                            data-message-id="<?= $message['id'] ?>">
                                             <div class="ms-2 me-auto">
                                                 <div class="fw-bold">
                                                     Sender: <?= htmlspecialchars($message['sender_name'] ?? 'Unknown User') ?>
@@ -89,9 +92,12 @@
                                                 </small>
                                             </div>
                                         </div>
-                                <?php
+                                        <?php
                                     endif;
                                 endforeach;
+                                if (!$hasRead) {
+                                    echo '<div class="list-group-item">No read messages.</div>';
+                                }
                                 ?>
                             </div>
                         </div>
@@ -140,21 +146,27 @@
                         if (listItem) {
                             // Remove from unread list
                             unreadMessagesList.removeChild(listItem);
+
+                            // Remove "No read messages" if it exists
+                            const noReadMessages = readMessagesList.querySelector('.list-group-item');
+                            if (noReadMessages && noReadMessages.textContent === 'No read messages.') {
+                                readMessagesList.removeChild(noReadMessages);
+                            }
+
                             //add to read list
                             readMessagesList.insertAdjacentHTML('beforeend', `<div class="list-group-item list-group-item-action d-flex justify-content-between align-items-start bg-light" data-message-id="${messageId}">
-                                                            <div class="ms-2 me-auto">
-                                                                <div class="fw-bold">
-                                                                    ${listItem.querySelector('.fw-bold').textContent}
-                                                                </div>
-                                                                <p class="mb-1">
-                                                                    ${listItem.querySelector('p').textContent}
-                                                                </p>
-                                                                <small class="text-muted">
-                                                                <i class="mdi mdi-clock-outline"></i>
-                                                                    ${listItem.querySelector('.text-muted').textContent}
-                                                                </small>
-                                                            </div>
-                                                        </div>`);
+                                                    <div class="ms-2 me-auto">
+                                                        <div class="fw-bold">
+                                                            ${listItem.querySelector('.fw-bold').textContent}
+                                                        </div>
+                                                        <p class="mb-1">
+                                                            ${listItem.querySelector('p').textContent}
+                                                        </div>
+                                                        <small class="text-muted">
+                                                        <i class="mdi mdi-clock-outline"></i>
+                                                            ${listItem.querySelector('.text-muted').textContent}
+                                                        </div>
+                                                    </div>`);
 
                             // Check if there are any remaining unread messages
                             if (unreadMessagesList.children.length === 0) {
@@ -188,19 +200,18 @@
                             unreadMessagesList.removeChild(item);
                             //add to read list
                             readMessagesList.insertAdjacentHTML('beforeend', `<div class="list-group-item list-group-item-action d-flex justify-content-between align-items-start bg-light" data-message-id="${messageId}">
-                                                            <div class="ms-2 me-auto">
-                                                                <div class="fw-bold">
-                                                                    ${item.querySelector('.fw-bold').textContent}
-                                                                </div>
-                                                                <p class="mb-1">
-                                                                    ${item.querySelector('p').textContent}
-                                                                </p>
-                                                                <small class="text-muted">
-                                                                <i class="mdi mdi-clock-outline"></i>
-                                                                    ${item.querySelector('.text-muted').textContent}
-                                                                </small>
-                                                            </div>
-                                                        </div>`);
+                                                    <div class="ms-2 me-auto">
+                                                        <div class="fw-bold">
+                                                            ${item.querySelector('.fw-bold').textContent}
+                                                        </div>
+                                                        <p class="mb-1">
+                                                            ${item.querySelector('p').textContent}
+                                                        </div>
+                                                        <small class="text-muted">
+                                                        <i class="mdi mdi-clock-outline"></i>
+                                                            ${item.querySelector('.text-muted').textContent}
+                                                        </div>
+                                                    </div>`);
                         });
                         unreadMessagesList.innerHTML = '<div class="list-group-item">No unread messages.</div>';
                         if (markAllReadButton) {
@@ -215,26 +226,32 @@
         }
 
         function updateMessageCounts() {
-    // Get the number of unread and read messages
-    const unreadCount = unreadMessagesList.querySelectorAll('.list-group-item-warning').length;
-    const readCount = readMessagesList.querySelectorAll('.list-group-item-action').length - (readMessagesList.querySelector('.list-group-item') ? 1 : 0) + 1;
+            // Get the number of unread and read messages
+            const unreadCount = unreadMessagesList.querySelectorAll('.list-group-item-warning').length;
+            let readCount = readMessagesList.querySelectorAll('.list-group-item-action').length;
 
-    // Update the tab links with the counts
-    unreadTabLink.textContent = `Unread Messages (${unreadCount})`;
-    readTabLink.textContent = `Read Messages (${readCount})`;
+            // Check if there is a "No read messages" item
+            const noReadMessages = readMessagesList.querySelector('.list-group-item');
+            if (noReadMessages && noReadMessages.textContent === 'No read messages.') {
+                readCount = 0; // Reset readCount to 0 if there are no read messages
+            }
 
-    // Return the counts
-    return { unreadCount, readCount };
-}
+            // Update the tab links with the counts
+            unreadTabLink.textContent = `Unread Messages (${unreadCount})`;
+            readTabLink.textContent = `Read Messages (${readCount})`;
 
-// Call updateMessageCounts and check readCount
-const counts = updateMessageCounts();
-if (counts.readCount > 0) {
-    const noReadMessagesText = readMessagesList.querySelector('.list-group-item');
-    if (noReadMessagesText && noReadMessagesText.textContent === 'No read messages.') {
-        readMessagesList.removeChild(noReadMessagesText);
-    }
-}
+            // Return the counts
+            return { unreadCount, readCount };
+        }
+
+        // Call updateMessageCounts and check readCount
+        const counts = updateMessageCounts();
+        if (counts.readCount > 0) {
+            const noReadMessagesText = readMessagesList.querySelector('.list-group-item');
+            if (noReadMessagesText && noReadMessagesText.textContent === 'No read messages.') {
+                readMessagesList.removeChild(noReadMessagesText);
+            }
+        }
         updateMessageCounts();
     });
 </script>

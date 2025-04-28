@@ -819,8 +819,8 @@ class OrderController extends Controller
         $response = [
             // Worth noting that product_price is the total price of all items, not the individual item price. Also, three labels. Product price is what is shown.
             'product_price' => number_format($total, 2),
-            'cod_fee' => number_format($codFee, 2),
-            'total' => number_format($total, 2),
+            // 'cod_fee' => number_format($codFee, 2),
+            // 'total' => number_format($total, 2),
             'items' => $items
         ];
 
