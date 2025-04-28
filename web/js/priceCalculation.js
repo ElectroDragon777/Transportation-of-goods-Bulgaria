@@ -15,6 +15,10 @@
                     } else {
                         $("#productPrice").val(data.product_price || '0.00');
                         $("#totalPrice").val(data.total || '0.00');
+
+                        // Trigger change event on payment method radio buttons
+                        $('input[name="payment_method"]').trigger('change');
+
                         updateTotalPrice(); // Update total price based on payment method
                     }
                 }

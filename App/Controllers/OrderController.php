@@ -160,7 +160,7 @@ class OrderController extends Controller
                     $quantity = $quantities[$key];
 
                     // Get weight and dimensions from pallet
-                    $weight = $pallet['weight'] ?? 0;
+                    $weight = $pallet['weight_kg'] ?? 0;
                     $length = $pallet['size_x_cm'] ?? 0;
                     $width = $pallet['size_y_cm'] ?? 0;
                     $height = $pallet['size_z_cm'] ?? 0;
@@ -198,7 +198,7 @@ class OrderController extends Controller
                         $quantity = $quantities[$key];
 
                         // Get weight and dimensions from pallet
-                        $weight = $pallet['weight'] ?? 0;
+                        $weight = $pallet['weight_kg'] ?? 0;
                         $length = $pallet['size_x_cm'] ?? 0; // Length
                         $width = $pallet['size_y_cm'] ?? 0; // Width
                         $height = $pallet['size_z_cm'] ?? 0; // Height
@@ -626,7 +626,7 @@ class OrderController extends Controller
                     $pallet = $palletData[$palletId] ?? $palletModel->get($palletId);
 
                     // Get weight and dimensions from pallet
-                    $weight = $pallet['weight'] ?? 0;
+                    $weight = $pallet['weight_kg'] ?? 0;
                     $length = $pallet['size_x_cm'] ?? 0;
                     $width = $pallet['size_y_cm'] ?? 0;
                     $height = $pallet['size_z_cm'] ?? 0;
@@ -670,7 +670,7 @@ class OrderController extends Controller
                     $palletDetails = $palletData[$palletId] ?? $palletModel->get($palletId);
 
                     // Calculate price based on dimensions and weight
-                    $weight = $palletDetails['weight'] ?? 0;
+                    $weight = $palletDetails['weight_kg'] ?? 0;
                     $length = $palletDetails['size_x_cm'] ?? 0;
                     $width = $palletDetails['size_y_cm'] ?? 0;
                     $height = $palletDetails['size_z_cm'] ?? 0;
@@ -760,8 +760,11 @@ class OrderController extends Controller
 
     function calculatePrice()
     {
+        // var_dump($_POST); // Add this line to inspect the $_POST array
+
         $palletModel = new \App\Models\Pallet();
         $total = 0;
+        $codFee = 0; // Initialize COD fee to 0
         $items = [];
 
         // Check if any products are selected
@@ -780,7 +783,7 @@ class OrderController extends Controller
             $quantity = $_POST['quantity'][$key];
 
             // Get weight and dimensions from pallet
-            $weight = $pallet['weight'] ?? 0; // Assuming weight is stored in kg
+            $weight = $pallet['weight_kg'] ?? 0; // Assuming weight is stored in kg
             $length = $pallet['size_x_cm'] ?? 0; // Assuming dimensions are in cm
             $width = $pallet['size_y_cm'] ?? 0;
             $height = $pallet['size_z_cm'] ?? 0;
@@ -806,8 +809,7 @@ class OrderController extends Controller
         }
 
         // Check if cash on delivery is selected
-        $cashOnDelivery = isset($_POST['cash_on_delivery']) && $_POST['cash_on_delivery'] == '1';
-        $codFee = 0;
+        $cashOnDelivery = (isset($_POST['payment_method'])) && ($_POST['payment_method'] == 'cash');
 
         if ($cashOnDelivery) {
             $codFee = $total * 0.015; // 1.5% of total amount
@@ -815,7 +817,8 @@ class OrderController extends Controller
         }
 
         $response = [
-            'product_price' => number_format($total - $codFee, 2),
+            // Worth noting that product_price is the total price of all items, not the individual item price. Also, three labels. Product price is what is shown.
+            'product_price' => number_format($total, 2),
             'cod_fee' => number_format($codFee, 2),
             'total' => number_format($total, 2),
             'items' => $items
@@ -846,25 +849,26 @@ class OrderController extends Controller
             } else {
                 return 2 * $k * 150;
             }
-        } else {
-            // Regular pricing based on weight
-            if ($weight <= 3) {
-                return 10;
-            } elseif ($weight <= 6) {
-                return 15;
-            } elseif ($weight <= 10) {
-                return 20;
-            } elseif ($weight <= 20) {
-                return 35;
-            } elseif ($weight <= 50) {
-                $extraKg = max(0, $weight - 20);
-                return 35 + ($extraKg * 1);
-            } else {
-                // Over 50kg
-                $extraKg = max(0, $weight - 50);
-                return 30 + ($extraKg * 0.9);
-            }
         }
+        // Regular pricing based on weight
+        // WEIGHT IS NOT REGISTERED... FIX IT ;w; (2 minutes later, I fixed it :3 [It was weight_kg, not weight])
+        if ($weight <= 3) {
+            return 10;
+        } elseif ($weight <= 6) {
+            return 15;
+        } elseif ($weight <= 10) {
+            return 20;
+        } elseif ($weight <= 20) {
+            return 35;
+        } elseif ($weight <= 50) {
+            $extraKg = max(0, $weight - 20);
+            return 35 + ($extraKg * 1);
+        } else {
+            // Over 50kg
+            $extraKg = max(0, $weight - 50);
+            return 30 + ($extraKg * 0.9);
+        }
+
     }
 
     function export()
