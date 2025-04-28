@@ -38,16 +38,6 @@
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="address" class="form-label">Address</label>
-                                    <input type="text" class="form-control" id="address" name="address"
-                                        value="<?php echo $order['address']; ?>" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="region" class="form-label">Region</label>
-                                    <input type="text" class="form-control" id="region" name="region"
-                                        value="<?php echo $order['region']; ?>" required>
-                                </div>
-                                <div class="mb-3">
                                     <label for="courierId" class="form-label">Courier</label>
                                     <select name="courier_id" id="courierId" class="form-select" required>
                                         <?php

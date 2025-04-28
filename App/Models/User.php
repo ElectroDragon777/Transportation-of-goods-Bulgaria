@@ -4,7 +4,8 @@ namespace App\Models;
 
 use Core\Model;
 
-class User extends Model {
+class User extends Model
+{
 
     var $primaryKey = 'id';
     var $table = 'users';
@@ -16,8 +17,6 @@ class User extends Model {
         array('name' => 'password_hash', 'type' => 'varchar', 'default' => ''),
         array('name' => 'created_at', 'type' => 'timestamp', 'default' => 'CURRENT_TIMESTAMP'),
         array('name' => 'role', 'type' => 'varchar', 'default' => ''),
-        array('name' => 'address', 'type' => 'varchar', 'default' => ':NULL'),
-        array('name' => 'region', 'type' => 'varchar', 'default' => ':NULL'),
         array('name' => 'photo_path', 'type' => 'varchar', 'default' => ':NULL')
     );
 }

@@ -61,9 +61,8 @@
                 <th>Courier</th>
                 <th>Delivery Date</th>
                 <th>Total Price</th>
-                <th>Address</th>
-                <th>Country</th>
-                <th>Region</th>
+                <th>Start Point</th>
+                <th>End Destination</th>
                 <th>Status</th>
             </tr>
         </thead>
@@ -76,8 +75,8 @@
                     <td><?php echo htmlspecialchars($order['courier']); ?></td>
                     <td><?php echo htmlspecialchars($order['delivery_date']); ?></td>
                     <td><?php echo htmlspecialchars($order['total_price']); ?></td>
-                    <td><?php echo htmlspecialchars($order['address']); ?></td>
-                    <td><?php echo htmlspecialchars($order['region']); ?></td>
+                    <td><?php echo htmlspecialchars($order['start_point']); ?></td>
+                    <td><?php echo htmlspecialchars($order['end_destination']); ?></td>
                     <td><?php echo Utility::$order_status[$order['status']] ?? 'Unknown'; ?></td>
                 </tr>
             <?php endforeach; ?>

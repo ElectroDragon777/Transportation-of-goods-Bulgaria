@@ -43,12 +43,6 @@ class UserController extends Controller
                 $roles = "'" . implode("','", $_POST['roles']) . "'";
                 $opts["role IN (" . $roles . ") AND 1 "] = "1";
             }
-            if (!empty($_POST['address'])) {
-                $opts["address LIKE '%" . $_POST['address'] . "%' AND 1 "] = "1";
-            }
-            if (!empty($_POST['region'])) {
-                $opts["region LIKE '%" . $_POST['region'] . "%' AND 1 "] = "1";
-            }
         }
 
         // Извличане на всички записи от таблицата gallery

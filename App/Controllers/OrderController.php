@@ -116,6 +116,22 @@ class OrderController extends Controller
             $palletIds = $_POST['parcel_id'];
             $quantities = $_POST['quantity'];
 
+            // Validate start and end locations
+            $startLocationType = $_POST['startLocationType'] ?? null;
+            $endLocationType = $_POST['endLocationType'] ?? null;
+
+            if ($startLocationType === 'office' && empty($_POST['startOfficeCoords'])) {
+                $error_message = "Please select a start office.";
+            } elseif ($startLocationType === 'address' && empty($_POST['startAddressCoords'])) {
+                $error_message = "Please enter a start address.";
+            }
+
+            if ($endLocationType === 'office' && empty($_POST['endOfficeCoords'])) {
+                $error_message = "Please select an end office.";
+            } elseif ($endLocationType === 'address' && empty($_POST['endAddressCoords'])) {
+                $error_message = "Please enter an end address.";
+            }
+
             // Validate quantities against available pallet quantities
             $quantityError = false;
             $error_message = null;

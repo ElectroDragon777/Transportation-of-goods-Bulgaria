@@ -18,11 +18,6 @@
                                 <input type="text" class="form-control" id="name" name="name"
                                     value="<?php echo $tpl['name']; ?>" required>
                             </div>
-                            <div class="form-group col-md-6 mb-3">
-                                <label for="address" class="form-label">Address</label>
-                                <input type="text" class="form-control" id="address" name="address"
-                                    value="<?php echo $tpl['address']; ?>">
-                            </div>
                         </div>
 
                         <div class="row">
@@ -38,11 +33,6 @@
                                 <label for="phoneNumber" class="form-label">Phone Number</label>
                                 <input type="tel" pattern="^\d{10}$" class="form-control" id="phoneNumber"
                                     name="phone_number" value="<?php echo $tpl['phone_number']; ?>">
-                            </div>
-                            <div class="form-group col-md-6 mb-3">
-                                <label for="region" class="form-label">Region</label>
-                                <input type="text" class="form-control" id="region" name="region"
-                                    value="<?php echo $tpl['region']; ?>">
                             </div>
                         </div>
                         <div class="row">

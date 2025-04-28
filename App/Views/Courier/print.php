@@ -59,9 +59,6 @@
                 <th>Name</th>
                 <th>Email</th>
                 <th>Phone Number</th>
-                <th>Address</th>
-                <th>Country</th>
-                <th>Region</th>
             </tr>
         </thead>
         <tbody>
@@ -71,8 +68,6 @@
                     <td><?php echo htmlspecialchars($user['name']); ?></td>
                     <td><?php echo htmlspecialchars($user['email']); ?></td>
                     <td><?php echo htmlspecialchars($user['phone_number'] ?? 'N/A'); ?></td>
-                    <td><?php echo htmlspecialchars($user['address'] ?? 'N/A'); ?></td>
-                    <td><?php echo htmlspecialchars($user['region'] ?? 'N/A'); ?></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>

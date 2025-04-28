@@ -16,8 +16,6 @@ CREATE TABLE IF NOT EXISTS `users` (
   `password_hash` VARCHAR(255) NOT NULL,
   `created_at` BIGINT DEFAULT UNIX_TIMESTAMP(),
   `role` VARCHAR(20) NOT NULL,
-  `address` VARCHAR(255),
-  `region` VARCHAR(255),
   `photo_path` VARCHAR(255),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -134,8 +134,6 @@ CREATE TABLE `users` (
   `password_hash` varchar(255) NOT NULL,
   `created_at` bigint(20) DEFAULT unix_timestamp(),
   `role` varchar(20) NOT NULL,
-  `address` varchar(255) DEFAULT NULL,
-  `region` varchar(255) DEFAULT NULL,
   `photo_path` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
@@ -174,12 +172,12 @@ CREATE TABLE `couriers` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `phone_number`, `password_hash`, `created_at`, `role`, `address`, `region`, `photo_path`) VALUES
-(1, 'Chara Dreemurr', 'chara@abv.bg', '0882872569', '$2y$10$SzepIhkBjgGu7USFhcIajOf6INf1T9tFMvKxgrCkBzZRIt0IUWUWy', 1743619906, 'root', '', '', 'web/upload/profile_1_67fb7114f4035.jpg'),
-(2, 'Hakane', 'hakane.hoshino@yahoo.com', '0886777106', '$2y$10$ziUyifPVgfFHNBiN/hT5MOOzOsAbsFO400vRw0u2d2qmW1OJw/cfW', 1743620055, 'user', '', '', 'web/upload/profile_2_67ed885239962.png'),
-(3, 'Monika', 'monika@gmail.com', '0883878982', '$2y$10$Xl7uKdPNbXLRbDgJQeTxCuO532QZLoPcCU5LzIFje/fMef9qSn/aK', 1743620068, 'courier', '', '', 'web/upload/profile_3_67ed8803c86f5.jpg'),
-(4, 'Shinano', 'shinano.azurship@gmail.com', '0889876728', '$2y$10$3J9U.m9zNCad8vPH4w5IH./Hq5psbKs7EN3NTEtvCgYscxqyibD3K', 1744996451, 'courier', NULL, NULL, NULL),
-(5, 'Ran Yakumo', 'ran-yakumo.the_bulgarianfoxie@abv.bg', '0881928372', '$2y$10$d3irtl06XZN8YGOoGfGI4u6FmkNIUtDVI20zrijE24CbN/vXzscoK', 1744997473, 'admin', NULL, NULL, NULL);
+INSERT INTO `users` (`id`, `name`, `email`, `phone_number`, `password_hash`, `created_at`, `role`, `photo_path`) VALUES
+(1, 'Chara Dreemurr', 'chara@abv.bg', '0882872569', '$2y$10$SzepIhkBjgGu7USFhcIajOf6INf1T9tFMvKxgrCkBzZRIt0IUWUWy', 1743619906, 'root', 'web/upload/profile_1_67fb7114f4035.jpg'),
+(2, 'Hakane', 'hakane.hoshino@yahoo.com', '0886777106', '$2y$10$ziUyifPVgfFHNBiN/hT5MOOzOsAbsFO400vRw0u2d2qmW1OJw/cfW', 1743620055, 'user', 'web/upload/profile_2_67ed885239962.png'),
+(3, 'Monika', 'monika@gmail.com', '0883878982', '$2y$10$Xl7uKdPNbXLRbDgJQeTxCuO532QZLoPcCU5LzIFje/fMef9qSn/aK', 1743620068, 'courier', 'web/upload/profile_3_67ed8803c86f5.jpg'),
+(4, 'Shinano', 'shinano.azurship@gmail.com', '0889876728', '$2y$10$3J9U.m9zNCad8vPH4w5IH./Hq5psbKs7EN3NTEtvCgYscxqyibD3K', 1744996451, 'courier', NULL),
+(5, 'Ran Yakumo', 'ran-yakumo.the_bulgarianfoxie@abv.bg', '0881928372', '$2y$10$d3irtl06XZN8YGOoGfGI4u6FmkNIUtDVI20zrijE24CbN/vXzscoK', 1744997473, 'admin', NULL);
 --
 -- Indexes for dumped tables
 --

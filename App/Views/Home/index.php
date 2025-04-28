@@ -919,67 +919,73 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
                                     </div>
                                     <div class="row">
-                                            <div class="col-md-3 text-center">
-                                                <div id="offices-BG" class="display-4">0</div>
-                                                <p class="text-muted">Offices in Bulgaria</p>
-                                            </div>
-                                            <div class="col-md-3 text-center">
-                                                <div id="kilometers-covered" class="display-4">0</div>
-                                                <p class="text-muted">Kilometers covered</p>
-                                            </div>
-                                            <div class="col-md-3 text-center">
-                                                <div id="people-team" class="display-4">0</div>
-                                                <p class="text-muted">People in Team</p>
-                                            </div>
-                                            <div class="col-md-3 text-center">
-                                                <div id="clients" class="display-4">0</div>
-                                                <p class="text-muted">Clients</p>
-                                            </div>
+                                        <div class="col-md-3 text-center">
+                                            <div id="offices-BG" class="display-4">0</div>
+                                            <p class="text-muted">Offices in Bulgaria</p>
+                                        </div>
+                                        <div class="col-md-3 text-center">
+                                            <div id="kilometers-covered" class="display-4">0</div>
+                                            <p class="text-muted">Kilometers covered</p>
+                                        </div>
+                                        <div class="col-md-3 text-center">
+                                            <div id="people-team" class="display-4">0</div>
+                                            <p class="text-muted">People in Team</p>
+                                        </div>
+                                        <div class="col-md-3 text-center">
+                                            <div id="clients" class="display-4">0</div>
+                                            <p class="text-muted">Clients</p>
+                                        </div>
                                     </div>
-                                        <!-- Team -->
+                                    <!-- Team -->
                                     <h3 class="card-title card-title-dash mt-5">Meet Our Couriers</h3>
-                                <p class="card-description">Our dedicated couriers are the backbone of our service,
+                                    <p class="card-description">Our dedicated couriers are the backbone of our service,
                                         ensuring your goods are delivered safely and on time.</p>
-                                <div class="courier-showcase">
-                                    <!-- Extracting Couriers from users -->
-                                <?php
-$userModel = new \App\Models\User();
-$couriers = $userModel->getAll(['role' => 'courier']);  // Fetch all couriers from the database 101
-?>
-    <?php if (!empty($couriers)): ?>
-        <?php foreach ($couriers as $courier): ?>
-            <div class="courier-card">
-                <?php if (!empty($courier['photo_path'])): ?>
-                    <img src="<?php echo htmlspecialchars($courier['photo_path']); ?>"
-                         alt="<?php echo htmlspecialchars($courier['name']); ?> Profile Picture"
-                         class="courier-image">
-                <?php else: ?>
-                    <div class="courier-image-placeholder">
-                        <i class="mdi mdi-account" style="font-size: 80px;"></i>
-                    </div>
-                <?php endif; ?>
-                <div class="courier-info">
-                    <?php if (!empty($courier['name'])): ?>
-                        <h4 class="courier-name"><?php echo htmlspecialchars($courier['name']); ?></h4>
-                    <?php endif; ?>
-                    <?php if (!empty($courier['description'])): ?>
-                        <p class="courier-description"><?php echo htmlspecialchars($courier['description']); ?></p>
-                    <?php endif; ?>
-                    <?php if (!empty($courier['phone_number'])): ?>
-                        <p class="courier-phone"><i class="mdi mdi-phone-outline"></i><?php echo htmlspecialchars($courier['phone_number']); ?></p>
-                    <?php endif; ?>
-                </div>
-            </div>
-        <?php endforeach; ?>
-    <?php else: ?>
-        <p>No couriers to display.</p>
-    <?php endif; ?>
+                                    <div class="courier-showcase">
+                                        <!-- Extracting Couriers from users -->
+                                        <?php
+                                        $userModel = new \App\Models\User();
+                                        $couriers = $userModel->getAll(['role' => 'courier']);  // Fetch all couriers from the database 101
+                                        ?>
+                                        <?php if (!empty($couriers)): ?>
+                                            <?php foreach ($couriers as $courier): ?>
+                                                <div class="courier-card">
+                                                    <?php if (!empty($courier['photo_path'])): ?>
+                                                        <img src="<?php echo htmlspecialchars($courier['photo_path']); ?>"
+                                                            alt="<?php echo htmlspecialchars($courier['name']); ?> Profile Picture"
+                                                            class="courier-image">
+                                                    <?php else: ?>
+                                                        <div class="courier-image-placeholder">
+                                                            <i class="mdi mdi-account" style="font-size: 80px;"></i>
+                                                        </div>
+                                                    <?php endif; ?>
+                                                    <div class="courier-info">
+                                                        <?php if (!empty($courier['name'])): ?>
+                                                            <h4 class="courier-name">
+                                                                <?php echo htmlspecialchars($courier['name']); ?>
+                                                            </h4>
+                                                        <?php endif; ?>
+                                                        <?php if (!empty($courier['description'])): ?>
+                                                            <p class="courier-description">
+                                                                <?php echo htmlspecialchars($courier['description']); ?>
+                                                            </p>
+                                                        <?php endif; ?>
+                                                        <?php if (!empty($courier['phone_number'])): ?>
+                                                            <p class="courier-phone"><i
+                                                                    class="mdi mdi-phone-outline"></i><?php echo htmlspecialchars($courier['phone_number']); ?>
+                                                            </p>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <p>No couriers to display.</p>
+                                        <?php endif; ?>
+                                    </div>
+
                                 </div>
-                                
-</div>
                             </div>
                         </div>
                     </div>
@@ -1292,13 +1298,6 @@ $couriers = $userModel->getAll(['role' => 'courier']);  // Fetch all couriers fr
                                                     </div>
 
                                                     <div class="px-3 text-content">
-                                                        <?php if (!empty($root['address'])): ?>
-                                                            <p><i class="mdi mdi-home-outline text-secondary"></i>
-                                                                <strong>Address:</strong>
-                                                                <?php echo htmlspecialchars($root['address']); ?>
-                                                            </p>
-                                                        <?php endif; ?>
-
                                                         <?php if (!empty($root['phone_number'])): ?>
                                                             <p><i class="mdi mdi-phone-outline text-success"></i>
                                                                 <strong>Phone:</strong>
@@ -1411,97 +1410,108 @@ $couriers = $userModel->getAll(['role' => 'courier']);  // Fetch all couriers fr
 </script>
 
 <!-- About's Courier Team -->
- <style>
+<style>
     .courier-showcase {
-    display: flex;
-    overflow-x: auto; /* Enable horizontal scrolling */
-    scroll-snap-type: x mandatory; /* Optional: Snap scrolling */
-    padding-bottom: 15px; /* Add padding for the scrollbar */
-    margin-bottom: 20px;
-}
+        display: flex;
+        overflow-x: auto;
+        /* Enable horizontal scrolling */
+        scroll-snap-type: x mandatory;
+        /* Optional: Snap scrolling */
+        padding-bottom: 15px;
+        /* Add padding for the scrollbar */
+        margin-bottom: 20px;
+    }
 
-.courier-card {
-    flex: 0 0 auto; /* Don't grow or shrink, auto width */
-    width: 300px; /* Adjust card width as needed */
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    margin-right: 20px; /* Spacing between cards */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s;
-    scroll-snap-align: start; /* Optional: Snap to the start of the card */
-}
+    .courier-card {
+        flex: 0 0 auto;
+        /* Don't grow or shrink, auto width */
+        width: 300px;
+        /* Adjust card width as needed */
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        margin-right: 20px;
+        /* Spacing between cards */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s;
+        scroll-snap-align: start;
+        /* Optional: Snap to the start of the card */
+    }
 
-.courier-card:hover {
-    transform: scale(1.02); /* Slight zoom on hover */
-}
+    .courier-card:hover {
+        transform: scale(1.02);
+        /* Slight zoom on hover */
+    }
 
-.courier-image {
-    width: 100%;
-    height: 200px; /* Adjust image height as needed */
-    object-fit: cover;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-}
-.courier-image-placeholder {
-    width: 100%;
-    height: 200px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-    background-color: #f0f0f0; /* Light background for the placeholder */
-}
+    .courier-image {
+        width: 100%;
+        height: 200px;
+        /* Adjust image height as needed */
+        object-fit: cover;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
 
-.courier-info {
-    padding: 15px;
-}
+    .courier-image-placeholder {
+        width: 100%;
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        background-color: #f0f0f0;
+        /* Light background for the placeholder */
+    }
 
-.courier-name {
-    font-size: 1.2em;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
+    .courier-info {
+        padding: 15px;
+    }
 
-.courier-description {
-    font-size: 1em;
-    color: #555;
-    margin-bottom: 10px;
-}
+    .courier-name {
+        font-size: 1.2em;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
 
-.courier-phone {
-    font-size: 1em;
-    color: #333;
-}
+    .courier-description {
+        font-size: 1em;
+        color: #555;
+        margin-bottom: 10px;
+    }
 
-.courier-phone i {
-    margin-right: 5px;
-}
+    .courier-phone {
+        font-size: 1em;
+        color: #333;
+    }
 
-/* Optional: Hide scrollbar on WebKit browsers (Chrome, Safari) */
-.courier-showcase::-webkit-scrollbar {
-    display: none;
-}
+    .courier-phone i {
+        margin-right: 5px;
+    }
 
-/* Optional: Style scrollbar on Firefox */
-.courier-showcase {
-    scrollbar-width: thin;
-    scrollbar-color: #888 #f5f5f5;
-}
+    /* Optional: Hide scrollbar on WebKit browsers (Chrome, Safari) */
+    .courier-showcase::-webkit-scrollbar {
+        display: none;
+    }
 
-.courier-showcase::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
+    /* Optional: Style scrollbar on Firefox */
+    .courier-showcase {
+        scrollbar-width: thin;
+        scrollbar-color: #888 #f5f5f5;
+    }
 
-.courier-showcase::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 5px;
-}
+    .courier-showcase::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
 
-.courier-showcase::-webkit-scrollbar-thumb:hover {
-    background: #555;
-}
- </style>
+    .courier-showcase::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 5px;
+    }
+
+    .courier-showcase::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+</style>
 
 <!-- Header Styles -->
 <style>

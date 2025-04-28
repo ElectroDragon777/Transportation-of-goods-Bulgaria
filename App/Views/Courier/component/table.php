@@ -14,8 +14,6 @@
             <th>Name</th>
             <th>Email</th>
             <th>Phone Number</th>
-            <th>Address</th>
-            <th>Region</th>
             <th style="text-align: right;">Actions</th>
         </tr>
     </thead>
@@ -36,8 +34,6 @@
                 <td><?php echo htmlspecialchars($courier['name']); ?></td>
                 <td><?php echo htmlspecialchars($courier['email']); ?></td>
                 <td><?php echo htmlspecialchars($courier['phone_number'] ?? 'N/A'); ?></td>
-                <td><?php echo htmlspecialchars($courier['address'] ?? 'N/A'); ?></td>
-                <td><?php echo htmlspecialchars($courier['region'] ?? 'N/A'); ?></td>
                 <td style="text-align: right;">
                     <a class="btn btn-light btn-circle mdc-ripple-upgraded"
                         href="<?php echo INSTALL_URL; ?>?controller=User&action=profile&id=<?php echo $courier['id']; ?>">

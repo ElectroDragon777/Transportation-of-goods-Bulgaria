@@ -49,16 +49,6 @@
                                             <input type="text" class="form-control" id="filter-phone"
                                                 placeholder="Search by phone">
                                         </div>
-                                        <div class="col-md-4 mb-3">
-                                            <label for="filter-region" class="form-label">Region</label>
-                                            <input type="text" class="form-control" id="filter-region"
-                                                placeholder="Search by region">
-                                        </div>
-                                        <div class="col-md-4 mb-3">
-                                            <label for="filter-address" class="form-label">Address</label>
-                                            <input type="text" class="form-control" id="filter-address"
-                                                placeholder="Search by address">
-                                        </div>
                                     </div>
                                     <div class="d-flex justify-content-end gap-2">
                                         <button type="button" class="btn btn-light" id="reset-filters-courier">

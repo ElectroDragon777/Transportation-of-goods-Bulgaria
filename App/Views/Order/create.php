@@ -55,121 +55,122 @@
                                     <span id="dynamic-late-note-2"></span>
                                 </div>
                             </div>
-                            <div id="orderCreationForm" action="process_order.php" method="post">
-                                <!-- Start Destination Section -->
-                                <div class="card mb-4">
-                                    <div class="card-header bg-primary text-white">
-                                        <h5>Start Destination</h5>
+                            <!-- Start Destination Section -->
+                            <div class="card mb-4">
+                                <div class="card-header bg-primary text-white">
+                                    <h5>Start Destination</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group mb-3">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="startLocationType"
+                                                id="startOffice" value="office" checked>
+                                            <label class="form-check-label" for="startOffice">Office</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="startLocationType"
+                                                id="startAddress" value="address">
+                                            <label class="form-check-label" for="startAddress">Address</label>
+                                        </div>
+                                        <div class="invalid-feedback">Please select a start location.</div>
+                                        <!-- Add this line ^ -->
                                     </div>
-                                    <div class="card-body">
-                                        <div class="form-group mb-3">
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="startLocationType"
-                                                    id="startOffice" value="office" checked>
-                                                <label class="form-check-label" for="startOffice">Office</label>
-                                            </div>
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="startLocationType"
-                                                    id="startAddress" value="address">
-                                                <label class="form-check-label" for="startAddress">Address</label>
-                                            </div>
-                                        </div>
 
-                                        <!-- Office Selection -->
-                                        <div class="form-group mb-3" id="startOfficeGroup">
-                                            <label for="startOfficeSelect">Select Office:</label>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control office-autocomplete"
-                                                    id="startOfficeInput" placeholder="Type to search offices">
-                                                <select class="form-control d-none" id="startOfficeSelect"
-                                                    name="startOffice" required>
-                                                    <option value="">Select an office</option>
-                                                </select>
-                                                <input type="hidden" id="startOfficeCoords" name="startOfficeCoords">
-                                            </div>
-                                            <div id="startOfficeAutocomplete" class="autocomplete-results"></div>
+                                    <!-- Office Selection -->
+                                    <div class="form-group mb-3" id="startOfficeGroup">
+                                        <label for="startOfficeSelect">Select Office:</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control office-autocomplete"
+                                                id="startOfficeInput" placeholder="Type to search offices">
+                                            <select class="form-control d-none" id="startOfficeSelect"
+                                                name="startOffice">
+                                                <option value="">Select an office</option>
+                                            </select>
+                                            <input type="hidden" id="startOfficeCoords" name="startOfficeCoords">
                                         </div>
+                                        <div id="startOfficeAutocomplete" class="autocomplete-results"></div>
+                                    </div>
 
-                                        <!-- Address Input -->
-                                        <div class="form-group mb-3 d-none" id="startAddressGroup">
-                                            <label for="startAddressInput">Enter Address:</label>
-                                            <input type="text" class="form-control" id="startAddressInput"
-                                                name="startAddress" placeholder="Enter full address">
-                                            <input type="hidden" id="startAddressCoords" name="startAddressCoords">
-                                            <div class="invalid-feedback">Please enter a valid address</div>
-                                            <button type="button" class="btn btn-sm btn-outline-secondary mt-2"
-                                                id="validateStartAddress">Validate Address</button>
-                                        </div>
+                                    <!-- Address Input -->
+                                    <div class="form-group mb-3 d-none" id="startAddressGroup">
+                                        <label for="startAddressInput">Enter Address:</label>
+                                        <input type="text" class="form-control" id="startAddressInput"
+                                            name="startAddress" placeholder="Enter full address">
+                                        <input type="hidden" id="startAddressCoords" name="startAddressCoords">
+                                        <div class="invalid-feedback">Please enter a valid address</div>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary mt-2"
+                                            id="validateStartAddress">Validate Address</button>
                                     </div>
                                 </div>
+                            </div>
 
-                                <!-- End Destination Section -->
-                                <div class="card mb-4">
-                                    <div class="card-header bg-success text-white">
-                                        <h5>End Destination</h5>
+                            <!-- End Destination Section -->
+                            <div class="card mb-4">
+                                <div class="card-header bg-success text-white">
+                                    <h5>End Destination</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group mb-3">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="endLocationType"
+                                                id="endOffice" value="office" checked>
+                                            <label class="form-check-label" for="endOffice">Office</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="endLocationType"
+                                                id="endAddress" value="address">
+                                            <label class="form-check-label" for="endAddress">Address</label>
+                                        </div>
+                                        <div class="invalid-feedback">Please select a start location.</div>
+                                        <!-- Add this line ^ -->
                                     </div>
-                                    <div class="card-body">
-                                        <div class="form-group mb-3">
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="endLocationType"
-                                                    id="endOffice" value="office" checked>
-                                                <label class="form-check-label" for="endOffice">Office</label>
-                                            </div>
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="endLocationType"
-                                                    id="endAddress" value="address">
-                                                <label class="form-check-label" for="endAddress">Address</label>
-                                            </div>
-                                        </div>
 
-                                        <!-- Office Selection -->
-                                        <div class="form-group mb-3" id="endOfficeGroup">
-                                            <label for="endOfficeSelect">Select Office:</label>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control office-autocomplete"
-                                                    id="endOfficeInput" placeholder="Type to search offices">
-                                                <select class="form-control d-none" id="endOfficeSelect"
-                                                    name="endOffice" required>
-                                                    <option value="">Select an office</option>
-                                                </select>
-                                                <input type="hidden" id="endOfficeCoords" name="endOfficeCoords">
-                                            </div>
-                                            <div id="endOfficeAutocomplete" class="autocomplete-results"></div>
+                                    <!-- Office Selection -->
+                                    <div class="form-group mb-3" id="endOfficeGroup">
+                                        <label for="endOfficeSelect">Select Office:</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control office-autocomplete"
+                                                id="endOfficeInput" placeholder="Type to search offices">
+                                            <select class="form-control d-none" id="endOfficeSelect" name="endOffice">
+                                                <option value="">Select an office</option>
+                                            </select>
+                                            <input type="hidden" id="endOfficeCoords" name="endOfficeCoords">
                                         </div>
+                                        <div id="endOfficeAutocomplete" class="autocomplete-results"></div>
+                                    </div>
 
-                                        <!-- Address Input -->
-                                        <div class="form-group mb-3 d-none" id="endAddressGroup">
-                                            <label for="endAddressInput">Enter Address:</label>
-                                            <input type="text" class="form-control" id="endAddressInput"
-                                                name="endAddress" placeholder="Enter full address">
-                                            <input type="hidden" id="endAddressCoords" name="endAddressCoords">
-                                            <div class="invalid-feedback">Please enter a valid address</div>
-                                            <button type="button" class="btn btn-sm btn-outline-secondary mt-2"
-                                                id="validateEndAddress">Validate Address</button>
-                                        </div>
+                                    <!-- Address Input -->
+                                    <div class="form-group mb-3 d-none" id="endAddressGroup">
+                                        <label for="endAddressInput">Enter Address:</label>
+                                        <input type="text" class="form-control" id="endAddressInput" name="endAddress"
+                                            placeholder="Enter full address">
+                                        <input type="hidden" id="endAddressCoords" name="endAddressCoords">
+                                        <div class="invalid-feedback">Please enter a valid address</div>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary mt-2"
+                                            id="validateEndAddress">Validate Address</button>
                                     </div>
                                 </div>
+                            </div>
 
-                                <!-- Map preview -->
-                                <div class="card mb-4">
-                                    <div class="card-header bg-info text-white">
-                                        <h5>Route Preview</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <div id="map-container" class="map-loading">
-                                            <div class="map-loading-indicator">
-                                                <link rel="stylesheet"
-                                                    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-                                                    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-                                                    crossorigin="" />
-                                                <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-                                                    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-                                                    crossorigin=""></script>
-                                                <div class="spinner-border text-primary" role="status">
-                                                    <span class="visually-hidden">Loading map...</span>
-                                                </div>
-                                                <p class="mt-2">Loading map...</p>
+                            <!-- Map preview: DEBUG -->
+                            <div class="card mb-4">
+                                <div class="card-header bg-info text-white">
+                                    <h5>Route Preview</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="map-container" class="map-loading">
+                                        <div class="map-loading-indicator">
+                                            <link rel="stylesheet"
+                                                href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+                                                integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+                                                crossorigin="" />
+                                            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+                                                integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+                                                crossorigin=""></script>
+                                            <div class="spinner-border text-primary" role="status">
+                                                <span class="visually-hidden">Loading map...</span>
                                             </div>
+                                            <p class="mt-2">Loading map...</p>
                                         </div>
                                     </div>
                                 </div>
@@ -335,7 +336,7 @@
                                     <span id="dynamic-late-note"></span>
                                     <br>
                                     <strong>Reminder:</strong> You can keep track of couriers if you feel
-                                    anxious (for
+                                    anxious (or
                                     just
                                     curious), via the map tracking!
                                 </p>
@@ -351,6 +352,7 @@
                                         class="btn btn-outline-dark">Cancel</a>
                                 </div>
                             </div>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -844,7 +846,7 @@
 
     // Form validation before submission
     function setupFormValidation() {
-        document.getElementById('orderCreationForm').addEventListener('submit', function (event) {
+        document.getElementById('booking-frm-id').addEventListener('submit', function (event) {
             let isValid = true;
 
             // Validate start location
@@ -852,11 +854,15 @@
                 if (!document.getElementById('startOfficeCoords').value) {
                     document.getElementById('startOfficeInput').classList.add('is-invalid');
                     isValid = false;
+                } else {
+                    document.getElementById('startOfficeInput').classList.remove('is-invalid');
                 }
             } else {
                 if (!document.getElementById('startAddressCoords').value) {
                     document.getElementById('startAddressInput').classList.add('is-invalid');
                     isValid = false;
+                } else {
+                    document.getElementById('startAddressInput').classList.remove('is-invalid');
                 }
             }
 
@@ -865,11 +871,15 @@
                 if (!document.getElementById('endOfficeCoords').value) {
                     document.getElementById('endOfficeInput').classList.add('is-invalid');
                     isValid = false;
+                } else {
+                    document.getElementById('endOfficeInput').classList.remove('is-invalid');
                 }
             } else {
                 if (!document.getElementById('endAddressCoords').value) {
                     document.getElementById('endAddressInput').classList.add('is-invalid');
                     isValid = false;
+                } else {
+                    document.getElementById('endAddressInput').classList.remove('is-invalid');
                 }
             }
 
@@ -1013,71 +1023,272 @@
         const paymentCash = document.getElementById('paymentCash');
 
         // Add event listeners to payment method radios
-        if (paymentOnline && paymentCash) {
-            paymentOnline.addEventListener('change', updateTotalPrice);
-            paymentCash.addEventListener('change', updateTotalPrice);
-        }
+        // if (paymentOnline && paymentCash) {
+        //     paymentOnline.addEventListener('change', updateTotalPrice);
+        //     paymentCash.addEventListener('change', updateTotalPrice);
+        // }
 
         // Get the form and add submit event listener
         const orderForm = document.getElementById('booking-frm-id');
+
         if (orderForm) {
-            orderForm.addEventListener('submit', handleFormSubmit);
+            orderForm.addEventListener('submit', function (event) {
+                // Always prevent default initially
+                event.preventDefault();
+
+                // Run all validations
+                if (validateFullForm()) {
+                    // Show payment popup based on selected method
+                    const isOnlinePayment = document.getElementById('paymentOnline').checked;
+                    if (isOnlinePayment) {
+                        showPaymentPopup();
+                    } else {
+                        showCashConfirmationPopup();
+                    }
+                }
+            });
         }
 
-        // Set up the calculate price button
-        const calculatePriceBtn = document.getElementById('calculate-price-btn-id');
-        if (calculatePriceBtn) {
-            calculatePriceBtn.addEventListener('click', calculatePrice);
-        }
+        // // Set up the calculate price button
+        // const calculatePriceBtn = document.getElementById('calculate-price-btn-id');
+        // if (calculatePriceBtn) {
+        //     calculatePriceBtn.addEventListener('click', calculatePrice);
+        // }
     });
 
-    // Function to update total price based on payment method
-    function updateTotalPrice() {
-        const productPrice = parseFloat(document.getElementById('productPrice').value) || 0;
-        const cashSelected = document.getElementById('paymentCash').checked;
+    // Comprehensive form validation function
+    function validateFullForm() {
+        let isValid = true;
 
-        let totalPrice = productPrice;
+        // Validate start location
+        let startLocationValid = true;
+        let startLocationGroup = document.querySelector('input[name="startLocationType"]:checked');
+        let startLocationFeedback = document.querySelector('#startDestination .invalid-feedback');
 
-        // Add 1.5% fee if cash payment is selected
-        if (cashSelected) {
-            totalPrice = productPrice * 1.015;
+        if (!startLocationGroup) {
+            startLocationValid = false;
+            startLocationFeedback.style.display = 'block'; // Show the error message
+            startLocationFeedback.textContent = "Please select a start location type.";
+        } else {
+            startLocationFeedback.style.display = 'none'; // Hide the error message
         }
 
-        // Update total price field
-        document.getElementById('totalPrice').value = totalPrice.toFixed(2);
+        if (document.getElementById('startOffice').checked) {
+            if (!document.getElementById('startOfficeCoords').value) {
+                document.getElementById('startOfficeInput').classList.add('is-invalid');
+                document.querySelector('#startOfficeGroup .invalid-feedback').style.display = 'block';
+                document.querySelector('#startOfficeGroup .invalid-feedback').textContent = "Please select a start office.";
+                startLocationValid = false;
+            } else {
+                document.getElementById('startOfficeInput').classList.remove('is-invalid');
+                document.querySelector('#startOfficeGroup .invalid-feedback').style.display = 'none';
+            }
+        } else if (document.getElementById('startAddress').checked) {
+            if (!document.getElementById('startAddressCoords').value) {
+                document.getElementById('startAddressInput').classList.add('is-invalid');
+                document.querySelector('#startAddressGroup .invalid-feedback').style.display = 'block';
+                document.querySelector('#startAddressGroup .invalid-feedback').textContent = "Please enter a start address.";
+                startLocationValid = false;
+            } else {
+                document.getElementById('startAddressInput').classList.remove('is-invalid');
+                document.querySelector('#startAddressGroup .invalid-feedback').style.display = 'none';
+            }
+        } else {
+            startLocationValid = false;
+        }
+
+        if (!startLocationValid) {
+            isValid = false;
+        }
+
+        // Validate end location
+        let endLocationValid = true;
+        let endLocationGroup = document.querySelector('input[name="endLocationType"]:checked');
+        let endLocationFeedback = document.querySelector('#endDestination .invalid-feedback');
+
+        if (!endLocationGroup) {
+            endLocationValid = false;
+            endLocationFeedback.style.display = 'block'; // Show the error message
+            endLocationFeedback.textContent = "Please select an end location type.";
+        } else {
+            endLocationFeedback.style.display = 'none'; // Hide the error message
+        }
+
+        if (document.getElementById('endOffice').checked) {
+            if (!document.getElementById('endOfficeCoords').value) {
+                document.getElementById('endOfficeInput').classList.add('is-invalid');
+                document.querySelector('#endOfficeGroup .invalid-feedback').style.display = 'block';
+                document.querySelector('#endOfficeGroup .invalid-feedback').textContent = "Please select an end office.";
+                endLocationValid = false;
+            } else {
+                document.getElementById('endOfficeInput').classList.remove('is-invalid');
+                document.querySelector('#endOfficeGroup .invalid-feedback').style.display = 'none';
+            }
+        } else if (document.getElementById('endAddress').checked) {
+            if (!document.getElementById('endAddressCoords').value) {
+                document.getElementById('endAddressInput').classList.add('is-invalid');
+                document.querySelector('#endAddressGroup .invalid-feedback').style.display = 'block';
+                document.querySelector('#endAddressGroup .invalid-feedback').textContent = "Please enter an end address.";
+                endLocationValid = false;
+            } else {
+                document.getElementById('endAddressInput').classList.remove('is-invalid');
+                document.querySelector('#endAddressGroup .invalid-feedback').style.display = 'none';
+            }
+        } else {
+            endLocationValid = false;
+        }
+
+        if (!endLocationValid) {
+            isValid = false;
+        }
+
+        // Validate courier selection
+        const courierSelect = document.getElementById('courierId');
+        if (courierSelect.value === '') {
+            courierSelect.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            courierSelect.classList.remove('is-invalid');
+        }
+
+        // Validate parcel and quantity
+        const parcelSelect = document.getElementById('parcelIds');
+        const quantityInput = document.getElementById('quantities');
+
+        if (parcelSelect.value === '') {
+            parcelSelect.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            parcelSelect.classList.remove('is-invalid');
+
+            // Only validate quantity if parcel is selected
+            if (quantityInput.value === '' || isNaN(parseInt(quantityInput.value)) || parseInt(quantityInput.value) <= 0) {
+                quantityInput.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                const maxQuantity = parseInt(parcelSelect.options[parcelSelect.selectedIndex].getAttribute('data-max-quantity'));
+                if (parseInt(quantityInput.value) > maxQuantity) {
+                    quantityInput.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    quantityInput.classList.remove('is-invalid');
+                }
+            }
+        }
+
+        // Validate delivery date
+        const deliveryDate = document.getElementById('deliveryDate');
+        if (!deliveryDate.value) {
+            deliveryDate.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            deliveryDate.classList.remove('is-invalid');
+        }
+
+        // If any validation failed, show alert
+        if (!isValid) {
+            alert('Please complete all required fields before proceeding.');
+        }
+
+        return isValid;
     }
-
-    // Price calculation function (call this from your existing calculate price functionality)
-    // function calculatePrice() {
-    //     // Check if any products are selected
-    //     const parcelSelects = document.querySelectorAll('select[name="parcel_id[]"]');
-    //     let anyProductSelected = false;
-
-    //     parcelSelects.forEach(select => {
-    //         if (select.value !== '') {
-    //             anyProductSelected = true;
-    //         }
-    //     });
-
-    //     if (!anyProductSelected) {
-    //         alert('Please select at least one product before calculating the price.');
-    //         return;
-    //     }
-
-    //     // This is where you would implement your price calculation logic
-    //     var calculatedPrice;
-
-    //     // Set the product price
-    //     document.getElementById('productPrice').value = calculatedPrice.toFixed(2);
-
-    //     // Update the total price based on payment method
-    //     updateTotalPrice();
-    // }
-
 
     // Handle form submission
     function handleFormSubmit(event) {
         event.preventDefault();
+
+        let isValid = true;
+
+        // Validate start location
+        let startLocationValid = true;
+        let startLocationGroup = document.querySelector('input[name="startLocationType"]:checked');
+        let startLocationFeedback = document.querySelector('#startOfficeGroup .invalid-feedback');
+
+        if (!startLocationGroup) {
+            startLocationValid = false;
+            startLocationFeedback.style.display = 'block'; // Show the error message
+            startLocationFeedback.textContent = "Please select a start location type.";
+        } else {
+            if (document.getElementById('startOffice').checked) {
+                if (!document.getElementById('startOfficeCoords').value) {
+                    document.getElementById('startOfficeInput').classList.add('is-invalid');
+                    document.querySelector('#startOfficeGroup .invalid-feedback').style.display = 'block';
+                    document.querySelector('#startOfficeGroup .invalid-feedback').textContent = "Please select a start office.";
+                    startLocationValid = false;
+                } else {
+                    document.getElementById('startOfficeInput').classList.remove('is-invalid');
+                    document.querySelector('#startOfficeGroup .invalid-feedback').style.display = 'none';
+                    startLocationFeedback.style.display = 'none'; // Hide the error message
+                }
+            } else if (document.getElementById('startAddress').checked) {
+                if (!document.getElementById('startAddressCoords').value) {
+                    document.getElementById('startAddressInput').classList.add('is-invalid');
+                    document.querySelector('#startAddressGroup .invalid-feedback').style.display = 'block';
+                    document.querySelector('#startAddressGroup .invalid-feedback').textContent = "Please enter a start address.";
+                    startLocationValid = false;
+                } else {
+                    document.getElementById('startAddressInput').classList.remove('is-invalid');
+                    document.querySelector('#startAddressGroup .invalid-feedback').style.display = 'none';
+                    startLocationFeedback.style.display = 'none'; // Hide the error message
+                }
+            } else {
+                startLocationValid = false;
+            }
+        }
+
+        // Validate end location
+        let endLocationValid = true;
+        let endLocationGroup = document.querySelector('input[name="endLocationType"]:checked');
+        let endLocationFeedback = document.querySelector('#endOfficeGroup .invalid-feedback');
+
+        if (!endLocationGroup) {
+            endLocationValid = false;
+            endLocationFeedback.style.display = 'block'; // Show the error message
+            endLocationFeedback.textContent = "Please select an end location type.";
+        } else {
+            endLocationFeedback.style.display = 'none'; // Hide the error message
+            if (document.getElementById('endOffice').checked) {
+                if (!document.getElementById('endOfficeCoords').value) {
+                    document.getElementById('endOfficeInput').classList.add('is-invalid');
+                    document.querySelector('#endOfficeGroup .invalid-feedback').style.display = 'block';
+                    document.querySelector('#endOfficeGroup .invalid-feedback').textContent = "Please select an end office.";
+                    endLocationValid = false;
+                } else {
+                    document.getElementById('endOfficeInput').classList.remove('is-invalid');
+                    document.querySelector('#endOfficeGroup .invalid-feedback').style.display = 'none';
+                }
+            } else if (document.getElementById('endAddress').checked) {
+                if (!document.getElementById('endAddressCoords').value) {
+                    document.getElementById('endAddressInput').classList.add('is-invalid');
+                    document.querySelector('#endAddressGroup .invalid-feedback').style.display = 'block';
+                    document.querySelector('#endAddressGroup .invalid-feedback').textContent = "Please enter an end address.";
+                    endLocationValid = false;
+                } else {
+                    document.getElementById('endAddressInput').classList.remove('is-invalid');
+                    document.querySelector('#endAddressGroup .invalid-feedback').style.display = 'none';
+                }
+            } else {
+                endLocationValid = false;
+            }
+        }
+
+        if (!endLocationValid) {
+            isValid = false;
+        }
+
+        // Validate courier selection
+        const courierSelect = document.getElementById('courierId');
+        if (courierSelect.value === '') {
+            courierSelect.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            courierSelect.classList.remove('is-invalid');
+        }
+
+        if (!isValid) {
+            alert('Please make sure all locations and courier are valid before proceeding.');
+            return;
+        }
 
         // Perform form validation (you can add your own validation logic here)
         if (!validateOrderForm()) {
@@ -1095,14 +1306,6 @@
             showCashConfirmationPopup();
         }
     }
-
-    // Validate the order form
-    function validateOrderForm() {
-        // Add your validation logic here
-        // Return false if validation fails
-        return true;
-    }
-
     // Show online payment popup
     function showPaymentPopup() {
         // Create the payment popup overlay
@@ -1138,7 +1341,7 @@
             </div>
             <div class="payment-amount">
                 <strong>Total Amount: </strong>
-                <span>${document.getElementById('totalPrice').value} ${document.querySelector('.input-group-text').textContent}</span>
+                <span>${document.getElementById('product_price').value} ${document.querySelector('.input-group-text').textContent}</span>
             </div>
         </div>
         <div class="payment-popup-footer">
@@ -1174,6 +1377,7 @@
 
             // Submit the form and redirect to homepage
             const form = document.getElementById('booking-frm-id');
+            form.removeEventListener('submit', handleFormSubmit); // Remove event listener to avoid recursion
             form.submit();
             // This is where you would normally redirect to homepage after form submission
             // window.location.href = "index.php";
@@ -1233,6 +1437,7 @@
 
             // Submit the form and redirect to homepage
             const form = document.getElementById('booking-frm-id');
+            form.removeEventListener('submit', handleFormSubmit); // Remove event listener to avoid recursion
             form.submit();
             // This is where you would normally redirect to homepage after form submission
             // window.location.href = "index.php";

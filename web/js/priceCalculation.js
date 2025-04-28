@@ -19,7 +19,7 @@
                         // Trigger change event on payment method radio buttons
                         $('input[name="payment_method"]').trigger('change');
 
-                        updateTotalPrice(); // Update total price based on payment method
+                        // Update total price based on payment method
                     }
                 }
             });

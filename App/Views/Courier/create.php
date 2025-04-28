@@ -18,10 +18,6 @@
                                 <label for="name" class="form-label">Name*</label>
                                 <input type="text" class="form-control" id="name" name="name" required>
                             </div>
-                            <div class="form-group col-md-6 mb-3">
-                                <label for="address" class="form-label">Address</label>
-                                <input type="text" class="form-control" id="address" name="address">
-                            </div>
                         </div>
 
                         <div class="row">
@@ -55,10 +51,6 @@
                                         name="repeat_password" required>
                                     <i class="password-toggle-icon fa fa-eye" data-target="repeatPassword"></i>
                                 </div>
-                            </div>
-                            <div class="form-group col-md-6 mb-3">
-                                <label for="region" class="form-label">Region</label>
-                                <input type="text" class="form-control" id="region" name="region">
                             </div>
                         </div>
                         <div class="row">

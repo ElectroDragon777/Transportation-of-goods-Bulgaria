@@ -21,9 +21,11 @@
                                 <p><strong>Order ID:</strong> <?php echo htmlspecialchars($tpl['order']['id']); ?></p>
                                 <p><strong>Customer:</strong> <?php echo htmlspecialchars($tpl['customer']['name']); ?>
                                 </p>
-                                <p><strong>Address:</strong> <?php echo htmlspecialchars($tpl['order']['address']); ?>
+                                <p><strong>Start Point:</strong>
+                                    <?php echo htmlspecialchars($tpl['order']['start_point']); ?>
                                 </p>
-                                <p><strong>Region:</strong> <?php echo htmlspecialchars($tpl['order']['region']); ?></p>
+                                <p><strong>End Destination:</strong>
+                                    <?php echo htmlspecialchars($tpl['order']['end_destination']); ?></p>
                             </div>
                             <div class="col-md-6">
                                 <p><strong>Tracking Number:</strong>
