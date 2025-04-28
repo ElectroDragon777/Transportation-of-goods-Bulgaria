@@ -1063,38 +1063,52 @@
         // Validate start location
         let startLocationValid = true;
         let startLocationGroup = document.querySelector('input[name="startLocationType"]:checked');
-        let startLocationFeedback = document.querySelector('#startDestination .invalid-feedback');
+        let startLocationFeedback;
 
         if (!startLocationGroup) {
             startLocationValid = false;
-            startLocationFeedback.style.display = 'block'; // Show the error message
-            startLocationFeedback.textContent = "Please select a start location type.";
-        } else {
-            startLocationFeedback.style.display = 'none'; // Hide the error message
-        }
-
-        if (document.getElementById('startOffice').checked) {
-            if (!document.getElementById('startOfficeCoords').value) {
-                document.getElementById('startOfficeInput').classList.add('is-invalid');
-                document.querySelector('#startOfficeGroup .invalid-feedback').style.display = 'block';
-                document.querySelector('#startOfficeGroup .invalid-feedback').textContent = "Please select a start office.";
-                startLocationValid = false;
-            } else {
-                document.getElementById('startOfficeInput').classList.remove('is-invalid');
-                document.querySelector('#startOfficeGroup .invalid-feedback').style.display = 'none';
-            }
-        } else if (document.getElementById('startAddress').checked) {
-            if (!document.getElementById('startAddressCoords').value) {
-                document.getElementById('startAddressInput').classList.add('is-invalid');
-                document.querySelector('#startAddressGroup .invalid-feedback').style.display = 'block';
-                document.querySelector('#startAddressGroup .invalid-feedback').textContent = "Please enter a start address.";
-                startLocationValid = false;
-            } else {
-                document.getElementById('startAddressInput').classList.remove('is-invalid');
-                document.querySelector('#startAddressGroup .invalid-feedback').style.display = 'none';
+            // Target the invalid feedback directly under the radio buttons
+            startLocationFeedback = document.querySelector('.card-body > .form-group > .invalid-feedback');
+            if (startLocationFeedback) {
+                startLocationFeedback.style.display = 'block'; // Show the error message
+                startLocationFeedback.textContent = "Please select a start location type.";
             }
         } else {
-            startLocationValid = false;
+            if (document.getElementById('startOffice').checked) {
+                if (!document.getElementById('startOfficeCoords').value) {
+                    document.getElementById('startOfficeInput').classList.add('is-invalid');
+                    const feedback = document.querySelector('#startOfficeGroup .invalid-feedback');
+                    if (feedback) {
+                        feedback.style.display = 'block';
+                        feedback.textContent = "Please select a start office.";
+                    }
+                    startLocationValid = false;
+                } else {
+                    document.getElementById('startOfficeInput').classList.remove('is-invalid');
+                    const feedback = document.querySelector('#startOfficeGroup .invalid-feedback');
+                    if (feedback) {
+                        feedback.style.display = 'none';
+                    }
+                }
+            } else if (document.getElementById('startAddress').checked) {
+                if (!document.getElementById('startAddressCoords').value) {
+                    document.getElementById('startAddressInput').classList.add('is-invalid');
+                    const feedback = document.querySelector('#startAddressGroup .invalid-feedback');
+                    if (feedback) {
+                        feedback.style.display = 'block';
+                        feedback.textContent = "Please enter a start address.";
+                    }
+                    startLocationValid = false;
+                } else {
+                    document.getElementById('startAddressInput').classList.remove('is-invalid');
+                    const feedback = document.querySelector('#startAddressGroup .invalid-feedback');
+                    if (feedback) {
+                        feedback.style.display = 'none';
+                    }
+                }
+            } else {
+                startLocationValid = false;
+            }
         }
 
         if (!startLocationValid) {
@@ -1102,40 +1116,53 @@
         }
 
         // Validate end location
+        // Validate end location
         let endLocationValid = true;
         let endLocationGroup = document.querySelector('input[name="endLocationType"]:checked');
-        let endLocationFeedback = document.querySelector('#endDestination .invalid-feedback');
+        let endLocationFeedback = document.querySelector('.card-body > .form-group > .invalid-feedback');
 
         if (!endLocationGroup) {
             endLocationValid = false;
-            endLocationFeedback.style.display = 'block'; // Show the error message
-            endLocationFeedback.textContent = "Please select an end location type.";
-        } else {
-            endLocationFeedback.style.display = 'none'; // Hide the error message
-        }
-
-        if (document.getElementById('endOffice').checked) {
-            if (!document.getElementById('endOfficeCoords').value) {
-                document.getElementById('endOfficeInput').classList.add('is-invalid');
-                document.querySelector('#endOfficeGroup .invalid-feedback').style.display = 'block';
-                document.querySelector('#endOfficeGroup .invalid-feedback').textContent = "Please select an end office.";
-                endLocationValid = false;
-            } else {
-                document.getElementById('endOfficeInput').classList.remove('is-invalid');
-                document.querySelector('#endOfficeGroup .invalid-feedback').style.display = 'none';
-            }
-        } else if (document.getElementById('endAddress').checked) {
-            if (!document.getElementById('endAddressCoords').value) {
-                document.getElementById('endAddressInput').classList.add('is-invalid');
-                document.querySelector('#endAddressGroup .invalid-feedback').style.display = 'block';
-                document.querySelector('#endAddressGroup .invalid-feedback').textContent = "Please enter an end address.";
-                endLocationValid = false;
-            } else {
-                document.getElementById('endAddressInput').classList.remove('is-invalid');
-                document.querySelector('#endAddressGroup .invalid-feedback').style.display = 'none';
+            if (endLocationFeedback) {
+                endLocationFeedback.style.display = 'block'; // Show the error message
+                endLocationFeedback.textContent = "Please select an end location type.";
             }
         } else {
-            endLocationValid = false;
+            if (document.getElementById('endOffice').checked) {
+                if (!document.getElementById('endOfficeCoords').value) {
+                    document.getElementById('endOfficeInput').classList.add('is-invalid');
+                    const feedback = document.querySelector('#endOfficeGroup .invalid-feedback');
+                    if (feedback) {
+                        feedback.style.display = 'block';
+                        feedback.textContent = "Please select an end office.";
+                    }
+                    endLocationValid = false;
+                } else {
+                    document.getElementById('endOfficeInput').classList.remove('is-invalid');
+                    const feedback = document.querySelector('#endOfficeGroup .invalid-feedback');
+                    if (feedback) {
+                        feedback.style.display = 'none';
+                    }
+                }
+            } else if (document.getElementById('endAddress').checked) {
+                if (!document.getElementById('endAddressCoords').value) {
+                    document.getElementById('endAddressInput').classList.add('is-invalid');
+                    const feedback = document.querySelector('#endAddressGroup .invalid-feedback');
+                    if (feedback) {
+                        feedback.style.display = 'block';
+                        feedback.textContent = "Please enter an end address.";
+                    }
+                    endLocationValid = false;
+                } else {
+                    document.getElementById('endAddressInput').classList.remove('is-invalid');
+                    const feedback = document.querySelector('#endAddressGroup .invalid-feedback');
+                    if (feedback) {
+                        feedback.style.display = 'none';
+                    }
+                }
+            } else {
+                endLocationValid = false;
+            }
         }
 
         if (!endLocationValid) {
@@ -1341,7 +1368,7 @@
             </div>
             <div class="payment-amount">
                 <strong>Total Amount: </strong>
-                <span>${document.getElementById('product_price').value} ${document.querySelector('.input-group-text').textContent}</span>
+                <span>${document.getElementById('productPrice').value} ${document.querySelector('.input-group-text').textContent}</span>
             </div>
         </div>
         <div class="payment-popup-footer">
@@ -1403,7 +1430,7 @@
             <p>A 1.5% fee has been added to your total amount.</p>
             <div class="payment-amount">
                 <strong>Total Amount to Pay on Delivery: </strong>
-                <span>${document.getElementById('totalPrice').value} ${document.querySelector('.input-group-text').textContent}</span>
+                <span>${document.getElementById('productPrice').value} ${document.querySelector('.input-group-text').textContent}</span>
             </div>
         </div>
         <div class="payment-popup-footer">
