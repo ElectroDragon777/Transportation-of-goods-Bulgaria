@@ -59,7 +59,6 @@ CREATE TABLE IF NOT EXISTS `order_pallets` (
   `pallet_id` INT(11) NOT NULL,
   `price` DECIMAL(10, 2) NOT NULL,
   `subtotal` DECIMAL(10, 2) NOT NULL,
-  `mini_tax` DECIMAL(10, 2) DEFAULT 0.00,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

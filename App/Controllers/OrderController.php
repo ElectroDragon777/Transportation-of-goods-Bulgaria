@@ -76,7 +76,19 @@ class OrderController extends Controller
         foreach ($orders as &$order) {
             $order['customer_name'] = $userModel->get($order['user_id'])['name'] ?? 'Unknown';
             $order['courier_name'] = $userModel->get($order['courier_id'])['name'] ?? 'Unknown';
-            $order['delivery_date'] = date($this->settings['date_format'], $order['delivery_date']);
+            if (is_numeric($order['delivery_date'])) {
+                $order['delivery_date'] = date($this->settings['date_format'], $order['delivery_date']);
+            } elseif ($order['delivery_date'] !== null && $order['delivery_date'] !== 'N/A') {
+                // Attempt to format the existing date string
+                try {
+                    $date = new \DateTime($order['delivery_date']);
+                    $order['delivery_date'] = $date->format($this->settings['date_format']);
+                } catch (\Exception $e) {
+                    $order['delivery_date'] = 'N/A'; // If formatting fails, set to N/A
+                }
+            } else {
+                $order['delivery_date'] = 'N/A'; // Or some other default value
+            }
         }
 
         // Pass the data to the view
@@ -146,13 +158,31 @@ class OrderController extends Controller
             }
 
             // Check delivery date
-            $deliveryDate = strtotime($_POST['delivery_date']);
+            $deliveryDateStr = $_POST['delivery_date'] ?? date($this->settings['date_format']); // Default to today's date if not provided
             $today = strtotime(date('Y-m-d')); // Get today's date without the time
+            $closingTime = strtotime($this->settings['closing_time']); // Assuming closing time is in 'H:i' format
             // $oneDayLater = strtotime('+1 day', $today);
 
-            if ($deliveryDate < $today) {
-                $error_message = "Delivery date must be at least today - " . date($this->settings['date_format'], $today);
-                $quantityError = true; // Use the quantityError flag for consistency
+            // Convert the date string to a timestamp using createFromFormat
+            $dateFormat = $this->settings['date_format']; // Assuming the date format is set in the settings
+            $date = \DateTime::createFromFormat($dateFormat, $deliveryDateStr);
+
+            if (!$date) {
+                $error_message = "Invalid delivery date format. Please use " . $dateFormat;
+                $quantityError = true;
+            } else {
+                $deliveryDate = $date->getTimestamp(); // Get the timestamp from the DateTime object
+                $today = strtotime(date('Y-m-d')); // Get today's date without the time
+                $closingTime = strtotime($this->settings['closing_time']); // Assuming closing time is in 'H:i' format
+
+                if ($deliveryDate < $today) {
+                    $error_message = "Delivery date must be at least " . date($dateFormat, $today);
+                    $quantityError = true;
+                } elseif ($deliveryDate == $today && date('H:i') > $closingTime) {
+                    $tomorrow = strtotime('+1 day', $today);
+                    $error_message = "It's past closing time. Delivery date must be at least " . date($dateFormat, $tomorrow);
+                    $quantityError = true;
+                }
             }
 
             if (!$quantityError && !$error_message) { // Added check for $error_message
@@ -167,6 +197,9 @@ class OrderController extends Controller
                     'tracking_number' => \Utility::generateRandomString(),
                     'delivery_date' => strtotime($_POST['delivery_date']),
                     'cash_on_delivery' => $cashOnDelivery ? 1 : 0,
+                    'start_point' => $_POST['startAddressName'] ?? $_POST['startOfficeName'] ?? "Set, but not going to Controller",
+                    'end_destination' => $_POST['endAddressName'] ?? $_POST['endOfficeName'] ?? "Set, but not going to Controller",
+                    'status' => $_POST['status'] ?? 'pending',
                     'created_at' => time()
                 ];
 
@@ -227,14 +260,16 @@ class OrderController extends Controller
                             $quantity = 1;
                         }
 
-                        $subtotal = $price * $quantity;
+                        // Old.
+                        // $subtotal = $price * $quantity;
 
+                        // OrderPallets Table data
                         $orderpalletData = [
                             'order_id' => $orderId,
                             'pallet_id' => $palletId,
                             'quantity' => $quantity,
-                            'price' => $price,
-                            'subtotal' => $subtotal,
+                            'price' => $productPrice,
+                            'subtotal' => $total - $productPrice // That 1.5%COD,
                         ];
 
                         if (!$OrderPalletsModel->save($orderpalletData)) {
@@ -288,7 +323,7 @@ class OrderController extends Controller
 
                             $mailer->sendMail($customer['email'], "Order Confirmation #{$orderId}", $emailContent);
                         }
-                        header("Location: " . INSTALL_URL . "?controller=Order&action=list", true, 301);
+                        header("Location: " . INSTALL_URL, true, 301);
                         exit;
                     }
                 } else {
@@ -670,7 +705,10 @@ class OrderController extends Controller
                     'tracking_number' => $order['tracking_number'],
                     'delivery_date' => strtotime($_POST['delivery_date']),
                     'total_amount' => $total,
-                    'cash_on_delivery' => $cashOnDelivery ? 1 : 0
+                    'cash_on_delivery' => $cashOnDelivery ? 1 : 0,
+                    'start_point' => $_POST['startAddress'] ?? $_POST['startOffice'] ?? "Set, but not going to Controller",
+                    'end_destination' => $_POST['endAddress'] ?? $_POST['endOffice'] ?? "Set, but not going to Controller",
+                    'status' => $_POST['status'] ?? 'pending',
                 ];
 
                 if (!$orderModel->update(['id' => $orderId] + $orderData + $_POST)) {

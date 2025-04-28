@@ -87,6 +87,7 @@
                                                 <option value="">Select an office</option>
                                             </select>
                                             <input type="hidden" id="startOfficeCoords" name="startOfficeCoords">
+                                            <input type="hidden" id="startOfficeName" name="startOfficeName">
                                         </div>
                                         <div id="startOfficeAutocomplete" class="autocomplete-results"></div>
                                     </div>
@@ -97,6 +98,7 @@
                                         <input type="text" class="form-control" id="startAddressInput"
                                             name="startAddress" placeholder="Enter full address">
                                         <input type="hidden" id="startAddressCoords" name="startAddressCoords">
+                                        <input type="hidden" id="startAddressName" name="startAddressName">
                                         <div class="invalid-feedback">Please enter a valid address</div>
                                         <button type="button" class="btn btn-sm btn-outline-secondary mt-2"
                                             id="validateStartAddress">Validate Address</button>
@@ -135,6 +137,7 @@
                                                 <option value="">Select an office</option>
                                             </select>
                                             <input type="hidden" id="endOfficeCoords" name="endOfficeCoords">
+                                            <input type="hidden" id="endOfficeName" name="endOfficeName">
                                         </div>
                                         <div id="endOfficeAutocomplete" class="autocomplete-results"></div>
                                     </div>
@@ -145,6 +148,7 @@
                                         <input type="text" class="form-control" id="endAddressInput" name="endAddress"
                                             placeholder="Enter full address">
                                         <input type="hidden" id="endAddressCoords" name="endAddressCoords">
+                                        <input type="hidden" id="endAddressName" name="endAddressName">
                                         <div class="invalid-feedback">Please enter a valid address</div>
                                         <button type="button" class="btn btn-sm btn-outline-secondary mt-2"
                                             id="validateEndAddress">Validate Address</button>
@@ -624,6 +628,7 @@
             li.addEventListener('click', function () {
                 input.value = office.city;
                 coords.value = `${office.lat},${office.lng}`;
+                document.getElementById(coordsId.replace('Coords', 'Name')).value = office.city;
 
                 // Set the select value for form submission
                 for (let i = 0; i < select.options.length; i++) {
@@ -636,7 +641,6 @@
                 container.classList.add('d-none');
                 updateMap();
             });
-
             ul.appendChild(li);
         });
 
@@ -707,6 +711,7 @@
                             input.classList.add('is-valid');
                             input.classList.remove('is-invalid');
                             input.nextElementSibling.textContent = "";
+                            document.getElementById(coordsId.replace('Coords', 'Name')).value = input.value;
 
                             // Show the validated address in a more readable format
                             const formattedAddress = result.display_name;
@@ -1022,11 +1027,11 @@
         const paymentOnline = document.getElementById('paymentOnline');
         const paymentCash = document.getElementById('paymentCash');
 
-        // Add event listeners to payment method radios
-        // if (paymentOnline && paymentCash) {
-        //     paymentOnline.addEventListener('change', updateTotalPrice);
-        //     paymentCash.addEventListener('change', updateTotalPrice);
-        // }
+        //Add event listeners to payment method radios
+        if (paymentOnline && paymentCash) {
+            paymentOnline.addEventListener('change', calculatePrice);
+            paymentCash.addEventListener('change', calculatePrice);
+        }
 
         // Get the form and add submit event listener
         const orderForm = document.getElementById('booking-frm-id');
@@ -1038,6 +1043,9 @@
 
                 // Run all validations
                 if (validateFullForm()) {
+                    // Calculate price before showing popup
+                    calculatePrice();
+
                     // Show payment popup based on selected method
                     const isOnlinePayment = document.getElementById('paymentOnline').checked;
                     if (isOnlinePayment) {
@@ -1050,11 +1058,33 @@
         }
 
         // // Set up the calculate price button
-        // const calculatePriceBtn = document.getElementById('calculate-price-btn-id');
-        // if (calculatePriceBtn) {
-        //     calculatePriceBtn.addEventListener('click', calculatePrice);
-        // }
+        const calculatePriceBtn = document.getElementById('calculate-price-btn-id');
+        if (calculatePriceBtn) {
+            calculatePriceBtn.addEventListener('click', calculatePrice);
+        }
     });
+
+    function calculatePrice() {
+        const form = document.getElementById('booking-frm-id');
+        const formData = new FormData(form);
+
+        fetch('<?php echo INSTALL_URL; ?>?controller=Order&action=calculatePrice', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    document.getElementById('productPrice').value = data.product_price;
+                    // document.getElementById('totalPrice').value = data.total;
+                }
+            })
+            .catch(error => {
+                console.error('Error calculating price:', error);
+            });
+    }
 
     // Comprehensive form validation function
     function validateFullForm() {
