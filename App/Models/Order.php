@@ -16,6 +16,7 @@ class Order extends Model
         array('name' => 'end_destination', 'type' => 'varchar', 'default' => ''),
         array('name' => 'status', 'type' => 'varchar', 'default' => ''),
         array('name' => 'product_price', 'type' => 'decimal', 'default' => ':NULL'),
+        array('name' => 'quantity', 'type' => 'int', 'default' => '0'),
         array('name' => 'total_amount', 'type' => 'decimal', 'default' => ':NULL'),
         array('name' => 'created_at', 'type' => 'varchar', 'default' => ''),
         array('name' => 'last_processed', 'type' => 'varchar', 'default' => ''),

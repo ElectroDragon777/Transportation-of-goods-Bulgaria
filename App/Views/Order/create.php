@@ -292,7 +292,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            
+
                                             <!-- Not a plan yet, but can be enhanced for pallets vvv -->
                                             <!-- <div class="col-md-4">
                                             <label for="quantities" class="form-label">Quantity</label>

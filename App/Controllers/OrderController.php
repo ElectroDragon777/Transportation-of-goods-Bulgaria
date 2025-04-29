@@ -76,7 +76,7 @@ class OrderController extends Controller
         foreach ($orders as &$order) {
             $order['customer_name'] = $userModel->get($order['user_id'])['name'] ?? 'Unknown';
             $order['courier_name'] = $userModel->get($order['courier_id'])['name'] ?? 'Unknown';
-            
+
             if (is_numeric($order['delivery_date'])) {
                 $order['delivery_date'] = date($this->settings['date_format'], $order['delivery_date']);
             } elseif ($order['delivery_date'] !== null && $order['delivery_date'] !== 'N/A') {
@@ -90,6 +90,28 @@ class OrderController extends Controller
             } else {
                 $order['delivery_date'] = 'N/A'; // Or some other default value
             }
+
+            // --- DEBUGGING ---
+            // echo "<b>Order ID:</b> " . $order['id'] . "<br>";
+            // echo "<b>Quantity from DB:</b> ";
+            // var_dump($order['quantity']);
+            // echo "<br>";
+
+            // echo "<b>\$order['quantity'] before utility:</b> ";
+            // var_dump($order['quantity']);
+            // echo "<br>";
+
+            // $displayableQuantity = $order['quantity']; // Direct assignment for quantity
+            // echo "<b>Quantity after direct assignment:</b> ";
+            // var_dump($displayableQuantity);
+            // echo "<br>";
+
+            // $order['quantity'] = $displayableQuantity;
+
+            // echo "<b>\$order['quantity'] after assignment:</b> ";
+            // var_dump($order['quantity']);
+            // echo "<br><br>";
+            // --- END DEBUGGING ---
         }
 
         // Pass the data to the view
@@ -126,8 +148,8 @@ class OrderController extends Controller
         $currency = $this->settings['currency']; // $this->settings['currency_code'], set manually to currency, since local+modded.
 
         if (!empty($_POST['send'])) {
-            $palletIds = $_POST['parcel_id'];
-            $quantities = $_POST['quantity'];
+            $palletIds = $_POST['parcel_id'] ?? [];
+            $quantities = $_POST['quantity'] ?? [];
 
             // Validate start and end locations
             $startLocationType = $_POST['startLocationType'] ?? null;
@@ -149,6 +171,15 @@ class OrderController extends Controller
             $quantityError = false;
             $error_message = null;
 
+            // Log the pallet IDs and quantities for debugging
+            error_log("Pallet IDs: " . print_r($palletIds, true));
+            error_log("Quantities: " . print_r($quantities, true));
+            if (count($palletIds) !== count($quantities)) {
+                $error_message = "Error: Pallet IDs and Quantities arrays are not aligned!";
+                error_log($error_message); // Log the error
+                // Consider adding a return here to stop processing and prevent further errors
+            }
+
             foreach ($palletIds as $key => $palletId) {
                 $pallet = $palletModel->get($palletId);
                 if ($quantities[$key] > $pallet['stock']) {
@@ -159,22 +190,17 @@ class OrderController extends Controller
             }
 
             // Check delivery date
-            $deliveryDateStr = $_POST['delivery_date'] ?? date($this->settings['date_format']); // Default to today's date if not provided
-            $today = strtotime(date('Y-m-d')); // Get today's date without the time
-            $closingTime = strtotime($this->settings['closing_time']); // Assuming closing time is in 'H:i' format
-            // $oneDayLater = strtotime('+1 day', $today);
-
-            // Convert the date string to a timestamp using createFromFormat
-            $dateFormat = $this->settings['date_format']; // Assuming the date format is set in the settings
+            $deliveryDateStr = $_POST['delivery_date'] ?? date($this->settings['date_format']);
+            $dateFormat = $this->settings['date_format'];
             $date = \DateTime::createFromFormat($dateFormat, $deliveryDateStr);
 
             if (!$date) {
                 $error_message = "Invalid delivery date format. Please use " . $dateFormat;
                 $quantityError = true;
             } else {
-                $deliveryDate = $date->getTimestamp(); // Get the timestamp from the DateTime object
-                $today = strtotime(date('Y-m-d')); // Get today's date without the time
-                $closingTime = strtotime($this->settings['closing_time']); // Assuming closing time is in 'H:i' format
+                $deliveryDate = $date->getTimestamp();
+                $today = strtotime(date('Y-m-d'));
+                $closingTime = strtotime($this->settings['closing_time']);
 
                 if ($deliveryDate < $today) {
                     $error_message = "Delivery date must be at least " . date($dateFormat, $today);
@@ -186,104 +212,111 @@ class OrderController extends Controller
                 }
             }
 
-            if (!$quantityError && !$error_message) { // Added check for $error_message
-                // Calculate total price using the new pricing method
+            if (!$quantityError && !$error_message) {
+                // Initialize variables
                 $productPrice = 0;
-                $total = 0;
-                $cashOnDelivery = isset($_POST['cash_on_delivery']) && $_POST['cash_on_delivery'] == '1';
-                $codFee = 0;
+                $totalQuantity = 0;
+                $cashOnDelivery = isset($_POST['payment_method']) && $_POST['payment_method'] == 'cash';
 
-                $orderData = [
-                    'last_processed' => time(),
-                    'tracking_number' => \Utility::generateRandomString(),
-                    'delivery_date' => $_POST['delivery_date'],
-                    'cash_on_delivery' => $cashOnDelivery ? 1 : 0,
-                    'product_price' => $_POST['productPrice'],
-                    'total_amount' => $_POST['productPrice'],
-                    // Fix start point logic - determine based on selected type
-                    'start_point' => $startLocationType === 'office' ? $_POST['startOfficeName'] : $_POST['startAddressName'],
-                    // Fix end destination logic - determine based on selected type
-                    'end_destination' => $endLocationType === 'office' ? $_POST['endOfficeName'] : $_POST['endAddressName'],
-                    'status' => $_POST['status'] ?? 'pending',
-                    'created_at' => time()
-                ];
-                
+                // Debug value to loop-around.
+                $ItemCost = 0;
 
-                // Calculate the total price
+                // First pass: calculate product price and total quantity
                 foreach ($palletIds as $key => $palletId) {
                     $pallet = $palletModel->get($palletId);
-                    $quantity = $quantities[$key];
+                    $quantity = is_numeric($quantities[$key]) ? intval($quantities[$key]) : 0;
+                    if ($quantity <= 0) {
+                        $error_message = "Invalid quantity provided. Please check your input.";
+                        // Handle the error (e.g., log it, display a message to the user)
+                        $quantityError = true;
+                        break; // Exit the loop since there's an error
+                    }
 
-                    // Get weight and dimensions from pallet
+                    // For document category, quantity is always 1
+                    if ($pallet['category'] === 'document') {
+                        $quantity = 1;
+                        $quantities[$key] = 1;
+                    }
+
+                    // Get weight and dimensions
                     $weight = $pallet['weight_kg'] ?? 0;
                     $length = $pallet['size_x_cm'] ?? 0;
                     $width = $pallet['size_y_cm'] ?? 0;
                     $height = $pallet['size_z_cm'] ?? 0;
 
-                    // Calculate price based on weight/dimensions
+                    // Calculate price
                     $itemPrice = $this->calculatePalletPrice($weight, $length, $width, $height);
-
-                    // For document category, quantity is always 1
-                    if ($pallet['category'] === 'document') {
-                        $quantity = 1;
-                    }
-
-                    // Calculate subtotal for this item
+                    $ItemCost = $itemPrice; // Debug value to loop-around.
                     $itemTotal = $itemPrice * $quantity;
-                    $total += $itemTotal;
+
+                    // Add to totals
+                    $productPrice += $itemTotal;
+                    $totalQuantity += $quantity;
+                    $orderData['quantity'] = $totalQuantity; // Set the quantity in the order data
                 }
 
-                // Add COD fee if applicable
-                if ($cashOnDelivery) {
-                    $codFee = $productPrice * 0.015; // 1.5% of product price
-                    $total = $productPrice + $codFee; // Total includes product price and COD fee
-                } else {
-                    $total = $productPrice; // Total is just the product price
-                }
+                // Calculate COD fee if applicable
+                $codFee = $cashOnDelivery ? $productPrice * 0.015 : 0;
+                $totalAmount = $productPrice + $codFee;
+                // $totalQuantity = ; // Total quantity is the sum of all quantities. Hardcoded since no discounts, we couriers.
 
-                $orderData['product_price'] = $productPrice; // Assign the product price
-                $orderData['total_amount'] = $total; // Assign the total amount
+                // Create order data
+                $orderData = [
+                    'last_processed' => time(),
+                    'tracking_number' => \Utility::generateRandomString(),
+                    'delivery_date' => $deliveryDate,
+                    'cash_on_delivery' => $cashOnDelivery ? 1 : 0,
+                    'start_point' => $startLocationType === 'office' ? $_POST['startOfficeName'] : $_POST['startAddressName'],
+                    'end_destination' => $endLocationType === 'office' ? $_POST['endOfficeName'] : $_POST['endAddressName'],
+                    'status' => $_POST['status'] ?? 'pending',
+                    'product_price' => $productPrice,
+                    'total_amount' => $totalAmount,
+                    // 'quantity' => $productPrice / $ItemCost,
+                    'created_at' => time()
+                ];
 
+                // Save the order
                 $orderId = $orderModel->save($orderData + $_POST);
 
                 if ($orderId) {
-                    // Save order pallets and update pallet quantities
+                    // Now process each pallet in the order
                     foreach ($palletIds as $key => $palletId) {
                         $pallet = $palletModel->get($palletId);
-                        $quantity = $quantities[$key];
+                        $quantity = intval($quantities[$key]);
 
-                        // Get weight and dimensions from pallet
-                        $weight = $pallet['weight_kg'] ?? 0;
-                        $length = $pallet['size_x_cm'] ?? 0; // Length
-                        $width = $pallet['size_y_cm'] ?? 0; // Width
-                        $height = $pallet['size_z_cm'] ?? 0; // Height
-
-                        // Calculate price based on weight/dimensions
-                        $price = $this->calculatePalletPrice($weight, $length, $width, $height);
-
-                        // For document category, quantity is always 1
+                        // For document category, ensure quantity is 1
                         if ($pallet['category'] === 'document') {
                             $quantity = 1;
                         }
 
-                        // Old.
-                        // $subtotal = $price * $quantity;
+                        // Get weight and dimensions
+                        $weight = $pallet['weight_kg'] ?? 0;
+                        $length = $pallet['size_x_cm'] ?? 0;
+                        $width = $pallet['size_y_cm'] ?? 0;
+                        $height = $pallet['size_z_cm'] ?? 0;
 
-                        // OrderPallets Table data
-                        $orderpalletData = [
+                        // Calculate price for this item
+                        $itemPrice = $this->calculatePalletPrice($weight, $length, $width, $height);
+                        $itemTotal = $itemPrice * $quantity;
+
+                        // Calculate this item's contribution to the COD fee
+                        $itemCodFee = $cashOnDelivery ? $itemTotal * 0.015 : 0;
+
+                        // Create the order pallet record
+                        $orderPalletData = [
                             'order_id' => $orderId,
                             'pallet_id' => $palletId,
                             'quantity' => $quantity,
-                            'price' => $total-$codFee,
-                            'subtotal' => $codFee // That 1.5%COD,
+                            'price' => $itemPrice,  // Individual pallet price (no COD)
+                            'subtotal' => $itemCodFee  // This item's COD fee
                         ];
 
-                        if (!$OrderPalletsModel->save($orderpalletData)) {
+                        if (!$OrderPalletsModel->save($orderPalletData)) {
                             $error_message = "Failed to save order pallets. Please try again.";
                             break;
                         }
 
-                        // Update pallet quantity after order pallet is saved
+                        // Update the pallet stock
                         $updatedQuantity = $pallet['stock'] - $quantity;
                         $updateSuccess = $palletModel->update([
                             'id' => $palletId,
@@ -298,10 +331,9 @@ class OrderController extends Controller
 
                     if (!isset($error_message)) {
                         // Send notifications
-                        // Notify user and courier
                         $notificationModel->save([
                             'user_id' => $_POST['user_id'],
-                            'message' => "Your order #{$orderId} has been created successfully! Total amount: {$total}",
+                            'message' => "Your order #{$orderId} has been created successfully! Total amount: {$totalAmount}",
                             'link' => INSTALL_URL . "?controller=Order&action=details&id=$orderId",
                             'created_at' => time()
                         ]);
@@ -313,7 +345,7 @@ class OrderController extends Controller
                             'created_at' => time()
                         ]);
 
-                        //
+                        // Send email if enabled
                         if ($this->settings['email_sending'] == 'enabled') {
                             $order = $orderModel->get($orderId);
                             $customer = $userModel->get($order['user_id']);
@@ -326,9 +358,9 @@ class OrderController extends Controller
                             }
 
                             $emailContent = $this->generateOrderEmail($order, $customer, $courier, $OrderPallets, "Order Confirmation");
-
                             $mailer->sendMail($customer['email'], "Order Confirmation #{$orderId}", $emailContent);
                         }
+
                         header("Location: " . INSTALL_URL, true, 301);
                         exit;
                     }
@@ -709,7 +741,8 @@ class OrderController extends Controller
                 $orderData = [
                     'last_processed' => time(),
                     'tracking_number' => $order['tracking_number'],
-                    'delivery_date' => strtotime($_POST['delivery_date']),
+                    //'delivery_date' => strtotime($_POST['delivery_date']),
+                    'delivery_date' => $_POST['delivery_date'],
                     'total_amount' => $total,
                     'cash_on_delivery' => $cashOnDelivery ? 1 : 0,
                     'start_point' => $_POST['startAddress'] ?? $_POST['startOffice'] ?? "Set, but not going to Controller",
