@@ -1034,10 +1034,14 @@
         const paymentOnline = document.getElementById('paymentOnline');
         const paymentCash = document.getElementById('paymentCash');
 
+        // Quantity change event listener
+        const quantityListener = document.getElementById('quantities');
+
         //Add event listeners to payment method radios
-        if (paymentOnline && paymentCash) {
+        if (paymentOnline || paymentCash || quantityListener) {
             paymentOnline.addEventListener('change', calculatePrice);
             paymentCash.addEventListener('change', calculatePrice);
+            quantityListener.addEventListener('change', calculatePrice);
         }
 
         // Get the form and add submit event listener
