@@ -854,6 +854,12 @@
         document.getElementById('booking-frm-id').addEventListener('submit', function (event) {
             let isValid = true;
 
+            // Debug to see values
+            console.log('Start Office Name:', document.getElementById('startOfficeName').value);
+            console.log('Start Address Name:', document.getElementById('startAddressName').value);
+            console.log('End Office Name:', document.getElementById('endOfficeName').value);
+            console.log('End Address Name:', document.getElementById('endAddressName').value);
+
             // Validate start location
             if (document.getElementById('startOffice').checked) {
                 if (!document.getElementById('startOfficeCoords').value) {

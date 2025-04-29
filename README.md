@@ -72,4 +72,7 @@ No Postal codes. Focus on Address conversion. And the DBs.
 ==== April 27th 2025 ====
 Orders almost reworked. Struggling still. But better in terms of understanding!
 
+==== April 28th 2025 ====
+In school again, Day 2/10 for school internship. Testing commits and hopefully fully fixing orders. Also marks 100 commits! ^w^
+
 ------------ End of current logs ------------

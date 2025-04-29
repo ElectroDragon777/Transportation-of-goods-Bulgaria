@@ -68,7 +68,7 @@ CREATE TABLE `order_pallets` (
   `order_id` int(11) NOT NULL,
   `pallet_id` int(11) NOT NULL,
   `price` decimal(10,2) NOT NULL,
-  `subtotal` decimal(10,2) NOT NULL,
+  `subtotal` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- --------------------------------------------------------
