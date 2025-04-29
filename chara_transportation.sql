@@ -49,6 +49,7 @@ CREATE TABLE `orders` (
   `end_destination` varchar(255) NOT NULL,
   `status` varchar(50) NOT NULL,
   `product_price` decimal(10,2) NOT NULL,
+  `quantity` int(11) NOT NULL,
   `total_amount` decimal(10,2) NOT NULL,
   `created_at` bigint(20) DEFAULT unix_timestamp(),
   `last_processed` bigint(20) DEFAULT unix_timestamp(),

@@ -4,12 +4,14 @@
             <div class="home-tab">
                 <div class="d-sm-flex align-items-center justify-content-between border-bottom">
                     <ul class="nav nav-tabs" role="tablist">
-                        <li class="nav-item">
+                        <?php if (in_array($_SESSION['user']['role'], ['admin', 'root'])): ?>
+                            <li class="nav-item">
                             <a class="nav-link" href="<?php echo INSTALL_URL; ?>?controller=Order&action=list">Order
                                 List</a>
                         </li>
+                        <?php endif ?>                    
                         <li class="nav-item">
-                            <a class="nav-link active ps-0" href="#">Order Details</a>
+                            <a class="nav-link active ps-3" href="#">Order Details</a>
                         </li>
                     </ul>
                 </div>
@@ -33,7 +35,17 @@
                                 <p><strong>Courier:</strong> <?php echo htmlspecialchars($tpl['courier']['name']); ?>
                                 </p>
                                 <p><strong>Delivery Date:</strong>
-                                    <?php echo htmlspecialchars(date($tpl['date_format'], $tpl['order']['delivery_date'])); ?>
+                                <?php
+                                    // Convert the delivery date to a Unix timestamp
+                                    $deliveryTimestamp = strtotime($tpl['order']['delivery_date']);
+                                    
+                                    // Check if the conversion was successful
+                                    if ($deliveryTimestamp !== false) {
+                                        echo htmlspecialchars(date($tpl['date_format'], $deliveryTimestamp));
+                                    } else {
+                                        echo 'Date was not set correctly';
+                                    }
+                                    ?>
                                 </p>
                                 <p><strong>Status:</strong>
                                     <?php echo htmlspecialchars(Utility::$order_status[$tpl['order']['status']]); ?></p>
@@ -43,25 +55,27 @@
                             </div>
                         </div>
                         <hr>
-                        <h5>Products</h5>
+                        <h5>Parcel:</h5>
                         <div class="table-responsive">
                             <table class="table select-table" id="order-products-table-id">
                                 <thead>
                                     <tr>
-                                        <th>Product Name</th>
+                                        <th>Parcel Name</th>
+                                        <th>Category</th>
                                         <th>Quantity</th>
                                         <th>Price</th>
                                         <th>Subtotal</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($tpl['products'] as $product) { ?>
+                                    <?php foreach ($tpl['pallets'] as $pallet) { ?>
                                         <tr>
-                                            <td><?php echo htmlspecialchars($product['name']); ?></td>
-                                            <td><?php echo htmlspecialchars($product['quantity']); ?></td>
-                                            <td><?php echo Utility::getDisplayableAmount(htmlspecialchars(number_format($product['price'], 2))); ?>
+                                            <td><?php echo htmlspecialchars($pallet['name']); ?></td>
+                                            <td><?php echo htmlspecialchars($pallet['category']); ?></td>
+                                            <td><?php echo htmlspecialchars($pallet['stock']); ?></td>
+                                            <td><?php echo Utility::getDisplayableAmount(htmlspecialchars(number_format($pallet['total_amount'], 2))); ?>
                                             </td>
-                                            <td><?php echo Utility::getDisplayableAmount(htmlspecialchars(number_format($product['subtotal'], 2))); ?>
+                                            <td><?php echo Utility::getDisplayableAmount(htmlspecialchars(number_format($pallet['subtotal'], 2))); ?>
                                             </td>
                                         </tr>
                                     <?php } ?>

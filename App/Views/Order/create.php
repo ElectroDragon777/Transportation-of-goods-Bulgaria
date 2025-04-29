@@ -292,12 +292,13 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            
                                             <!-- Not a plan yet, but can be enhanced for pallets vvv -->
                                             <!-- <div class="col-md-4">
                                             <label for="quantities" class="form-label">Quantity</label>
                                             <input type="number" step="1" min="1" class="form-control" id="quantities"
                                                    name="quantity[]" required>
-                                        </div> -->
+                                            </div> -->
 
                                             <!-- <div class="col-md-1 text-center d-flex justify-content-center align-items-center">
                                             <button type="button" class="btn btn-light d-flex justify-content-center align-items-center rounded-circle add-row" style="width: 36px; height: 36px;">+</button>
