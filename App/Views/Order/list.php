@@ -65,14 +65,6 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-12 mb-3">
-                                            <label for="filter-region" class="form-label">Region</label>
-                                            <input type="text" class="form-control" id="filter-region"
-                                                placeholder="Search by region">
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label for="filter-date-from" class="form-label">Delivery Date From
                                                 (inclusive)</label>

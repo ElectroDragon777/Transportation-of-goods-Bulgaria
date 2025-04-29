@@ -76,6 +76,7 @@ class OrderController extends Controller
         foreach ($orders as &$order) {
             $order['customer_name'] = $userModel->get($order['user_id'])['name'] ?? 'Unknown';
             $order['courier_name'] = $userModel->get($order['courier_id'])['name'] ?? 'Unknown';
+            
             if (is_numeric($order['delivery_date'])) {
                 $order['delivery_date'] = date($this->settings['date_format'], $order['delivery_date']);
             } elseif ($order['delivery_date'] !== null && $order['delivery_date'] !== 'N/A') {
@@ -195,13 +196,18 @@ class OrderController extends Controller
                 $orderData = [
                     'last_processed' => time(),
                     'tracking_number' => \Utility::generateRandomString(),
-                    'delivery_date' => strtotime($_POST['delivery_date']),
+                    'delivery_date' => $_POST['delivery_date'],
                     'cash_on_delivery' => $cashOnDelivery ? 1 : 0,
-                    'start_point' => $_POST['startAddressName'] ?? $_POST['startOfficeName'] ?? "Set, but not going to Controller",
-                    'end_destination' => $_POST['endAddressName'] ?? $_POST['endOfficeName'] ?? "Set, but not going to Controller",
+                    'product_price' => $_POST['productPrice'],
+                    'total_amount' => $_POST['productPrice'],
+                    // Fix start point logic - determine based on selected type
+                    'start_point' => $startLocationType === 'office' ? $_POST['startOfficeName'] : $_POST['startAddressName'],
+                    // Fix end destination logic - determine based on selected type
+                    'end_destination' => $endLocationType === 'office' ? $_POST['endOfficeName'] : $_POST['endAddressName'],
                     'status' => $_POST['status'] ?? 'pending',
                     'created_at' => time()
                 ];
+                
 
                 // Calculate the total price
                 foreach ($palletIds as $key => $palletId) {
@@ -268,8 +274,8 @@ class OrderController extends Controller
                             'order_id' => $orderId,
                             'pallet_id' => $palletId,
                             'quantity' => $quantity,
-                            'price' => $productPrice,
-                            'subtotal' => $total - $productPrice // That 1.5%COD,
+                            'price' => $total-$codFee,
+                            'subtotal' => $codFee // That 1.5%COD,
                         ];
 
                         if (!$OrderPalletsModel->save($orderpalletData)) {
