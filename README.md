@@ -75,4 +75,8 @@ Orders almost reworked. Struggling still. But better in terms of understanding!
 ==== April 28th 2025 ====
 In school again, Day 2/10 for school internship. Testing commits and hopefully fully fixing orders. Also marks 100 commits! ^w^
 
+==== April 30th 2025 ====
+Focusing on thesis' 30 pages today. Anyway, have a silly commit of an old DB copy =w=
+As of now, 21 done.
+
 ------------ End of current logs ------------
