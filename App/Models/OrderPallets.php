@@ -13,9 +13,10 @@ class OrderPallets extends Model
         array('name' => 'id', 'type' => 'int', 'default' => ':NULL'),
         array('name' => 'order_id', 'type' => 'int', 'default' => ':NULL'),
         array('name' => 'pallet_id', 'type' => 'int', 'default' => ':NULL'),
+        array('name' => 'quantity', 'type' => 'int', 'default' => ':NULL'),
+        array('name' => 'category', 'type' => 'varchar', 'default' => ':NULL'),
         array('name' => 'price', 'type' => 'decimal', 'default' => ':NULL'),
         array('name' => 'subtotal', 'type' => 'decimal', 'default' => ':NULL'),
-        array('name' => 'mini_tax', 'type' => 'decimal', 'default' => '0.00') // Default to 0.00
     );
 }
 ?>

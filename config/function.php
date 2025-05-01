@@ -7,8 +7,8 @@ class Utility
 
     static $order_status = [
         'pending' => 'Pending',
-        'shipped' => 'Shipped',
         'delivered' => 'Delivered',
+        'paid' => 'Paid', // If PayPal is used, this status is set when the payment is completed
         'cancelled' => 'Cancelled',
         'returned' => 'Returned'
     ];

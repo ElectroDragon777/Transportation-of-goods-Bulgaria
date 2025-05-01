@@ -48,6 +48,7 @@ CREATE TABLE `orders` (
   `start_point` varchar(255) NOT NULL,
   `end_destination` varchar(255) NOT NULL,
   `status` varchar(50) NOT NULL,
+  `product_name` varchar(100) NOT NULL, -- Added product name for better clarity
   `product_price` decimal(10,2) NOT NULL,
   `quantity` int(11) NOT NULL,
   `total_amount` decimal(10,2) NOT NULL,
@@ -68,6 +69,8 @@ CREATE TABLE `order_pallets` (
   `id` int(11) NOT NULL,
   `order_id` int(11) NOT NULL,
   `pallet_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `category` varchar(50) NOT NULL, -- Document, Package, etc.
   `price` decimal(10,2) NOT NULL,
   `subtotal` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;

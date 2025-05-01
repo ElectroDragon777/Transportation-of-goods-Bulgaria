@@ -42,8 +42,9 @@ CREATE TABLE IF NOT EXISTS `orders` (
   `start_point` VARCHAR(255) NOT NULL,
   `end_destination` VARCHAR(255) NOT NULL,
   `status` VARCHAR(50) NOT NULL,
+  `product_name` VARCHAR(100) NOT NULL, -- Added product name for better clarity
   `product_price` DECIMAL(10, 2) NOT NULL,
-   `quantity` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
   `total_amount` DECIMAL(10, 2) NOT NULL,
   `created_at` BIGINT DEFAULT UNIX_TIMESTAMP(),
   `last_processed` BIGINT DEFAULT UNIX_TIMESTAMP(),
@@ -57,6 +58,8 @@ CREATE TABLE IF NOT EXISTS `orders` (
 CREATE TABLE IF NOT EXISTS `order_pallets` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `order_id` INT(11) NOT NULL,
+  'quantity' INT(11) NOT NULL,
+  `category` VARCHAR(50) NOT NULL, -- Document, Package, etc.
   `pallet_id` INT(11) NOT NULL,
   `price` DECIMAL(10, 2) NOT NULL,
   `subtotal` DECIMAL(10, 2) NOT NULL,

@@ -264,14 +264,15 @@ class OrderController extends Controller
                 $orderData = [
                     'last_processed' => time(),
                     'tracking_number' => \Utility::generateRandomString(),
+                    'category' => $pallet['category'] ?? 'Existing',
                     'delivery_date' => $deliveryDate,
                     'cash_on_delivery' => $cashOnDelivery ? 1 : 0,
-                    'start_point' => $startLocationType === 'office' ? $_POST['startOfficeName'] : $_POST['startAddressName'],
-                    'end_destination' => $endLocationType === 'office' ? $_POST['endOfficeName'] : $_POST['endAddressName'],
+                    'start_point' => $startLocationType === 'office' ? ($_POST['startOfficeName'] . " (Office)") : $_POST['startAddressName'],
+                    'end_destination' => $endLocationType === 'office' ? ($_POST['endOfficeName'] . " (Office)") : $_POST['endAddressName'],
                     'status' => $_POST['status'] ?? 'pending',
+                    'product_name' => ($pallet['name'] . " (" . ucfirst($pallet['category']) . ")") ?? 'Whatever, now it is a parcel and it is a product. Therefore, it is a product.',
                     'product_price' => $productPrice,
                     'total_amount' => $totalAmount,
-                    // 'quantity' => $productPrice / $ItemCost,
                     'created_at' => time()
                 ];
 
@@ -307,6 +308,7 @@ class OrderController extends Controller
                             'order_id' => $orderId,
                             'pallet_id' => $palletId,
                             'quantity' => $quantity,
+                            'category' => $pallet['category'], // Category of the pallet
                             'price' => $itemPrice,  // Individual pallet price (no COD)
                             'subtotal' => $itemCodFee  // This item's COD fee
                         ];
@@ -568,7 +570,7 @@ class OrderController extends Controller
             // Update the order status based on payment confirmation
             if ($_POST['payment_status'] == 'Completed') {
                 // Payment is successful, update order status
-                $order['status'] = 'shipped';
+                $order['status'] = 'paid';
                 $orderModel->update($order);
                 $notificationModel->save([
                     'user_id' => $user['id'],
@@ -740,14 +742,17 @@ class OrderController extends Controller
 
                 $orderData = [
                     'last_processed' => time(),
-                    'tracking_number' => $order['tracking_number'],
-                    //'delivery_date' => strtotime($_POST['delivery_date']),
+                    'tracking_number' => \Utility::generateRandomString(),
+                    'category' => $pallet['category'] ?? 'Existing',
                     'delivery_date' => $_POST['delivery_date'],
-                    'total_amount' => $total,
                     'cash_on_delivery' => $cashOnDelivery ? 1 : 0,
-                    'start_point' => $_POST['startAddress'] ?? $_POST['startOffice'] ?? "Set, but not going to Controller",
-                    'end_destination' => $_POST['endAddress'] ?? $_POST['endOffice'] ?? "Set, but not going to Controller",
+                    'start_point' => $order['start_point'],
+                    'end_destination' => $order['end_destination'],
                     'status' => $_POST['status'] ?? 'pending',
+                    'product_name' => $order['product_name'] ?? 'Whatever, now it is a parcel and it is a product. Therefore, it is a product.',
+                    'total_amount' => $order['total_amount'],
+                    'quantity' => $order['quantity'],
+                    'created_at' => time()
                 ];
 
                 if (!$orderModel->update(['id' => $orderId] + $orderData + $_POST)) {

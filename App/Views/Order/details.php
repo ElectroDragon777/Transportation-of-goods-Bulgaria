@@ -6,10 +6,10 @@
                     <ul class="nav nav-tabs" role="tablist">
                         <?php if (in_array($_SESSION['user']['role'], ['admin', 'root'])): ?>
                             <li class="nav-item">
-                            <a class="nav-link" href="<?php echo INSTALL_URL; ?>?controller=Order&action=list">Order
-                                List</a>
-                        </li>
-                        <?php endif ?>                    
+                                <a class="nav-link" href="<?php echo INSTALL_URL; ?>?controller=Order&action=list">Order
+                                    List</a>
+                            </li>
+                        <?php endif ?>
                         <li class="nav-item">
                             <a class="nav-link active ps-3" href="#">Order Details</a>
                         </li>
@@ -35,17 +35,7 @@
                                 <p><strong>Courier:</strong> <?php echo htmlspecialchars($tpl['courier']['name']); ?>
                                 </p>
                                 <p><strong>Delivery Date:</strong>
-                                <?php
-                                    // Convert the delivery date to a Unix timestamp
-                                    $deliveryTimestamp = strtotime($tpl['order']['delivery_date']);
-                                    
-                                    // Check if the conversion was successful
-                                    if ($deliveryTimestamp !== false) {
-                                        echo htmlspecialchars(date($tpl['date_format'], $deliveryTimestamp));
-                                    } else {
-                                        echo 'Date was not set correctly';
-                                    }
-                                    ?>
+                                    <?php echo htmlspecialchars(date($tpl['date_format'], $tpl['order']['delivery_date'])); ?>
                                 </p>
                                 <p><strong>Status:</strong>
                                     <?php echo htmlspecialchars(Utility::$order_status[$tpl['order']['status']]); ?></p>
@@ -57,7 +47,7 @@
                         <hr>
                         <h5>Parcel:</h5>
                         <div class="table-responsive">
-                            <table class="table select-table" id="order-products-table-id">
+                            <table class="table select-table" id="order-pallets-table-id">
                                 <thead>
                                     <tr>
                                         <th>Parcel Name</th>
@@ -68,12 +58,13 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($tpl['pallets'] as $pallet) { ?>
+                                    <?php
+                                    foreach ($tpl['pallets'] as $pallet) { ?>
                                         <tr>
                                             <td><?php echo htmlspecialchars($pallet['name']); ?></td>
                                             <td><?php echo htmlspecialchars($pallet['category']); ?></td>
-                                            <td><?php echo htmlspecialchars($pallet['stock']); ?></td>
-                                            <td><?php echo Utility::getDisplayableAmount(htmlspecialchars(number_format($pallet['total_amount'], 2))); ?>
+                                            <td><?php echo htmlspecialchars($pallet['quantity']); ?></td>
+                                            <td><?php echo Utility::getDisplayableAmount(htmlspecialchars(number_format($pallet['price'], 2))); ?>
                                             </td>
                                             <td><?php echo Utility::getDisplayableAmount(htmlspecialchars(number_format($pallet['subtotal'], 2))); ?>
                                             </td>
@@ -85,10 +76,10 @@
                         <div class="mt-3">
                             <a href="<?php echo INSTALL_URL; ?>?controller=Order&action=list"
                                 class="btn btn-outline-dark">Back to Order List</a>
-                            <?php if ($_SESSION['user']['id'] === $tpl['order']['user_id'] && in_array($tpl['order']['status'], ['pending', 'cancelled'])) { ?>
-                                <a href="<?php echo INSTALL_URL; ?>?controller=Order&action=pay&order_id=<?php echo $tpl['order']['id']; ?>"
+                            <!-- </*?php if ($_SESSION['user']['id'] === $tpl['order']['user_id'] && in_array($tpl['order']['status'], ['pending', 'cancelled'])) { */?>
+                                <a href="</*?php echo INSTALL_URL; ?>?controller=Order&action=pay&order_id=</*?php echo $tpl['order']['id']; */?>"
                                     class="btn btn-success">Pay</a>
-                            <?php } ?>
+                            </*?php } */?> -->
                         </div>
                     </div>
                 </div>

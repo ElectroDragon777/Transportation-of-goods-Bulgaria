@@ -27,17 +27,6 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="customer" class="form-label">Customer</label>
-                                    <select name="user_id" id="userId" class="form-select" required>
-                                        <?php
-                                        foreach ($tpl['users'] as $user) {
-                                            $selected = ($user['id'] == $order['user_id']) ? 'selected' : '';
-                                            echo "<option value=\"{$user['id']}\" $selected>{$user['name']}</option>";
-                                        }
-                                        ?>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
                                     <label for="courierId" class="form-label">Courier</label>
                                     <select name="courier_id" id="courierId" class="form-select" required>
                                         <?php
@@ -64,19 +53,12 @@
                                     </div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="tax" class="form-label">Tax</label>
+                                    <label for="subtotal" class="form-label">Subtotal</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><?php echo $tpl['currency']; ?></span>
-                                        <input type="text" class="form-control" id="tax" name="tax"
-                                            value="<?php echo $order['tax']; ?>" required readonly>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="shippingPrice" class="form-label">Shipping Price</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><?php echo $tpl['currency']; ?></span>
-                                        <input type="теьт" class="form-control" id="shippingPrice" name="shipping_price"
-                                            value="<?php echo $order['shipping_price']; ?>" required readonly>
+                                        <input type="text" class="form-control" id="subtotal" name="subtotal"
+                                            value="<?php echo ($order['total_amount'] - $order['product_price']); ?>"
+                                            readonly>
                                     </div>
                                 </div>
                                 <div class="mb-3">
@@ -97,42 +79,6 @@
                                         }
                                         ?>
                                     </select>
-                                </div>
-                                <div id="productRows">
-                                    <?php foreach ($tpl['orderProducts'] as $index => $orderProduct): ?>
-                                        <div class="row align-items-end mb-3 product-row">
-                                            <div class="col-md-6">
-                                                <label for="productIds" class="form-label">Products</label>
-                                                <select name="product_id[]" class="form-select" required>
-                                                    <option value="">---</option>
-                                                    <?php foreach ($tpl['products'] as $productOption): ?>
-                                                        <option value="<?php echo $productOption['id']; ?>"
-                                                            data-max-quantity="<?php echo $productOption['stock'] + $tpl['productQuantities'][$productOption['id']]; ?>"
-                                                            <?php echo ($productOption['id'] == $orderProduct['product_id']) ? 'selected' : ''; ?>>
-                                                            <?php echo $productOption['name']; ?>
-                                                        </option>
-                                                    <?php endforeach; ?>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label for="quantities" class="form-label">Quantity</label>
-                                                <input type="number" step="1" min="1" class="form-control" name="quantity[]"
-                                                    value="<?php echo $orderProduct['quantity']; ?>" required>
-                                            </div>
-                                            <div
-                                                class="col-md-1 text-center d-flex justify-content-center align-items-center">
-                                                <?php if ($index === count($tpl['orderProducts']) - 1): ?>
-                                                    <button type="button"
-                                                        class="btn btn-light d-flex justify-content-center align-items-center rounded-circle add-row"
-                                                        style="width: 36px; height: 36px;">+</button>
-                                                <?php else: ?>
-                                                    <button type="button"
-                                                        class="btn btn-danger d-flex justify-content-center align-items-center rounded-circle remove-row"
-                                                        style="width: 36px; height: 36px;">−</button>
-                                                <?php endif; ?>
-                                            </div>
-                                        </div>
-                                    <?php endforeach; ?>
                                 </div>
                             </div>
                             <div class="col-md-6">

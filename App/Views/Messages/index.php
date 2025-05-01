@@ -1,28 +1,40 @@
-<div class="container mt-5">
+<video autoplay muted loop id="myVideo">
+    <source src="Extras\Dashboard\Messages\bgvideo.mp4" type="video/mp4">
+    Your browser does not support HTML5 video.
+</video>
+<div class="container-fluid d-flex flex-column h-100">
     <h2 class="mb-4">Your Messages</h2>
-    <div class="row">
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="card-title">Message Navigation</h4>
+    <div class="row d-flex">
+        <div class="col-md-2 col-sm-12"> <!-- Added col-sm-12 for better responsiveness -->
+            <div class="card mb-3"> <!-- Added margin-bottom for mobile view -->
+                <div class="card-body nav-card">
+                    <h4 class="card-title nav-title">Message Navigation</h4>
                     <ul class="nav nav-pills flex-column">
                         <li class="nav-item">
-                            <a class="nav-link active" id="unread-tab" data-bs-toggle="tab" href="#unread">Unread
+                            <a class="nav-link active w-100 text-center text-md-start" id="unread-tab"
+                                data-bs-toggle="tab" href="#unread">Unread
                                 Messages</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="read-tab" data-bs-toggle="tab" href="#read">Read Messages</a>
+                            <a class="nav-link w-100 text-center text-md-start" id="read-tab" data-bs-toggle="tab"
+                                href="#read">Read Messages</a>
                         </li>
                     </ul>
                 </div>
             </div>
         </div>
-        <div class="col-md-9">
+        <div class="col-md-10 col-sm-12"> <!-- Added col-sm-12 for better responsiveness -->
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="unread" role="tabpanel">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">Unread Messages</h4>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h4 class="card-title mb-0">Unread Messages</h4>
+                                <button id="markAllRead" class="btn btn-primary">
+                                    <i class="mdi mdi-check-all"></i> <span class="mark-all-text">Mark All as
+                                        Read</span>
+                                </button>
+                            </div>
                             <div class="list-group list-group-flush" id="unread-messages-list">
                                 <?php
                                 $hasUnread = false;
@@ -56,13 +68,6 @@
                                 }
                                 ?>
                             </div>
-                            <?php if ($hasUnread): ?>
-                                <div class="d-flex justify-content-end mt-3">
-                                    <button id="markAllRead" class="btn btn-primary">
-                                        <i class="mdi mdi-check-all"></i> Mark All as Read
-                                    </button>
-                                </div>
-                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -161,18 +166,19 @@
                                                         </div>
                                                         <p class="mb-1">
                                                             ${listItem.querySelector('p').textContent}
-                                                        </div>
+                                                        </p>
                                                         <small class="text-muted">
-                                                        <i class="mdi mdi-clock-outline"></i>
+                                                            <i class="mdi mdi-clock-outline"></i>
                                                             ${listItem.querySelector('.text-muted').textContent}
-                                                        </div>
-                                                    </div>`);
+                                                        </small>
+                                                    </div>
+                                                </div>`);
 
                             // Check if there are any remaining unread messages
                             if (unreadMessagesList.children.length === 0) {
                                 unreadMessagesList.innerHTML = '<div class="list-group-item">No unread messages.</div>';
                                 if (markAllReadButton) {
-                                    markAllReadButton.style.display = 'none';
+                                    markAllReadButton.disabled = true; // Disable instead of hiding
                                 }
                             }
                         }
@@ -206,16 +212,17 @@
                                                         </div>
                                                         <p class="mb-1">
                                                             ${item.querySelector('p').textContent}
-                                                        </div>
+                                                        </p>
                                                         <small class="text-muted">
-                                                        <i class="mdi mdi-clock-outline"></i>
+                                                            <i class="mdi mdi-clock-outline"></i>
                                                             ${item.querySelector('.text-muted').textContent}
-                                                        </div>
-                                                    </div>`);
+                                                        </small>
+                                                    </div>
+                                                </div>`);
                         });
                         unreadMessagesList.innerHTML = '<div class="list-group-item">No unread messages.</div>';
                         if (markAllReadButton) {
-                            markAllReadButton.style.display = 'none';
+                            markAllReadButton.disabled = true; // Disable instead of hiding
                         }
                         updateMessageCounts();
                     } else {
@@ -252,6 +259,252 @@
                 readMessagesList.removeChild(noReadMessagesText);
             }
         }
+
+        // Disable "Mark All as Read" button if there are no unread messages
+        if (counts.unreadCount === 0 && markAllReadButton) {
+            markAllReadButton.disabled = true;
+        } else if (markAllReadButton) {
+            markAllReadButton.disabled = false;
+        }
+
         updateMessageCounts();
     });
 </script>
+
+<style>
+    .container-fluid {
+        min-height: 100%;
+        display: flex;
+    }
+
+    .row {
+        flex: 1;
+        display: flex;
+        min-height: 100%;
+    }
+
+    /* Improved responsive behavior */
+    @media (max-width: 767.98px) {
+        .container-fluid {
+            overflow-y: auto;
+            height: auto;
+        }
+
+        .row {
+            flex-direction: column;
+            overflow: visible;
+        }
+
+        .col-md-2,
+        .col-md-10 {
+            width: 100%;
+            max-height: none;
+            overflow: visible;
+        }
+
+        .card {
+            margin-bottom: 15px;
+        }
+    }
+
+    /* For desktop view */
+    @media (min-width: 992px) {
+        .col-md-2 {
+            position: sticky;
+            top: 0;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .col-md-10 {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            max-height: 700px;
+            /* Set a max height for the main content area */
+            /* Remove height restriction */
+            overflow-y: auto;
+            padding-right: 10px;
+            padding-bottom: 30px;
+            /* Add padding at bottom */
+        }
+
+        /* Navigation sidebar specific styling */
+        .nav-title {
+            text-align: left;
+        }
+
+        .nav-link {
+            text-align: left;
+        }
+    }
+
+    .card {
+        flex: 0 1 auto;
+    }
+
+    .tab-content {
+        flex: 1;
+        width: 100%;
+    }
+
+    .list-group-item {
+        width: 100%;
+        padding: 20px;
+        font-size: 16px;
+    }
+
+    /* Fixed scrollbar styling */
+    .col-md-10::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .col-md-10::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.5);
+        border-radius: 6px;
+    }
+
+    .col-md-10::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Button styling */
+    #markAllRead {
+        white-space: nowrap;
+    }
+
+    /* Hide button text on small screens */
+    @media (max-width: 575.98px) {
+        .mark-all-text {
+            display: none;
+        }
+
+        #markAllRead {
+            padding: 0.375rem 0.5rem;
+            min-width: 38px;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+        }
+    }
+
+    /* Modify layout for tablet/medium sizes specifically */
+    @media (min-width: 768px) and (max-width: 991.98px) {
+        .row {
+            flex-direction: column;
+        }
+
+        .col-md-2,
+        .col-md-10 {
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .nav-pills {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .nav-item {
+            margin-right: 10px;
+            margin-bottom: 0;
+        }
+
+        #unread-tab,
+        #read-tab {
+            min-width: 180px;
+            text-align: center;
+        }
+    }
+
+    /* Navigation card and buttons */
+    .nav-card {
+        padding: 0.75rem;
+    }
+
+    .nav-title {
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    .nav-item {
+        margin-bottom: 0.5rem;
+        width: 100%;
+    }
+
+    .nav-link {
+        white-space: normal;
+        word-wrap: break-word;
+        text-align: center;
+        padding: 0.5rem;
+        width: 100%;
+        font-size: 0.95rem;
+    }
+
+    /* Medium screens specific adjustments */
+    @media (min-width: 576px) and (max-width: 991.98px) {
+        .col-md-2 {
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .nav-pills {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .nav-item {
+            width: auto;
+            flex: 1;
+            max-width: 200px;
+        }
+
+        /* Make buttons display inline on medium screens */
+        .nav-link {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+</style>
+
+<style>
+    /* Style the video: 100% width and height to cover the entire window */
+    #myVideo {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        min-width: 100%;
+        min-height: 100%;
+    }
+
+    /* Add some content at the bottom of the video/page */
+    .content {
+        position: fixed;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        color: #f1f1f1;
+        width: 100%;
+        padding: 20px;
+    }
+
+    /* Style the button used to pause/play the video */
+    #myBtn {
+        width: 200px;
+        font-size: 18px;
+        padding: 10px;
+        border: none;
+        background: #000;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    #myBtn:hover {
+        background: #ddd;
+        color: black;
+    }
+</style>

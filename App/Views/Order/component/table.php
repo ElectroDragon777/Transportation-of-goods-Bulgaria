@@ -16,6 +16,7 @@
             <th>Courier</th>
             <th>Delivery Date</th>
             <th>Quantity</th>
+            <th>Name of Parcel</th>
             <th>Total Price</th>
             <th>Start Point</th>
             <th>End Destination</th>
@@ -42,6 +43,7 @@
                 <td><?php echo htmlspecialchars($order['courier_name']); ?></td>
                 <td><?php echo htmlspecialchars($order['delivery_date']); ?></td>
                 <td><?php echo htmlspecialchars($order['quantity']); ?></td>
+                <td><?php echo htmlspecialchars($order['product_name']); ?></td>
                 <td><?php echo Utility::getDisplayableAmount(htmlspecialchars($order['total_amount'])); ?></td>
                 <td><?php echo htmlspecialchars($order['start_point']); ?></td>
                 <td><?php echo htmlspecialchars($order['end_destination']); ?></td>
