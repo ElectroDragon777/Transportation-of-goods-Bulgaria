@@ -81,6 +81,9 @@ class CourierController extends Controller
         // Create an instance of the User model
         $userModel = new \App\Models\User();
 
+        // Create an instance of the Courier model
+        $courierModel = new \App\Models\Courier();
+
         // Check if the form has been submitted
         if (!empty($_POST['send'])) {
             if ($userModel->existsBy(['email' => $_POST['email']])) {
@@ -91,7 +94,17 @@ class CourierController extends Controller
                 $_POST['password_hash'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
                 $_POST['role'] = 'courier';
 
-                if ($userModel->save($_POST)) {
+                // Prepare courier data
+                $courierData = [
+                    'name' => $_POST['name'],
+                    'phone_number' => $_POST['phone_number'],
+                    'email' => $_POST['email'],
+                    'is_busy' => 0,
+                    'allowed_tracking' => 1
+                ];
+
+                if ($userModel->save($_POST) && $courierModel->save($courierData)) {
+                    // Redirect to the list of couriers on successful creation
                     header("Location: " . INSTALL_URL . "?controller=Courier&action=list", true, 301);
                     exit;
                 } else {
@@ -138,6 +151,7 @@ class CourierController extends Controller
         $this->view('ajax', ['couriers' => $couriers]);
     }
 
+
     function edit()
     {
         $userModel = new \App\Models\User();
@@ -161,6 +175,97 @@ class CourierController extends Controller
         // Load the view and pass the data to it
         $this->view($this->layout, $arr);
     }
+
+    // Broken function, help.
+    // function edit()
+    // {
+    //     $userModel = new \App\Models\User();
+    //     $courierModel = new \App\Models\Courier();
+
+    //     // Get user data
+    //     $userData = $userModel->get($_GET['id']);
+    //     // echo $userData['id'];
+    //     // echo $userData['name']; /* Works */
+
+    //     // Try to find the corresponding courier by name and/or email (FIX GETTER)
+    //     if (isset($userData['name'])) {
+    //         // Try to find courier by name
+    //         $courierByName = $courierModel->getAll(['name' => $userData['name']])[0];
+    //         //echo $courierByName['name'];
+    //         if ($courierByName) {
+    //             $courierId = $courierByName['id'];
+    //         }
+    //     }
+
+    //     // If we couldn't find by name, try email as fallback
+    //     if (!$courierId && isset($userData['email'])) {
+    //         $courierByEmail = $courierModel->get(['email' => $userData['email']]);
+    //         if ($courierByEmail) {
+    //             $courierId = $courierByEmail['id'];
+    //         }
+    //     }
+
+    //     // Now get the courier data if we found an ID
+    //     $courierData = null;
+    //     if ($courierId) {
+    //         $courierData = $courierModel->get($courierId);
+    //         // Merge courier data into user data for the form
+    //         $arr = array_merge($userData, $courierData);
+    //     } else {
+    //         $arr = $userData;
+    //         $arr['error_message'] = "Courier data not found. It will be created when you save.";
+    //     }
+
+    //     // Check if the form has been submitted
+    //     if (!empty($_POST['id'])) {
+    //         // Handle password update
+    //         if (!empty($_POST['password'])) {
+    //             if ($_POST['password'] !== $_POST['repeat_password']) {
+    //                 $arr['error_message'] = "Passwords do not match.";
+    //                 $this->view($this->layout, $arr);
+    //                 return;
+    //             } else {
+    //                 $_POST['password_hash'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    //             }
+    //         }
+
+    //         // Remove password fields from POST data before saving
+    //         unset($_POST['password']);
+    //         unset($_POST['repeat_password']);
+
+    //         // Update user record
+    //         $userUpdateSuccess = $userModel->update($_POST);
+
+    //         // Prepare courier data
+    //         $courierUpdateData = [
+    //             'name' => $_POST['name'],
+    //             'phone_number' => $_POST['phone_number'],
+    //             'email' => $_POST['email']
+    //         ];
+
+    //         // If we found an existing courier, update it with its own ID
+    //         $courierUpdateSuccess = false;
+    //         if ($courierId) {
+    //             $courierUpdateData['id'] = $courierId;
+    //             $courierUpdateSuccess = $courierModel->update($courierUpdateData);
+    //         } else {
+    //             // Otherwise, create a new courier record
+    //             $courierUpdateSuccess = $courierModel->save($courierUpdateData);
+    //         }
+
+    //         if ($userUpdateSuccess && $courierUpdateSuccess) {
+    //             // Redirect to the list of couriers on successful update
+    //             header("Location: " . INSTALL_URL . "?controller=Courier&action=list", true, 301);
+    //             exit;
+    //         } else {
+    //             // If saving fails, set an error message
+    //             $arr['error_message'] = "Failed to update the courier. Please try again.";
+    //         }
+    //     }
+
+    //     // Load the view and pass the data to it
+    //     $this->view($this->layout, $arr);
+    // }
 
     function export()
     {

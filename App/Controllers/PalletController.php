@@ -53,13 +53,15 @@ class PalletController extends Controller
             if (!empty($_POST['description'])) {
                 $opts["description LIKE '%" . $_POST['description'] . "%' AND 1 "] = "1";
             }
-            // if (!empty($_POST['minPrice'])) {
-            //     $opts["price >= " . $_POST['minPrice'] . " AND 1 "] = "1";
-            // }
-            // if (!empty($_POST['maxPrice'])) {
-            //     $opts["price <= " . $_POST['maxPrice'] . " AND 1 "] = "1";
-            // }
-            // No need for Stock, since, like Econt, you select count, but you order them all. No remnants.
+            if (!empty($_POST['minPrice'])) {
+                $opts["price >= " . $_POST['minPrice'] . " AND 1 "] = "1";
+            }
+            if (!empty($_POST['maxPrice'])) {
+                $opts["price <= " . $_POST['maxPrice'] . " AND 1 "] = "1";
+            }
+            if (!empty($_POST['quantity'])) {
+                $opts["quantity = " . $_POST['quantity'] . " AND 1 "] = "1";
+            }
             if (!empty($_POST['size_x_cm'])) {
                 $opts["size_x_cm = " . $_POST['size_x_cm'] . " AND 1 "] = "1";
             }

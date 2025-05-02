@@ -3,7 +3,8 @@
 namespace App\Models;
 use Core\Model;
 
-class Courier extends Model {
+class Courier extends Model
+{
 
     var $primaryKey = 'id';
     var $table = 'couriers';
@@ -12,9 +13,9 @@ class Courier extends Model {
         array('name' => 'id', 'type' => 'int', 'default' => ':NULL'),
         array('name' => 'name', 'type' => 'varchar', 'default' => ''),
         array('name' => 'phone_number', 'type' => 'varchar', 'default' => ':NULL'),
-        array('name' => 'email', 'type' => 'varchar', 'default' => ':NULL')
+        array('name' => 'email', 'type' => 'varchar', 'default' => ':NULL'),
+        array('name' => 'is_busy', 'type' => 'tinyint', 'default' => '0'),
+        array('name' => 'allowed_tracking', 'type' => 'tinyint', 'default' => '1')
     );
 }
 ?>
-
-

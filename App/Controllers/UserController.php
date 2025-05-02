@@ -93,7 +93,6 @@ class UserController extends Controller
     {
         // Create an instance of the User model
         $userModel = new \App\Models\User();
-        $courierModel = new \App\Models\Courier(); // Add Courier Model
 
         // Check if the form has been submitted
         if (!empty($_POST['send'])) {

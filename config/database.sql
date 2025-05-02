@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS `order_pallets` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Create the `couriers` table (NOT USED)
+-- Create the `couriers` table
 CREATE TABLE IF NOT EXISTS `couriers` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(100) NOT NULL,

@@ -166,9 +166,8 @@ CREATE TABLE `couriers` (
   `phone_number` VARCHAR(20) DEFAULT NULL,
   `email` VARCHAR(100) DEFAULT NULL,
   `is_busy` TINYINT(1) DEFAULT 0,  -- Added is_busy status (0=false, 1=true)
-  `allowed_tracking` TINYINT(1) DEFAULT 1,  -- Added allowed_tracking status (0=false, 1=true)
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `allowed_tracking` TINYINT(1) DEFAULT 1  -- Added allowed_tracking status (0=false, 1=true)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 
 --
@@ -232,6 +231,12 @@ ALTER TABLE `settings`
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `couriers`
+--
+ALTER TABLE `couriers`
   ADD PRIMARY KEY (`id`);
 
 --
