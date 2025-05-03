@@ -80,7 +80,6 @@ class CourierController extends Controller
     {
         // Create an instance of the User model
         $userModel = new \App\Models\User();
-
         // Create an instance of the Courier model
         $courierModel = new \App\Models\Courier();
 
@@ -94,20 +93,42 @@ class CourierController extends Controller
                 $_POST['password_hash'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
                 $_POST['role'] = 'courier';
 
-                // Prepare courier data
-                $courierData = [
-                    'name' => $_POST['name'],
-                    'phone_number' => $_POST['phone_number'],
-                    'email' => $_POST['email'],
-                    'is_busy' => 0,
-                    'allowed_tracking' => 1
-                ];
+                // Save the user first
+                $userId = $userModel->save($_POST);
 
-                if ($userModel->save($_POST) && $courierModel->save($courierData)) {
+                if ($userId) {
+                    // If save returned the ID directly
+                    $courierData = [
+                        'name' => $_POST['name'],
+                        'user_id' => $userId,
+                        'phone_number' => $_POST['phone_number'],
+                        'email' => $_POST['email'],
+                        'is_busy' => 0,
+                        'allowed_tracking' => 1
+                    ];
+                } else {
+                    // Fallback: Try to find the newly created user by email
+                    $newUser = $userModel->getFirstBy(['email' => $_POST['email']]);
+                    if ($newUser) {
+                        $userId = $newUser['id'];
+                        $courierData = [
+                            'name' => $_POST['name'],
+                            'user_id' => $userId,
+                            'phone_number' => $_POST['phone_number'],
+                            'email' => $_POST['email'],
+                            'is_busy' => 0,
+                            'allowed_tracking' => 1
+                        ];
+                    } else {
+                        $error_message = "Failed to retrieve user ID. Please try again.";
+                    }
+                }
+
+                if (isset($courierData) && $courierModel->save($courierData)) {
                     // Redirect to the list of couriers on successful creation
                     header("Location: " . INSTALL_URL . "?controller=Courier&action=list", true, 301);
                     exit;
-                } else {
+                } else if (!isset($error_message)) {
                     $error_message = "Failed to save courier. Please try again.";
                 }
             }
@@ -155,14 +176,27 @@ class CourierController extends Controller
     function edit()
     {
         $userModel = new \App\Models\User();
+        $courierModel = new \App\Models\Courier();
 
         $arr = $userModel->get($_GET['id']);
+        $arr2 = $courierModel->getAll(['user_id' => $_GET['id']])[0];
+
+        echo $arr2['name'] . "\n";
+        echo $arr2['user_id'] . "\n";
+        echo $arr2['phone_number'] . "\n";
+        echo $arr2['email'] . "\n";
+        echo $arr2['is_busy'] . "\n";
+        echo $arr2['allowed_tracking'] . "\n";
 
         // Check if the form has been submitted
         if (!empty($_POST['id'])) {
-
+            if ($userModel->existsBy(['email' => $_POST['email']])) {
+                $error_message = "User with this email already exists.";
+            } else if ($_POST['password'] !== $_POST['repeat_password']) {
+                $error_message = "Passwords do not match.";
+            }
             // Save the data using the Courier model
-            if ($userModel->update($_POST)) {
+            if ($userModel->update($_POST) && $courierModel->update($_POST)) {
                 // Redirect to the list of couriers on successful creation
                 header("Location: " . INSTALL_URL . "?controller=Courier&action=list", true, 301);
                 exit;
@@ -176,7 +210,7 @@ class CourierController extends Controller
         $this->view($this->layout, $arr);
     }
 
-    // Broken function, help.
+    // Broken function, help. This is the one you can edit here. I commented it out, so it gets your focus.
     // function edit()
     // {
     //     $userModel = new \App\Models\User();

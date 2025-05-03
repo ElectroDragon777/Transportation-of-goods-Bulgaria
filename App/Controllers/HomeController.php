@@ -17,8 +17,4 @@ class HomeController extends Controller
         $this->view($this->layout);
     }
 
-    // For Admin and Couriers - show users with active orders (active is not here yet).
-
-    // For Admin/Root Contact:
-
 }

@@ -4,7 +4,6 @@ namespace Core;
 
 class View
 {
-
     public static function render($layout, array $tpl = []): void
     {
         $controller = $_REQUEST['controller'] ?? null;
@@ -21,8 +20,10 @@ class View
             echo "View '{$viewPath}' not found.";
             return;
         }
+        $isLoggedIn = !empty($_SESSION['user']);
 
-        if (INSTALLED) {
+        if (INSTALLED && $isLoggedIn) {
+            // Извличане на информация за потребителя
             //Notifications
             if (!empty($_SESSION)) {
                 $notificationModel = new \App\Models\Notification();

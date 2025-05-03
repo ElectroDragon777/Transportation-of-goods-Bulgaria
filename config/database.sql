@@ -6,6 +6,8 @@ DROP TABLE IF EXISTS `couriers`;
 DROP TABLE IF EXISTS `settings`;
 DROP TABLE IF EXISTS `notifications`;
 DROP TABLE IF EXISTS `messages`;
+DROP TABLE IF EXISTS `courier_tracking`;
+DROP TABLE IF EXISTS `courier_location_history`;
 
 -- Create the `users` table
 CREATE TABLE IF NOT EXISTS `users` (
@@ -69,12 +71,14 @@ CREATE TABLE IF NOT EXISTS `order_pallets` (
 -- Create the `couriers` table
 CREATE TABLE IF NOT EXISTS `couriers` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `user_id` INT(11) NOT NULL,
   `name` VARCHAR(100) NOT NULL,
   `phone_number` VARCHAR(20) DEFAULT NULL,
   `email` VARCHAR(100) DEFAULT NULL,
   `is_busy` TINYINT(1) DEFAULT 0,  -- Added is_busy status (0=false, 1=true)
   `allowed_tracking` TINYINT(1) DEFAULT 1,  -- Added allowed_tracking status (0=false, 1=true)
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Create the `settings` table
@@ -107,6 +111,42 @@ CREATE TABLE IF NOT EXISTS `messages` (
   PRIMARY KEY (`id`),
   FOREIGN KEY (`sender_id`) REFERENCES `users`(`id`), -- Add foreign key for sender
   FOREIGN KEY (`recipient_id`) REFERENCES `users`(`id`) -- Add foreign key for recipient
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Create the `courier_tracking` table
+CREATE TABLE IF NOT EXISTS `courier_tracking` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `courier_name` VARCHAR(100) NOT NULL,
+  `order_id` INT(11) NOT NULL, 
+  `user_id` INT(11) NOT NULL, 
+  `start_point_lat` DECIMAL(10, 7) NOT NULL, 
+  `start_point_lng` DECIMAL(10, 7) NOT NULL, 
+  `end_destination_lat` DECIMAL(10, 7) NOT NULL, 
+  `end_destination_lng` DECIMAL(10, 7) NOT NULL, 
+  `current_location_lat` DECIMAL(10, 7) NOT NULL, on
+  `current_location_lng` DECIMAL(10, 7) NOT NULL, -n
+  `last_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+  `estimated_arrival_time` DATETIME,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`courier_id`) REFERENCES `couriers`(`id`),
+  FOREIGN KEY (`order_id`) REFERENCES `orders`(`id`),
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Create the `courier_location_history` table
+CREATE TABLE IF NOT EXISTS `courier_location_history` (
+  `id` INT(11) NOT NULL,
+  `courier_name` VARCHAR(100) NOT NULL,
+  `user_id` INT(11) NOT NULL, 
+  `current_lat` DECIMAL(10, 7) NOT NULL, 
+  `current_lng` DECIMAL(10, 7) NOT NULL,
+  `order_id` INT(11) NOT NULL,
+  `timestamp` TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`courier_id`) REFERENCES `couriers`(`id`),
+  FOREIGN KEY (`order_id`) REFERENCES `orders`(`id`),
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

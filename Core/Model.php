@@ -497,4 +497,18 @@ class Model
         // Затваряне на връзката с базата данни
         $this->mysqli->close();
     }
+
+    /**
+     * Get the ID of the last inserted row.
+     *
+     * @ return int|null The last inserted ID, or null on error.
+     */
+    public function getLastInsertId()
+    {
+        $this->connect(); // Ensure connection is established
+        if ($this->mysqli) {
+            return $this->mysqli->insert_id;
+        }
+        return null;
+    }
 }

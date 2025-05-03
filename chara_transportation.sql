@@ -160,15 +160,54 @@ CREATE TABLE `messages` (
 --
 -- Table structure for table `couriers`
 --
+
 CREATE TABLE `couriers` (
   `id` INT(11) NOT NULL,
+  `user_id` INT(11) NOT NULL,
   `name` VARCHAR(100) NOT NULL,
-  `phone_number` VARCHAR(20) DEFAULT NULL,
+  `phone_number` VARCHAR(20) NOT NULL DEFAULT '',
   `email` VARCHAR(100) DEFAULT NULL,
   `is_busy` TINYINT(1) DEFAULT 0,  -- Added is_busy status (0=false, 1=true)
   `allowed_tracking` TINYINT(1) DEFAULT 1  -- Added allowed_tracking status (0=false, 1=true)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `courier_tracking`
+--
+
+CREATE TABLE `courier_tracking` (
+  `id` INT(11) NOT NULL,
+  `courier_name` VARCHAR(100) NOT NULL,
+  `order_id` INT(11) NOT NULL, -- Added order_id to link to the order
+  `user_id` INT(11) NOT NULL, -- Added user_id to link to the user
+  `start_point_lat` DECIMAL(10, 7) NOT NULL, -- Added latitude for start point
+  `start_point_lng` DECIMAL(10, 7) NOT NULL, -- Added longitude for start point
+  `end_destination_lat` DECIMAL(10, 7) NOT NULL, -- Added latitude for end point
+  `end_destination_lng` DECIMAL(10, 7) NOT NULL, -- Added longitude for end point
+  `current_location_lat` DECIMAL(10, 7) NOT NULL, -- Added latitude for current location
+  `current_location_lng` DECIMAL(10, 7) NOT NULL, -- Added longitude for current location
+  `last_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- Added last updated timestamp
+  `estimated_arrival_time` DATETIME, -- Added estimated arrival time
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- Added created at timestamp
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `courier_location_history`
+--
+
+CREATE TABLE `courier_location_history` (
+  `id` INT(11) NOT NULL,
+  `courier_name` VARCHAR(100) NOT NULL,
+  `user_id` INT(11) NOT NULL, -- Added user_id to link to the user
+  `current_lat` DECIMAL(10, 7) NOT NULL, -- Added latitude for current location
+  `current_lng` DECIMAL(10, 7) NOT NULL, -- Added longitude for current location
+  `order_id` INT(11) NOT NULL, -- Added order_id to link to the order
+  `timestamp` TIMESTAMP DEFAULT CURRENT_TIMESTAMP() -- Added timestamp for the location record
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Dumping data for table `users`
@@ -188,9 +227,9 @@ INSERT INTO `users` (`id`, `name`, `email`, `phone_number`, `password_hash`, `cr
 -- Dumping data for table `couriers`
 --
 
-INSERT INTO `couriers` (`id`, `name`, `phone_number`, `email`, `is_busy`, `allowed_tracking`) VALUES
-(1, 'Monika', '0883878982', 'monika@gmail.com', 0, 1),
-(2, 'Shinano', '0889876728', 'shinano.azurship@gmail.com', 0, 1);
+INSERT INTO `couriers` (`id`, `user_id`, `name`, `phone_number`, `email`, `is_busy`, `allowed_tracking`) VALUES
+(1, 3, 'Monika', '0883878982', 'monika@gmail.com', 0, 1),
+(2, 4, 'Shinano', '0889876728', 'shinano.azurship@gmail.com', 0, 1);
 
 --
 -- Indexes for dumped tables
@@ -237,6 +276,18 @@ ALTER TABLE `users`
 -- Indexes for table `couriers`
 --
 ALTER TABLE `couriers`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `courier_tracking`
+--
+ALTER TABLE `courier_tracking`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `courier_location_history`
+--
+ALTER TABLE `courier_location_history`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -291,6 +342,20 @@ COMMIT;
 --
 ALTER TABLE `couriers`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+COMMIT;
+
+--
+-- AUTO_INCREMENT for table `courier_tracking`
+--
+ALTER TABLE `courier_tracking`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+COMMIT;
+
+--
+-- AUTO_INCREMENT for table `courier_location_history`
+--
+ALTER TABLE `courier_location_history`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 COMMIT;
 
 --
