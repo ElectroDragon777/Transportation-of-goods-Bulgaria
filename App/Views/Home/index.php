@@ -1,4 +1,18 @@
 <?php
+
+namespace Core;
+use \App\Models\Order; // Use the correct namespace for your Order model.
+use \App\Models\User;  // Use the correct namespace for your User model.
+
+// Define $date_key here!
+$user_order_interval = 'weekly'; // or 'daily' - changed to weekly
+$user_order_date_key = ($user_order_interval == 'daily') ? date('Y-m-d') : date('Y-W');
+
+// Start session to store previous week's data
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
 /**
  * Sets a cookie to track page visits, including the maximum number of visits.
  *
@@ -14,9 +28,9 @@
 function trackPageVisit($visitCookieName = 'page_visits', $maxVisitCookieName = 'max_page_visits')
 {
     // // Use a session variable as a flag to ensure this function runs only once per request.
-    // if (session_status() == PHP_SESSION_NONE) {
-    //     session_start();
-    // }
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
 
     $interval = 'daily'; // or 'weekly'
     $date_key = ($interval == 'daily') ? date('Y-m-d') : date('Y-W');
@@ -73,6 +87,27 @@ $visits = $visitData['visits'];
 $maxVisits = $visitData['maxVisits'];
 $previousVisits = $visitData['previousVisits']; // Access previous visits from the array
 $previousMaxVisits = $visitData['previousMaxVisits'];
+
+// Get current counts from the database
+$orderModel = new Order();
+$total_orders = $orderModel->countAll();  //renamed
+$userModel = new User();
+$total_users = $userModel->countAll();    //renamed
+
+// Get previous counts from session, default to 0 if not set
+$previous_orders = isset($_SESSION['previous_orders_' . $date_key]) ? $_SESSION['previous_orders_' . $date_key] : 0;
+$previous_users = isset($_SESSION['previous_users_' . $date_key]) ? $_SESSION['previous_users_' . $date_key] : 0;
+
+// Calculate percentage changes
+$order_change = ($previous_orders != 0) ? (($total_orders - $previous_orders) / $previous_orders) * 100 : 0;
+$order_change_formatted = number_format($order_change, 2);
+
+$user_change = ($previous_users != 0) ? (($total_users - $previous_users) / $previous_users) * 100 : 0;
+$user_change_formatted = number_format($user_change, 2);
+
+// Store current counts in session for next week's calculation
+$_SESSION['previous_orders_' . $date_key] = $total_orders;
+$_SESSION['previous_users_' . $date_key] = $total_users;
 
 // Calculate the percentage change for visits
 $percentageChange = ($previousVisits != 0) ? (($visits - $previousVisits) / $previousVisits) * 100 : 0;
@@ -134,7 +169,7 @@ $isLoggedIn = !empty($_SESSION['user']);
                 <div class="guest-notification"
                     style="position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999; background-color: #f8d7da; color: #721c24; padding: 10px; text-align: center;">
                     <strong>Guest Account:</strong> You are currently using a guest account. You can log in to access more!
-                    If you are a new one on our web platform, please consider a register for an account!
+                    If you are a new one on our web platform, please consider registering!
                     <a href="<?php echo INSTALL_URL; ?>?controller=Auth&action=login" class="btn btn-primary btn-sm"
                         style="margin-left: 20px; top:50%; position: flex; -ms-transform: translate(-50%, -50%); transform: translate(0%, 10%);">Login</a>
                     <a href="<?php echo INSTALL_URL; ?>?controller=Auth&action=register" class="btn btn-primary btn-sm"
@@ -173,14 +208,46 @@ $isLoggedIn = !empty($_SESSION['user']);
                                             </p>
                                         </div>
                                         <div>
-                                            <p class="statistics-title">New Sessions</p>
-                                            <h3 class="rate-percentage">68.8</h3>
-                                            <p class="text-danger d-flex"><i class="mdi mdi-menu-down"></i><span>68.8</span></p>
+                                            <p class="statistics-title">Total Orders</p>
+                                            <h3 class="rate-percentage"><?php echo $total_orders; ?></h3>
+                                            <p class="text-<?php
+                                            if ($order_change > 0) {
+                                                echo 'success';
+                                            } elseif ($order_change < 0) {
+                                                echo 'danger';
+                                            } else {
+                                                echo 'muted'; // Use muted for no change
+                                            }
+                                            ?> d-flex">
+                                                <?php if ($order_change > 0): ?>
+                                                    <i class="mdi mdi-menu-up"></i>
+                                                <?php elseif ($order_change < 0): ?>
+                                                    <i class="mdi mdi-menu-down"></i>
+                                                <?php else: ?>
+                                                    <i class="mdi mdi-menu-minus"></i> <?php endif; ?>
+                                                <span><?php echo ($order_change == 0) ? '-' : $order_change_formatted . '%'; ?></span>
+                                            </p>
                                         </div>
                                         <div class="d-none d-md-block">
-                                            <p class="statistics-title">Avg. Time on Site</p>
-                                            <h3 class="rate-percentage">2m:35s</h3>
-                                            <p class="text-success d-flex"><i class="mdi mdi-menu-up"></i><span>+0.8%</span></p>
+                                            <p class="statistics-title">Registered/All users:</p>
+                                            <h3 class="rate-percentage"><?php echo $total_users; ?></h3>
+                                            <p class="text-<?php
+                                            if ($user_change > 0) {
+                                                echo 'success';
+                                            } elseif ($user_change < 0) {
+                                                echo 'danger';
+                                            } else {
+                                                echo 'muted'; // Use muted for no change
+                                            }
+                                            ?> d-flex">
+                                                <?php if ($user_change > 0): ?>
+                                                    <i class="mdi mdi-menu-up"></i>
+                                                <?php elseif ($user_change < 0): ?>
+                                                    <i class="mdi mdi-menu-down"></i>
+                                                <?php else: ?>
+                                                    <i class="mdi mdi-menu-minus"></i> <?php endif; ?>
+                                                <span><?php echo ($user_change == 0) ? '-' : $user_change_formatted . '%'; ?></span>
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
@@ -188,10 +255,69 @@ $isLoggedIn = !empty($_SESSION['user']);
                         <?php endif; ?>
                     <?php endif; ?>
 
-                    <!-- Orders progress -->
+                    <!-- The version it should be, coded by me, but working now. Reminder to check notes! >w< -->
 
-                    <!-- Removed for now. Will do later. The version it should be, coded by me, but not working yet. Reminder to check notes! >w< -->
-                    <!-- Events -->
+                    <!-- Hero Section -->
+                    <div class="hero-section">
+                        <h2 class="hero-title">Welcome!</h2>
+                        <div style="width: 60px; height: 4px; background-color: #3498db; margin: 0 auto 20px auto;">
+                        </div>
+                        <p class="hero-subtitle"><br>Elec-Transport is one of the major Bulgarian Transportation
+                            Companies!</p>
+                        <p class="hero-description"><br>Our company is made for High School of Mathematics Varna! Here
+                            are
+                            our benefits:</p>
+                    </div>
+
+                    <!-- Feature Cards -->
+                    <div class="container">
+                        <div class="feature-cards">
+                            <div class="feature-card">
+                                <div class="feature-card-bg"
+                                    style="background-image: url('Extras/Dashboard/Main/No_Hidden_Fees.jpg');">
+                                </div>
+                                <div class="feature-card-content">
+                                    <h3 class="feature-card-title">No cost cancellation,<br>No hidden fees!</h3>
+                                </div>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-card-bg"
+                                    style="background-image: url('Extras/Dashboard/ContactsBG/BG.png');">
+                                </div>
+                                <div class="feature-card-content">
+                                    <h3 class="feature-card-title">The best service in<br>the industry</h3>
+                                </div>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-card-bg"
+                                    style="background-image: url('Extras/Dashboard/Main/Courier_because_I_can.png');">
+                                </div>
+                                <div class="feature-card-content">
+                                    <h3 class="feature-card-title">All our drivers are fully<br>insured and bonded</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quote Section -->
+                    <div class="quote-section" style="background-image: url('Extras/Dashboard/Main/HowToElectricity.jpg');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;">
+                        <?php
+                        $userModel = new User();
+                        $root = $userModel->getFirstBy(['role' => 'root']);
+                        $root_name = $root['name'];
+                        $root_phone = $root['phone_number'];
+                        ?>
+                        <h3 class="quote-title">Call us if you need anything!</h3>
+                        <h2 class="quote-heading">The Electro Dragon's phone: (Or mine, <?php echo $root_name ?>'s)
+                        </h2>
+                        <div class="quote-phone"><?php echo $root_phone ?></div>
+                        <p class="quote-text">We are committed to offering you the best rates and customer service.</p>
+                    </div>
+
+                    <!-- Events
                     <div class="row flex-grow">
                         <div class="col-md-6 col-lg-6 grid-margin stretch-card">
                             <div class="card card-rounded">
@@ -260,85 +386,85 @@ $isLoggedIn = !empty($_SESSION['user']);
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
 
-                        <!-- Admin Tracking activities of couriers -->
-                        <div class="col-md-6 col-lg-6 grid-margin stretch-card">
-                            <div class="card card-rounded">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-center justify-content-between mb-3">
-                                        <h4 class="card-title card-title-dash">Activities</h4>
-                                        <p class="mb-0">20 finished, 5 remaining</p>
-                                    </div>
-                                    <ul class="bullet-line-list">
-                                        <li>
-                                            <div class="d-flex justify-content-between">
-                                                <div><span class="text-light-green">Ben Tossell</span> assigned
-                                                    you a task</div>
-                                                <p>Just now</p>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="d-flex justify-content-between">
-                                                <div><span class="text-light-green">Oliver Noah</span> assigned
-                                                    you a task</div>
-                                                <p>1h</p>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="d-flex justify-content-between">
-                                                <div><span class="text-light-green">Jack William</span> assigned
-                                                    you a task</div>
-                                                <p>1h</p>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="d-flex justify-content-between">
-                                                <div><span class="text-light-green">Leo Lucas</span> assigned you
-                                                    a task</div>
-                                                <p>1h</p>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="d-flex justify-content-between">
-                                                <div><span class="text-light-green">Thomas Henry</span> assigned
-                                                    you a task</div>
-                                                <p>1h</p>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="d-flex justify-content-between">
-                                                <div><span class="text-light-green">Ben Tossell</span> assigned
-                                                    you a task</div>
-                                                <p>1h</p>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="d-flex justify-content-between">
-                                                <div><span class="text-light-green">Ben Tossell</span> assigned
-                                                    you a task</div>
-                                                <p>1h</p>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                    <div class="list align-items-center pt-3">
-                                        <div class="wrapper w-100">
-                                            <p class="mb-0">
-                                                <a href="#" class="fw-bold text-primary">Show all <i
-                                                        class="mdi mdi-arrow-right ms-2"></i></a>
-                                            </p>
+                    <!-- Admin Tracking activities of couriers -->
+                    <!-- <div class="col-md-6 col-lg-6 grid-margin stretch-card">
+                        <div class="card card-rounded">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <h4 class="card-title card-title-dash">Activities</h4>
+                                    <p class="mb-0">20 finished, 5 remaining</p>
+                                </div>
+                                <ul class="bullet-line-list">
+                                    <li>
+                                        <div class="d-flex justify-content-between">
+                                            <div><span class="text-light-green">Ben Tossell</span> assigned
+                                                you a task</div>
+                                            <p>Just now</p>
                                         </div>
+                                    </li>
+                                    <li>
+                                        <div class="d-flex justify-content-between">
+                                            <div><span class="text-light-green">Oliver Noah</span> assigned
+                                                you a task</div>
+                                            <p>1h</p>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="d-flex justify-content-between">
+                                            <div><span class="text-light-green">Jack William</span> assigned
+                                                you a task</div>
+                                            <p>1h</p>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="d-flex justify-content-between">
+                                            <div><span class="text-light-green">Leo Lucas</span> assigned you
+                                                a task</div>
+                                            <p>1h</p>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="d-flex justify-content-between">
+                                            <div><span class="text-light-green">Thomas Henry</span> assigned
+                                                you a task</div>
+                                            <p>1h</p>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="d-flex justify-content-between">
+                                            <div><span class="text-light-green">Ben Tossell</span> assigned
+                                                you a task</div>
+                                            <p>1h</p>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="d-flex justify-content-between">
+                                            <div><span class="text-light-green">Ben Tossell</span> assigned
+                                                you a task</div>
+                                            <p>1h</p>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <div class="list align-items-center pt-3">
+                                    <div class="wrapper w-100">
+                                        <p class="mb-0">
+                                            <a href="#" class="fw-bold text-primary">Show all <i
+                                                    class="mdi mdi-arrow-right ms-2"></i></a>
+                                        </p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div> -->
 
 
                     <div class="row flex-grow">
 
-                        <!-- TO-DO -->
-                        <div class="col-md-6 col-lg-6 grid-margin stretch-card">
+                        <!-- TO-DO List -->
+                        <!-- <div class="col-md-6 col-lg-6 grid-margin stretch-card">
                             <div class="card card-rounded">
                                 <div class="card-body card-rounded">
                                     <div class="row">
@@ -346,7 +472,8 @@ $isLoggedIn = !empty($_SESSION['user']);
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <h4 class="card-title card-title-dash">TO-DO list</h4>
                                                 <div class="add-items d-flex mb-0">
-                                                    <!-- <input type="text" class="form-control todo-list-input" placeholder="What do you need to do today?"> -->
+                                                    <input type="text" class="form-control todo-list-input"
+                                                        placeholder="Add new task...">
                                                     <button
                                                         class="add btn btn-icons btn-rounded btn-primary todo-list-add-btn text-white me-0 pl-12p"><i
                                                             class="mdi mdi-plus"></i></button>
@@ -421,7 +548,7 @@ $isLoggedIn = !empty($_SESSION['user']);
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
 
                         <!-- Type by Amount -->
                         <!-- <div class="row flex-grow">
@@ -466,7 +593,7 @@ $isLoggedIn = !empty($_SESSION['user']);
                                 </div> -->
 
                         <!-- Reports  -->
-                        <div class="col-md-6 col-lg-6 grid-margin stretch-card">
+                        <!-- <div class="col-md-6 col-lg-6 grid-margin stretch-card">
                             <div class="card card-rounded">
                                 <div class="card-body d-flex flex-column">
                                     <div class="row">
@@ -514,7 +641,7 @@ $isLoggedIn = !empty($_SESSION['user']);
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
 
 
                         <!-- <div class="row flex-grow">
@@ -672,71 +799,73 @@ $isLoggedIn = !empty($_SESSION['user']);
                                             </div>
                                         </div>
                                     </div>
-                                    <h3 class="card-title card-title-dash mt-5">Our Solutions</h3>
-                                    <p class="card-description">We offer a wide range of logistics solutions to meet
-                                        your needs.</p>
+                                    <div class="solutions">
+                                        <h3 class="card-title card-title-dash mt-5">Our Solutions</h3>
+                                        <p class="card-description">We offer a wide range of logistics solutions to meet
+                                            your needs.</p>
 
-                                    <!-- Lists -->
-                                    <div class="row">
-                                        <div class="col-md-6 grid-margin stretch-card">
-                                            <div class="card card-rounded bg-light">
-                                                <div class="card-body">
-                                                    <h4 class="card-title"><i
-                                                            class="mdi mdi-truck-delivery text-primary me-2"></i>
-                                                        Logistics Consulting</h4>
-                                                    <p class="card-text">
-                                                        Our logistics experts assist you in finding the best and
-                                                        most
-                                                        cost-effective transport solutions.
-                                                    </p>
+                                        <!-- Lists -->
+                                        <div class="row">
+                                            <div class="col-md-6 grid-margin stretch-card">
+                                                <div class="card card-rounded bg-light">
+                                                    <div class="card-body">
+                                                        <h4 class="card-title"><i
+                                                                class="mdi mdi-truck-delivery text-primary me-2"></i>
+                                                            Logistics Consulting</h4>
+                                                        <p class="card-text">
+                                                            Our logistics experts assist you in finding the best and
+                                                            most
+                                                            cost-effective transport solutions.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 grid-margin stretch-card">
+                                                <div class="card card-rounded bg-light">
+                                                    <div class="card-body">
+                                                        <h4 class="card-title"><i
+                                                                class="mdi mdi-rocket text-warning me-2"></i>
+                                                            Quick
+                                                            Services
+                                                        </h4>
+                                                        <p class="card-text">
+                                                            Fast and time-bound deliveries across all major locations
+                                                            with
+                                                            flexible and optimal routing.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 grid-margin stretch-card">
+                                                <div class="card card-rounded bg-light">
+                                                    <div class="card-body">
+                                                        <h4 class="card-title"><i
+                                                                class="mdi mdi-shield-check text-success me-2"></i> Safe
+                                                            &
+                                                            Secure</h4>
+                                                        <p class="card-text">
+                                                            No matter what the destination is, your cargo will reach it
+                                                            on
+                                                            time and intact.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 grid-margin stretch-card">
+                                                <div class="card card-rounded bg-light">
+                                                    <div class="card-body">
+                                                        <h4 class="card-title"><i
+                                                                class="mdi mdi-home-import-outline text-secondary me-2"></i>
+                                                            Door Delivery & Pick Up</h4>
+                                                        <p class="card-text">
+                                                            Comprehensive delivery services with pick-up at your door
+                                                            and
+                                                            last-mile delivery.
+                                                        </p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-6 grid-margin stretch-card">
-                                            <div class="card card-rounded bg-light">
-                                                <div class="card-body">
-                                                    <h4 class="card-title"><i
-                                                            class="mdi mdi-rocket text-warning me-2"></i> Quick
-                                                        Services
-                                                    </h4>
-                                                    <p class="card-text">
-                                                        Fast and time-bound deliveries across all major locations
-                                                        with
-                                                        flexible and optimal routing.
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 grid-margin stretch-card">
-                                            <div class="card card-rounded bg-light">
-                                                <div class="card-body">
-                                                    <h4 class="card-title"><i
-                                                            class="mdi mdi-shield-check text-success me-2"></i> Safe
-                                                        &
-                                                        Secure</h4>
-                                                    <p class="card-text">
-                                                        No matter what the destination is, your cargo will reach it
-                                                        on
-                                                        time and intact.
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 grid-margin stretch-card">
-                                            <div class="card card-rounded bg-light">
-                                                <div class="card-body">
-                                                    <h4 class="card-title"><i
-                                                            class="mdi mdi-home-import-outline text-secondary me-2"></i>
-                                                        Door Delivery & Pick Up</h4>
-                                                    <p class="card-text">
-                                                        Comprehensive delivery services with pick-up at your door
-                                                        and
-                                                        last-mile delivery.
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-
                                     </div>
                                     <div class="row">
                                         <div class="col-md-3 text-center">
@@ -1271,502 +1400,879 @@ $isLoggedIn = !empty($_SESSION['user']);
                         </div>
                     </div>
                 </div>
+                <!-- Footer -->
+                <?php
+                $userModel = new User();
+                $root = $userModel->getFirstBy(['role' => 'root']);
+                $root_name = $root['name'];
+                $root_phone = $root['phone_number'];
+                $root_email = $root['email'];
+                ?>
+                <footer class="footer">
+                    <div class="container">
+                        <div class="footer-content">
+                            <div class="footer-section">
+                                <h3 class="footer-title">Elec-Transport</h3>
+                                <p>Providing quality transportation services nationwide since 2016.</p>
+                            </div>
+                            <div class="footer-section">
+                                <h3 class="footer-title">Contact Us</h3>
+                                <ul class="footer-list">
+                                    <li>Varna 9020 - Boul. Yanosh Huniadi 192</li>
+                                    <li><?php echo $root_phone ?></li>
+                                    <li><?php echo $root_email ?></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="copyright">
+                            <p>&copy; 2025 Elec-Transport. All rights reserved.</p>
+                        </div>
+                    </div>
+                </footer>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- For About's Counters animation -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const counters = document.querySelectorAll('.display-4');
-            const aboutSection = document.getElementById('about');
-            const targets = {
-                'offices-BG': 26,
-                'kilometers-covered': 1928,
-                'people-team': 6,
-                'clients': 9
-            };
-            const animationDuration = 2000; // Total animation time in milliseconds
-            const frameRate = 60; // Updates per second (higher for smoother animation)
-            const totalFrames = Math.ceil(animationDuration / (1000 / frameRate)); // Total number of animation frames
+<!-- For About's Counters animation -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const counters = document.querySelectorAll('.display-4');
+        const aboutSection = document.getElementById('about');
+        const targets = {
+            'offices-BG': 26,
+            'kilometers-covered': 1928,
+            'people-team': 6,
+            'clients': 9
+        };
+        const animationDuration = 2000; // Total animation time in milliseconds
+        const frameRate = 60; // Updates per second (higher for smoother animation)
+        const totalFrames = Math.ceil(animationDuration / (1000 / frameRate)); // Total number of animation frames
 
-            const observer = new IntersectionObserver(entries => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        counters.forEach(counter => {
-                            const targetId = counter.id;
-                            if (targets.hasOwnProperty(targetId)) {
-                                const targetValue = targets[targetId];
-                                const increment = targetValue / totalFrames; // Calculate increment per frame
-                                let currentValue = 0;
-                                let frameCount = 0;
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    counters.forEach(counter => {
+                        const targetId = counter.id;
+                        if (targets.hasOwnProperty(targetId)) {
+                            const targetValue = targets[targetId];
+                            const increment = targetValue / totalFrames; // Calculate increment per frame
+                            let currentValue = 0;
+                            let frameCount = 0;
 
-                                const interval = setInterval(() => {
-                                    frameCount++;
-                                    currentValue += increment;
-                                    counter.textContent = Math.ceil(currentValue); // Display rounded value
+                            const interval = setInterval(() => {
+                                frameCount++;
+                                currentValue += increment;
+                                counter.textContent = Math.ceil(currentValue); // Display rounded value
 
-                                    if (frameCount >= totalFrames) {
-                                        counter.textContent = targetValue; // Ensure final value is exact
-                                        clearInterval(interval);
-                                    }
-                                }, 1000 / frameRate);
-                            }
-                        });
-                        observer.unobserve(aboutSection);
-                    }
-                });
-            }, { threshold: 0.5 });
-
-            observer.observe(aboutSection);
-        });
-    </script>
-
-    <!-- About's Courier Team -->
-    <style>
-        .courier-showcase {
-            display: flex;
-            overflow-x: auto;
-            /* Enable horizontal scrolling */
-            scroll-snap-type: x mandatory;
-            /* Optional: Snap scrolling */
-            padding-bottom: 15px;
-            /* Add padding for the scrollbar */
-            margin-bottom: 20px;
-        }
-
-        .courier-card {
-            flex: 0 0 auto;
-            /* Don't grow or shrink, auto width */
-            width: 300px;
-            /* Adjust card width as needed */
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            margin-right: 20px;
-            /* Spacing between cards */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s;
-            scroll-snap-align: start;
-            /* Optional: Snap to the start of the card */
-        }
-
-        .courier-card:hover {
-            transform: scale(1.02);
-            /* Slight zoom on hover */
-        }
-
-        .courier-image {
-            width: 100%;
-            height: 200px;
-            /* Adjust image height as needed */
-            object-fit: cover;
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
-        }
-
-        .courier-image-placeholder {
-            width: 100%;
-            height: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
-            background-color: #f0f0f0;
-            /* Light background for the placeholder */
-        }
-
-        .courier-info {
-            padding: 15px;
-        }
-
-        .courier-name {
-            font-size: 1.2em;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .courier-description {
-            font-size: 1em;
-            color: #555;
-            margin-bottom: 10px;
-        }
-
-        .courier-phone {
-            font-size: 1em;
-            color: #333;
-        }
-
-        .courier-phone i {
-            margin-right: 5px;
-        }
-
-        /* Optional: Hide scrollbar on WebKit browsers (Chrome, Safari) */
-        .courier-showcase::-webkit-scrollbar {
-            display: none;
-        }
-
-        /* Optional: Style scrollbar on Firefox */
-        .courier-showcase {
-            scrollbar-width: thin;
-            scrollbar-color: #888 #f5f5f5;
-        }
-
-        .courier-showcase::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        .courier-showcase::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 5px;
-        }
-
-        .courier-showcase::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
-    </style>
-
-    <!-- Header Styles -->
-    <style>
-        .price-table thead th {
-            background-color: #aaa;
-            /* Replace with your desired color */
-            color: white;
-            /* Optional: change text color for better contrast */
-            border: 1px solid #ddd;
-            /* Optional: add borders to header cells */
-        }
-
-        .price-table,
-        .price-table th,
-        .price-table td {
-            border: 1px solid #ddd;
-            /* Add borders to the entire table and its cells */
-            border-collapse: collapse;
-            /* Optional: collapse borders into a single line */
-        }
-    </style>
-    <!-- For the table in Price-decision -->
-    <style>
-        .sort-icon {
-            display: inline-block;
-            margin-left: 5px;
-            vertical-align: middle;
-            opacity: 0.5;
-            /* Slightly faded initially */
-        }
-
-        .sort-icon.sort-asc {
-            font-size: 0.8em;
-            color: #212529;
-        }
-
-        .sort-icon.sort-desc {
-            font-size: 0.8em;
-            color: #212529;
-        }
-
-        /* Initially show both arrows, but slightly faded */
-        thead th[data-sortable="true"] .sort-asc,
-        thead th[data-sortable="true"] .sort-desc {
-            display: inline-block;
-        }
-
-        /* Highlight the active sort direction and dim the other */
-        thead th[data-sort="asc"] .sort-asc {
-            opacity: 1;
-            font-weight: bold;
-            /* Make the active arrow more prominent */
-        }
-
-        thead th[data-sort="asc"] .sort-desc {
-            opacity: 0.2;
-            /* Dim the inactive arrow */
-            font-weight: normal;
-        }
-
-        thead th[data-sort="desc"] .sort-desc {
-            opacity: 1;
-            font-weight: bold;
-            /* Make the active arrow more prominent */
-        }
-
-        thead th[data-sort="desc"] .sort-asc {
-            opacity: 0.2;
-            /* Dim the inactive arrow */
-            font-weight: normal;
-        }
-
-        /* Style the header to indicate it's sortable */
-        thead th[data-sortable="true"] {
-            cursor: pointer;
-        }
-    </style>
-
-    <script>
-        function sortTableEnhanced(table, columnIndex, ascending = true) {
-            const tbody = table.tBodies[0];
-            const rows = Array.from(tbody.querySelectorAll("tr"));
-            const headerCells = table.querySelectorAll("thead th");
-
-            // Identify section headers and group rows
-            const sections = [];
-            let currentSection = { headerRow: null, contentRows: [] };
-            let normalRows = [];
-
-            rows.forEach(row => {
-                // Check if this is a section header row (has colspan or th elements)
-                const hasTh = row.querySelector("th");
-                const hasColspan = Array.from(row.querySelectorAll("td, th")).some(cell =>
-                    cell.hasAttribute("colspan") && parseInt(cell.getAttribute("colspan")) > 1);
-
-                if (hasTh || hasColspan) {
-                    // This is a section header
-                    if (currentSection.contentRows.length > 0 || currentSection.headerRow) {
-                        sections.push({ ...currentSection });
-                    }
-                    currentSection = { headerRow: row, contentRows: [] };
-                } else {
-                    // This is a content row
-                    currentSection.contentRows.push(row);
-                    normalRows.push(row);
+                                if (frameCount >= totalFrames) {
+                                    counter.textContent = targetValue; // Ensure final value is exact
+                                    clearInterval(interval);
+                                }
+                            }, 1000 / frameRate);
+                        }
+                    });
+                    observer.unobserve(aboutSection);
                 }
             });
+        }, { threshold: 0.5 });
 
-            // Add the last section
-            if (currentSection.contentRows.length > 0 || currentSection.headerRow) {
-                sections.push(currentSection);
+        observer.observe(aboutSection);
+    });
+</script>
+
+<!-- About's Courier Team -->
+<style>
+    .courier-showcase {
+        display: flex;
+        overflow-x: auto;
+        /* Enable horizontal scrolling */
+        scroll-snap-type: x mandatory;
+        /* Optional: Snap scrolling */
+        padding-bottom: 15px;
+        /* Add padding for the scrollbar */
+        margin-bottom: 20px;
+    }
+
+    .courier-card {
+        flex: 0 0 auto;
+        /* Don't grow or shrink, auto width */
+        width: 300px;
+        /* Adjust card width as needed */
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        margin-right: 20px;
+        /* Spacing between cards */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s;
+        scroll-snap-align: start;
+        /* Optional: Snap to the start of the card */
+    }
+
+    .courier-card:hover {
+        transform: scale(1.02);
+        /* Slight zoom on hover */
+    }
+
+    .courier-image {
+        width: 100%;
+        height: 200px;
+        /* Adjust image height as needed */
+        object-fit: cover;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+
+    .courier-image-placeholder {
+        width: 100%;
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        background-color: #f0f0f0;
+        /* Light background for the placeholder */
+    }
+
+    .courier-info {
+        padding: 15px;
+    }
+
+    .courier-name {
+        font-size: 1.2em;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .courier-description {
+        font-size: 1em;
+        color: #555;
+        margin-bottom: 10px;
+    }
+
+    .courier-phone {
+        font-size: 1em;
+        color: #333;
+    }
+
+    .courier-phone i {
+        margin-right: 5px;
+    }
+
+    /* Optional: Hide scrollbar on WebKit browsers (Chrome, Safari) */
+    .courier-showcase::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Optional: Style scrollbar on Firefox */
+    .courier-showcase {
+        scrollbar-width: thin;
+        scrollbar-color: #888 #f5f5f5;
+    }
+
+    .courier-showcase::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    .courier-showcase::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 5px;
+    }
+
+    .courier-showcase::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+</style>
+
+<!-- Header Styles -->
+<style>
+    .price-table thead th {
+        background-color: #aaa;
+        /* Replace with your desired color */
+        color: white;
+        /* Optional: change text color for better contrast */
+        border: 1px solid #ddd;
+        /* Optional: add borders to header cells */
+    }
+
+    .price-table,
+    .price-table th,
+    .price-table td {
+        border: 1px solid #ddd;
+        /* Add borders to the entire table and its cells */
+        border-collapse: collapse;
+        /* Optional: collapse borders into a single line */
+    }
+</style>
+<!-- For the table in Price-decision -->
+<style>
+    .sort-icon {
+        display: inline-block;
+        margin-left: 5px;
+        vertical-align: middle;
+        opacity: 0.5;
+        /* Slightly faded initially */
+    }
+
+    .sort-icon.sort-asc {
+        font-size: 0.8em;
+        color: #212529;
+    }
+
+    .sort-icon.sort-desc {
+        font-size: 0.8em;
+        color: #212529;
+    }
+
+    /* Initially show both arrows, but slightly faded */
+    thead th[data-sortable="true"] .sort-asc,
+    thead th[data-sortable="true"] .sort-desc {
+        display: inline-block;
+    }
+
+    /* Highlight the active sort direction and dim the other */
+    thead th[data-sort="asc"] .sort-asc {
+        opacity: 1;
+        font-weight: bold;
+        /* Make the active arrow more prominent */
+    }
+
+    thead th[data-sort="asc"] .sort-desc {
+        opacity: 0.2;
+        /* Dim the inactive arrow */
+        font-weight: normal;
+    }
+
+    thead th[data-sort="desc"] .sort-desc {
+        opacity: 1;
+        font-weight: bold;
+        /* Make the active arrow more prominent */
+    }
+
+    thead th[data-sort="desc"] .sort-asc {
+        opacity: 0.2;
+        /* Dim the inactive arrow */
+        font-weight: normal;
+    }
+
+    /* Style the header to indicate it's sortable */
+    thead th[data-sortable="true"] {
+        cursor: pointer;
+    }
+</style>
+
+<script>
+    function sortTableEnhanced(table, columnIndex, ascending = true) {
+        const tbody = table.tBodies[0];
+        const rows = Array.from(tbody.querySelectorAll("tr"));
+        const headerCells = table.querySelectorAll("thead th");
+
+        // Identify section headers and group rows
+        const sections = [];
+        let currentSection = { headerRow: null, contentRows: [] };
+        let normalRows = [];
+
+        rows.forEach(row => {
+            // Check if this is a section header row (has colspan or th elements)
+            const hasTh = row.querySelector("th");
+            const hasColspan = Array.from(row.querySelectorAll("td, th")).some(cell =>
+                cell.hasAttribute("colspan") && parseInt(cell.getAttribute("colspan")) > 1);
+
+            if (hasTh || hasColspan) {
+                // This is a section header
+                if (currentSection.contentRows.length > 0 || currentSection.headerRow) {
+                    sections.push({ ...currentSection });
+                }
+                currentSection = { headerRow: row, contentRows: [] };
+            } else {
+                // This is a content row
+                currentSection.contentRows.push(row);
+                normalRows.push(row);
+            }
+        });
+
+        // Add the last section
+        if (currentSection.contentRows.length > 0 || currentSection.headerRow) {
+            sections.push(currentSection);
+        }
+
+        // Sort function for comparing row values
+        const compare = (rowA, rowB) => {
+            const cellsA = rowA.querySelectorAll("td");
+            const cellsB = rowB.querySelectorAll("td");
+
+            if (cellsA.length === 0 || cellsB.length === 0) {
+                return 0;
             }
 
-            // Sort function for comparing row values
-            const compare = (rowA, rowB) => {
-                const cellsA = rowA.querySelectorAll("td");
-                const cellsB = rowB.querySelectorAll("td");
+            const cellA = cellsA[columnIndex] ? cellsA[columnIndex].textContent.trim() : '';
+            const cellB = cellsB[columnIndex] ? cellsB[columnIndex].textContent.trim() : '';
 
-                if (cellsA.length === 0 || cellsB.length === 0) {
+            // Special handling for weight column (column 0)
+            if (columnIndex === 0) {
+                // Extract numeric value from weight strings like "Up to 10 kg" or "20 kg - 50 kg"
+                const extractWeight = (text) => {
+                    if (text.includes("Up to")) {
+                        const match = text.match(/Up to (\d+)/);
+                        return match ? parseInt(match[1]) : 0;
+                    } else if (text.includes("Over")) {
+                        const match = text.match(/Over (\d+)/);
+                        return match ? parseInt(match[1]) + 1000 : 2000; // Add 1000 to push "Over" items to the end
+                    } else if (text.includes("-")) {
+                        const match = text.match(/(\d+) kg - (\d+)/);
+                        return match ? parseInt(match[1]) : 0;
+                    } else if (text.includes("Cash on Delivery")) {
+                        return 3000; // Push special items to the very end
+                    }
                     return 0;
+                };
+
+                const weightA = extractWeight(cellA);
+                const weightB = extractWeight(cellB);
+
+                if (weightA !== weightB) {
+                    return ascending ? weightA - weightB : weightB - weightA;
                 }
+            }
 
-                const cellA = cellsA[columnIndex] ? cellsA[columnIndex].textContent.trim() : '';
-                const cellB = cellsB[columnIndex] ? cellsB[columnIndex].textContent.trim() : '';
+            // Special handling for price column (column 1)
+            if (columnIndex === 1) {
+                // Handle formula-based prices
+                const isFormulaA = cellA.includes("K *") || cellA.includes("* K");
+                const isFormulaB = cellB.includes("K *") || cellB.includes("* K");
 
-                // Special handling for weight column (column 0)
-                if (columnIndex === 0) {
-                    // Extract numeric value from weight strings like "Up to 10 kg" or "20 kg - 50 kg"
-                    const extractWeight = (text) => {
-                        if (text.includes("Up to")) {
-                            const match = text.match(/Up to (\d+)/);
-                            return match ? parseInt(match[1]) : 0;
-                        } else if (text.includes("Over")) {
-                            const match = text.match(/Over (\d+)/);
-                            return match ? parseInt(match[1]) + 1000 : 2000; // Add 1000 to push "Over" items to the end
-                        } else if (text.includes("-")) {
-                            const match = text.match(/(\d+) kg - (\d+)/);
-                            return match ? parseInt(match[1]) : 0;
-                        } else if (text.includes("Cash on Delivery")) {
-                            return 3000; // Push special items to the very end
-                        }
-                        return 0;
-                    };
-
-                    const weightA = extractWeight(cellA);
-                    const weightB = extractWeight(cellB);
-
-                    if (weightA !== weightB) {
-                        return ascending ? weightA - weightB : weightB - weightA;
+                if (isFormulaA && !isFormulaB) {
+                    return ascending ? 1 : -1;
+                } else if (!isFormulaA && isFormulaB) {
+                    return ascending ? -1 : 1;
+                } else if (isFormulaA && isFormulaB) {
+                    const prefixA = cellA.match(/^(\d+)\s*\*/);
+                    const prefixB = cellB.match(/^(\d+)\s*\*/);
+                    if (prefixA && prefixB) {
+                        return ascending ?
+                            parseInt(prefixA[1]) - parseInt(prefixB[1]) :
+                            parseInt(prefixB[1]) - parseInt(prefixA[1]);
                     }
                 }
 
-                // Special handling for price column (column 1)
-                if (columnIndex === 1) {
-                    // Handle formula-based prices
-                    const isFormulaA = cellA.includes("K *") || cellA.includes("* K");
-                    const isFormulaB = cellB.includes("K *") || cellB.includes("* K");
+                // Handle special cases for "+" in price
+                if (cellA.includes("+") && cellB.includes("+")) {
+                    const baseA = parseFloat(cellA.split("+")[0]);
+                    const baseB = parseFloat(cellB.split("+")[0]);
 
-                    if (isFormulaA && !isFormulaB) {
-                        return ascending ? 1 : -1;
-                    } else if (!isFormulaA && isFormulaB) {
-                        return ascending ? -1 : 1;
-                    } else if (isFormulaA && isFormulaB) {
-                        const prefixA = cellA.match(/^(\d+)\s*\*/);
-                        const prefixB = cellB.match(/^(\d+)\s*\*/);
-                        if (prefixA && prefixB) {
-                            return ascending ?
-                                parseInt(prefixA[1]) - parseInt(prefixB[1]) :
-                                parseInt(prefixB[1]) - parseInt(prefixA[1]);
-                        }
-                    }
-
-                    // Handle special cases for "+" in price
-                    if (cellA.includes("+") && cellB.includes("+")) {
-                        const baseA = parseFloat(cellA.split("+")[0]);
-                        const baseB = parseFloat(cellB.split("+")[0]);
-
-                        if (!isNaN(baseA) && !isNaN(baseB) && baseA !== baseB) {
-                            return ascending ? baseA - baseB : baseB - baseA;
-                        }
+                    if (!isNaN(baseA) && !isNaN(baseB) && baseA !== baseB) {
+                        return ascending ? baseA - baseB : baseB - baseA;
                     }
                 }
+            }
 
-                // Default handling for numeric values
-                const numA = parseFloat(cellA.replace(/[^0-9.,]/g, '').replace(',', '.'));
-                const numB = parseFloat(cellB.replace(/[^0-9.,]/g, '').replace(',', '.'));
+            // Default handling for numeric values
+            const numA = parseFloat(cellA.replace(/[^0-9.,]/g, '').replace(',', '.'));
+            const numB = parseFloat(cellB.replace(/[^0-9.,]/g, '').replace(',', '.'));
 
-                if (!isNaN(numA) && !isNaN(numB)) {
-                    return ascending ? numA - numB : numB - numA;
+            if (!isNaN(numA) && !isNaN(numB)) {
+                return ascending ? numA - numB : numB - numA;
+            }
+
+            // Fallback to string comparison
+            const strA = cellA.toLowerCase();
+            const strB = cellB.toLowerCase();
+
+            return ascending ?
+                strA.localeCompare(strB) :
+                strB.localeCompare(strA);
+        };
+
+        // For sorting by weight/dimensions or price, we need to maintain section boundaries
+        if (columnIndex === 0 || columnIndex === 1) {
+            // Sort rows within each section
+            sections.forEach(section => {
+                section.contentRows.sort(compare);
+            });
+
+            // Clear table and rebuild
+            while (tbody.firstChild) {
+                tbody.removeChild(tbody.firstChild);
+            }
+
+            // Reconstruct table with sorted sections
+            sections.forEach(section => {
+                if (section.headerRow) {
+                    tbody.appendChild(section.headerRow);
                 }
-
-                // Fallback to string comparison
-                const strA = cellA.toLowerCase();
-                const strB = cellB.toLowerCase();
-
-                return ascending ?
-                    strA.localeCompare(strB) :
-                    strB.localeCompare(strA);
-            };
-
-            // For sorting by weight/dimensions or price, we need to maintain section boundaries
-            if (columnIndex === 0 || columnIndex === 1) {
-                // Sort rows within each section
-                sections.forEach(section => {
-                    section.contentRows.sort(compare);
-                });
-
-                // Clear table and rebuild
-                while (tbody.firstChild) {
-                    tbody.removeChild(tbody.firstChild);
-                }
-
-                // Reconstruct table with sorted sections
-                sections.forEach(section => {
-                    if (section.headerRow) {
-                        tbody.appendChild(section.headerRow);
-                    }
-                    section.contentRows.forEach(row => {
-                        tbody.appendChild(row);
-                    });
-                });
-            } else {
-                // For other columns, use simpler sorting
-                normalRows.sort(compare);
-
-                // Clear table and rebuild
-                while (tbody.firstChild) {
-                    tbody.removeChild(tbody.firstChild);
-                }
-
-                // Add all rows back in sorted order
-                normalRows.forEach(row => {
+                section.contentRows.forEach(row => {
                     tbody.appendChild(row);
                 });
+            });
+        } else {
+            // For other columns, use simpler sorting
+            normalRows.sort(compare);
+
+            // Clear table and rebuild
+            while (tbody.firstChild) {
+                tbody.removeChild(tbody.firstChild);
             }
 
-            // Update sort icons and data-sort attribute
-            headerCells.forEach((th, index) => {
-                if (th.getAttribute("data-sortable") === "true") {
-                    if (index === columnIndex) {
-                        th.setAttribute("data-sort", ascending ? "asc" : "desc");
-                    } else {
-                        th.removeAttribute("data-sort");
-                    }
-                }
+            // Add all rows back in sorted order
+            normalRows.forEach(row => {
+                tbody.appendChild(row);
             });
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const priceTable = document.querySelector("#price_decision .table");
-            if (priceTable) {
-                const sortableHeaders = priceTable.querySelectorAll("thead th[data-sortable='true']");
-                sortableHeaders.forEach((th, index) => {
-                    th.addEventListener("click", () => {
-                        const currentSort = th.getAttribute("data-sort");
-                        const ascending = currentSort !== "asc";
-                        sortTableEnhanced(priceTable, index, ascending);
-                    });
-                });
-
-                // Initial sort (by the first sortable column, ascending)
-                if (sortableHeaders.length > 0) {
-                    sortTableEnhanced(priceTable, 0, true); // Sort by the first column (index 0), ascending
+        // Update sort icons and data-sort attribute
+        headerCells.forEach((th, index) => {
+            if (th.getAttribute("data-sortable") === "true") {
+                if (index === columnIndex) {
+                    th.setAttribute("data-sort", ascending ? "asc" : "desc");
+                } else {
+                    th.removeAttribute("data-sort");
                 }
             }
         });
-    </script>
+    }
 
-    <!-- Root PFP BG for Contacts -->
-    <!-- Extras/Dashboard/ContactsBG/BG.png -->
-    <style>
-        .admin-contact-card {
-            position: relative;
-            background: url('Extras/Dashboard/ContactsBG/BG.png') no-repeat center;
-            background-size: cover;
-            opacity: 0.85;
-            padding: 20px;
-            border-radius: 8px;
-            color: #ffffff;
-            /* Ensures text remains bright */
-        }
-
-        /* Soft transparent background behind the text for contrast */
-        .admin-contact-card .text-content {
-            position: relative;
-            background: rgba(255, 255, 255, 0.15);
-            /* Light background for better readability */
-            padding: 10px;
-            border-radius: 8px;
-        }
-
-        /* Ensure link contrast */
-        .admin-contact-card a {
-            color: #ffffff;
-            font-weight: bold;
-        }
-
-        /* Flexbox for layout */
-        .admin-contact-card,
-        .guest-contact-form {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 100%;
-            /* Ensures both halves stretch equally */
-        }
-    </style>
-
-    <!-- For Message Sending -->
-    <script>
-        function sendMessage() {
-            const message = document.getElementById('message').value;
-            if (message.trim() !== '') {
-                // AJAX request to send the message
-                $.ajax({
-                    url: '<?php echo INSTALL_URL; ?>?controller=Messages&action=sendMessage', // URL to your sendMessage action
-                    type: 'POST',
-                    dataType: 'json', // Expect JSON response
-                    data: { message: message }, // Send the message data
-                    success: function (response) {
-                        if (response.status === 'success') {
-                            // Display success message
-                            $('#messageSentAlert').text(response.message).fadeIn().delay(3000).fadeOut();
-                            $('#contactForm')[0].reset(); // Clear the form
-                        } else {
-                            // Display error message
-                            alert('Error: ' + response.message);
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        // Handle AJAX errors
-                        console.error('AJAX Error:', status, error);
-                        alert('An error occurred while sending the message. Please try again.');
-                    }
+    document.addEventListener('DOMContentLoaded', () => {
+        const priceTable = document.querySelector("#price_decision .table");
+        if (priceTable) {
+            const sortableHeaders = priceTable.querySelectorAll("thead th[data-sortable='true']");
+            sortableHeaders.forEach((th, index) => {
+                th.addEventListener("click", () => {
+                    const currentSort = th.getAttribute("data-sort");
+                    const ascending = currentSort !== "asc";
+                    sortTableEnhanced(priceTable, index, ascending);
                 });
-            } else {
-                alert('Please enter your message.');
+            });
+
+            // Initial sort (by the first sortable column, ascending)
+            if (sortableHeaders.length > 0) {
+                sortTableEnhanced(priceTable, 0, true); // Sort by the first column (index 0), ascending
             }
         }
+    });
+</script>
 
-        // This is to prevent form submission from reloading the page (if it's still happening)
-        $('#contactForm').submit(function (event) {
-            event.preventDefault();
-        });
-    </script>
+<!-- Root PFP BG for Contacts -->
+<!-- Extras/Dashboard/ContactsBG/BG.png -->
+<style>
+    .admin-contact-card {
+        position: relative;
+        background: url('Extras/Dashboard/ContactsBG/BG.png') no-repeat center;
+        background-size: cover;
+        opacity: 0.85;
+        padding: 20px;
+        border-radius: 8px;
+        color: #ffffff;
+        /* Ensures text remains bright */
+    }
+
+    /* Soft transparent background behind the text for contrast */
+    .admin-contact-card .text-content {
+        position: relative;
+        background: rgba(255, 255, 255, 0.15);
+        /* Light background for better readability */
+        padding: 10px;
+        border-radius: 8px;
+    }
+
+    /* Ensure link contrast */
+    .admin-contact-card a {
+        color: #ffffff;
+        font-weight: bold;
+    }
+
+    /* Flexbox for layout */
+    .admin-contact-card,
+    .guest-contact-form {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+        /* Ensures both halves stretch equally */
+    }
+</style>
+
+<!-- For Message Sending -->
+<script>
+    function sendMessage() {
+        const message = document.getElementById('message').value;
+        if (message.trim() !== '') {
+            // AJAX request to send the message
+            $.ajax({
+                url: '<?php echo INSTALL_URL; ?>?controller=Messages&action=sendMessage', // URL to your sendMessage action
+                type: 'POST',
+                dataType: 'json', // Expect JSON response
+                data: { message: message }, // Send the message data
+                success: function (response) {
+                    if (response.status === 'success') {
+                        // Display success message
+                        $('#messageSentAlert').text(response.message).fadeIn().delay(3000).fadeOut();
+                        $('#contactForm')[0].reset(); // Clear the form
+                    } else {
+                        // Display error message
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    // Handle AJAX errors
+                    console.error('AJAX Error:', status, error);
+                    alert('An error occurred while sending the message. Please try again.');
+                }
+            });
+        } else {
+            alert('Please enter your message.');
+        }
+    }
+
+    // This is to prevent form submission from reloading the page (if it's still happening)
+    $('#contactForm').submit(function (event) {
+        event.preventDefault();
+    });
+</script>
+
+
+<!-- For Home Page - Main -->
+<style>
+    /* General Styles */
+    :root {
+        --primary-color: #3498db;
+        --secondary-color: #2c3e50;
+        --accent-color: #e74c3c;
+        --light-bg: #f8f9fa;
+        --dark-bg: #343a40;
+        --text-color: #333;
+        --light-text: #f8f9fa;
+    }
+
+    body {
+        font-family: 'Roboto', Arial, sans-serif;
+        color: var(--text-color);
+        line-height: 1.6;
+        background-color: #f5f5f5;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 15px;
+        background-color: rgba(245, 245, 245, 0);
+    }
+
+    /* Override Bootstrap white boxes to make transparent */
+    .card,
+    .card-body {
+        background-color: transparent !important;
+        border: none !important;
+    }
+
+    /* Hero Section Styles */
+    .hero-section {
+        background: linear-gradient(rgba(44, 62, 80, 0.7), rgba(44, 62, 80, 0.7)), url('https://images.unsplash.com/photo-1592838064575-70ed626d3a0e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center;
+        background-size: cover;
+        color: #fff;
+        text-align: center;
+        padding: 100px 0;
+        margin-bottom: 50px;
+    }
+
+    .hero-title {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        color: rgb(25, 13, 190);
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .hero-subtitle {
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+        color: rgb(255, 255, 255);
+    }
+
+    .hero-description {
+        font-size: 1.2rem;
+        max-width: 800px;
+        margin: 0 auto;
+        color: rgb(255, 255, 255);
+    }
+
+    /* Feature Cards Styles */
+    .feature-cards {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        margin-bottom: 50px;
+    }
+
+    .feature-card {
+        flex: 0 0 calc(33.333% - 20px);
+        position: relative;
+        overflow: hidden;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .feature-card-bg {
+        height: 200px;
+        background-size: cover;
+        background-position: center;
+    }
+
+    .feature-card-content {
+        padding: 20px;
+        background-color: #fff;
+        text-align: center;
+    }
+
+    .feature-card-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: var(--secondary-color);
+    }
+
+    /* Quote Section Styles */
+    .quote-section {
+        background: linear-gradient(rgba(52, 152, 219, 0.8), rgba(52, 152, 219, 0.8)), url('https://images.unsplash.com/photo-1567501077737-4a931a4e5e7c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center;
+        background-size: cover;
+        color: #fff;
+        text-align: center;
+        padding: 70px 0;
+        margin: 50px 0;
+    }
+
+    .quote-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .quote-heading {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    .quote-phone {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        color: #fff;
+    }
+
+    .quote-text {
+        font-size: 1.2rem;
+        max-width: 700px;
+        margin: 0 auto 15px;
+    }
+
+    /* Footer Styles */
+    .footer {
+        background-color: var(--dark-bg);
+        color: var(--light-text);
+        padding: 50px 0 20px;
+    }
+
+    .footer-content {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        margin-bottom: 30px;
+    }
+
+    .footer-section {
+        flex: 0 0 calc(50.000% - 30px);
+        margin-bottom: 30px;
+    }
+
+    .footer-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: var(--primary-color);
+    }
+
+    .footer-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .footer-list li {
+        margin-bottom: 10px;
+    }
+
+    .footer-list a {
+        color: var(--light-text);
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .footer-list a:hover {
+        color: var(--primary-color);
+    }
+
+    .copyright {
+        text-align: center;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* About Page Specific Styles */
+    #about {
+        padding: 20px 0;
+    }
+
+    .card-title-dash {
+        color: var(--primary-color);
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+    .card-description {
+        margin-bottom: 20px;
+        line-height: 1.7;
+    }
+
+    .card-rounded {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .border-primary,
+    .border-success,
+    .border-info {
+        border-width: 2px !important;
+    }
+
+    /* .courier-showcase {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-top: 30px;
+    } */
+
+    /* .courier-card {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        flex: 0 0 calc(50% - 10px);
+        display: flex;
+        transition: transform 0.3s ease;
+    } */
+
+    .courier-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    /* .courier-image,
+    .courier-image-placeholder {
+        width: 120px;
+        height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f5f5f5;
+    } */
+
+    .courier-info {
+        padding: 15px;
+        flex: 1;
+    }
+
+    .courier-name {
+        margin: 0 0 10px;
+        color: var(--secondary-color);
+    }
+
+    .courier-description {
+        margin: 0 0 10px;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .courier-phone {
+        margin: 0;
+        font-size: 0.9rem;
+        color: var(--primary-color);
+    }
+
+    .courier-phone i {
+        margin-right: 5px;
+    }
+
+    .display-4 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+
+    /* Responsive styles */
+    @media (max-width: 992px) {
+        .feature-card {
+            flex: 0 0 calc(50% - 15px);
+        }
+
+        .footer-section {
+            flex: 0 0 calc(50% - 15px);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.5rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+        }
+
+        .feature-card {
+            flex: 0 0 100%;
+        }
+
+        .footer-section {
+            flex: 0 0 100%;
+        }
+
+        .quote-phone {
+            font-size: 1.8rem;
+        }
+    }
+
+    /* Additional styles for counters in About page */
+    .text-center .display-4 {
+        transition: all 0.5s ease;
+    }
+
+    /* Custom backgrounds for sections */
+    .bg-light {
+        background-color: #f8f9fa !important;
+    }
+
+    /* Enhance buttons */
+    .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        padding: 10px 25px;
+        border-radius: 5px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: #2980b9;
+        border-color: #2980b9;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    }
+</style>

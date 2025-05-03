@@ -503,12 +503,32 @@ class Model
      *
      * @ return int|null The last inserted ID, or null on error.
      */
-    public function getLastInsertId()
+    public function countAll($options = null)
     {
-        $this->connect(); // Ensure connection is established
-        if ($this->mysqli) {
-            return $this->mysqli->insert_id;
+        $query = "SELECT COUNT(*) as total FROM " . $this->getTable();
+        $params = [];
+
+        // Build WHERE clause if options are provided
+        if ($options && is_array($options)) {
+            $conditions = [];
+            foreach ($options as $field => $value) {
+                $conditions[] = "`$field` = ?";
+                $params[] = $value;
+            }
+            $query .= " WHERE " . implode(" AND ", $conditions);
+            $types = str_repeat('s', count($params));
+        } elseif ($options) {
+            // If options is a raw WHERE string
+            $query .= " WHERE " . $options;
+            $types = '';
+        } else {
+            $types = '';
         }
-        return null;
+
+        // Execute the query
+        $result = $this->executeQuery($query, $params, $types);
+
+        // Return the count from the result
+        return isset($result[0]['total']) ? (int) $result[0]['total'] : 0;
     }
 }
