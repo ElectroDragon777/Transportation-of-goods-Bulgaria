@@ -3,6 +3,12 @@ $unread_count = 0;
 if (!empty($tpl['notifications'])) {
     $unread_count = count(array_filter($tpl['notifications'], fn($n) => !$n['is_seen']));
 }
+
+// Messages count
+$unread_message_count = 0;
+if (!empty($tpl['messages'])) {
+    $unread_message_count = count(array_filter($tpl['messages'], fn($n) => !$n['is_read']));
+}
 ?>
 <nav class="navbar default-layout col-lg-12 col-12 p-0 d-flex align-items-top flex-row fixed-top">
     <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
@@ -244,10 +250,10 @@ if (!empty($tpl['notifications'])) {
                         <a class="dropdown-item"
                             href="<?php echo INSTALL_URL; ?>?controller=User&action=profile&id=<?php echo $_SESSION['user']['id']; ?>"><i
                                 class="dropdown-item-icon mdi mdi-account-outline text-primary me-2"></i> My Profile</a>
-                                <?php if ($_SESSION['user']['role'] === 'root'): ?>
-                        <a class="dropdown-item" href="<?php echo INSTALL_URL; ?>?controller=Messages&action=index"><i
-                                class="dropdown-item-icon mdi mdi-message-text-outline text-primary me-2"></i> Messages</a>
-                                <?php endif; ?>
+                        <?php if ($_SESSION['user']['role'] === 'root'): ?>
+                            <a class="dropdown-item" href="<?php echo INSTALL_URL; ?>?controller=Messages&action=index"><i
+                                    class="dropdown-item-icon mdi mdi-message-text-outline text-primary me-2"></i> Messages</a>
+                        <?php endif; ?>
                         <a class="dropdown-item"><i
                                 class="dropdown-item-icon mdi mdi-calendar-check-outline text-primary me-2"></i>
                             Activity</a>

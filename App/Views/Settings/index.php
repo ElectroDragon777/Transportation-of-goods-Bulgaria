@@ -2,7 +2,10 @@
     <div class="col-sm-12">
         <div class="home-tab">
             <div class="card card-rounded mt-3">
-                <div class="card-body">
+                <div class="card-body" style="background: linear-gradient(rgb(255, 255, 255), rgba(255, 255, 255, 0.69), rgba(85, 85, 85, 0.4), rgba(85, 85, 85, 0.4) ,  rgba(255, 255, 255, 0.69), rgb(255, 255, 255)), url('Extras/Dashboard/Settings/settings.jpg');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;">
                     <h4 class="card-title">Settings</h4>
 
                     <?php if (isset($error_message)): ?>

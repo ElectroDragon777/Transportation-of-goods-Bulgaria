@@ -3,6 +3,7 @@
 namespace Core;
 use \App\Models\Order; // Use the correct namespace for your Order model.
 use \App\Models\User;  // Use the correct namespace for your User model.
+use \App\Models\Courier; // Use the correct namespace for your Courier model.
 
 // Define $date_key here!
 $user_order_interval = 'weekly'; // or 'daily' - changed to weekly
@@ -738,6 +739,12 @@ $isLoggedIn = !empty($_SESSION['user']);
 
 
                 <!-- About Page : Also, keep in mind, show active is for HOME only. Do not add to "tab-pane fade" the "show active" unless it is HOME-->
+                <?php
+                $userModel = new User();
+                $root = $userModel->getFirstBy(['role' => 'root']);
+                $root_name = $root['name'];
+                $root_phone = $root['phone_number'];
+                ?>
                 <div class="tab-pane fade" id="about" role="tabpanel" aria-labelledby="about">
                     <div class="row flex-grow">
                         <div class="col-12 grid-margin stretch-card">
@@ -1047,7 +1054,10 @@ $isLoggedIn = !empty($_SESSION['user']);
 
                 <!-- FAQs  -->
                 <div class="tab-pane fade" id="faqs" role="tabpanel" aria-labelledby="faqs-tab">
-                    <div class="row flex-grow">
+                    <div class="row flex-grow" style="background: linear-gradient(rgb(255, 255, 255), rgba(85, 85, 85, 0.4)), url('Extras/Dashboard/FAQ/faq.jpg');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;">
                         <div class="col-12 grid-margin stretch-card">
                             <div class="card card-rounded">
                                 <div class="card-body">
@@ -1435,6 +1445,15 @@ $isLoggedIn = !empty($_SESSION['user']);
 </div>
 
 <!-- For About's Counters animation -->
+<?php
+// User Model and user count
+$userModel = new User();
+$total_users = $userModel->countAll();    //renamed
+
+//Courier Model and courier count
+$courierModel = new Courier();
+$total_couriers = $courierModel->countAll(); //renamed
+?>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const counters = document.querySelectorAll('.display-4');
@@ -1442,8 +1461,8 @@ $isLoggedIn = !empty($_SESSION['user']);
         const targets = {
             'offices-BG': 26,
             'kilometers-covered': 1928,
-            'people-team': 6,
-            'clients': 9
+            'people-team': <?php echo $total_couriers; ?>,
+            'clients': <?php echo $total_users; ?>
         };
         const animationDuration = 2000; // Total animation time in milliseconds
         const frameRate = 60; // Updates per second (higher for smoother animation)
