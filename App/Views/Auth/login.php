@@ -11,6 +11,10 @@
 
                     <form class="forms-sample" method="POST" action="<?php echo INSTALL_URL; ?>?controller=Auth&action=login">
                         <input type="hidden" name="send" value="1" />
+
+                        <div class="col-12">
+                                <h5 class="with-line">Email and Password:</h5>
+                            </div>
                         <div class="row">
                             <div class="form-group col-md-6 mb-3">
                                 <label for="email" class="form-label">Email</label>
@@ -39,3 +43,38 @@
         </div>
     </div>
 </div>
+
+<!-- For better styling -->
+<style>
+    .card-title.with-line {
+        position: relative;
+        padding-bottom: 10px;
+        /* Space for the line */
+    }
+
+    .card-title.with-line::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-image: linear-gradient(to right, #9c27b0, #673ab7);
+    }
+
+    .h5.with-line {
+        position: relative;
+        padding-bottom: 10px;
+        /* Space for the line */
+    }
+
+    .h5.with-line::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-image: linear-gradient(to right, #9c27b0, #673ab7);
+    }
+</style>

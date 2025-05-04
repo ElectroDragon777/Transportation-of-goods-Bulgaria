@@ -304,7 +304,7 @@ $isLoggedIn = !empty($_SESSION['user']);
                     <div class="quote-section" style="background-image: url('Extras/Dashboard/Main/HowToElectricity.jpg');
   background-repeat: no-repeat;
   background-attachment: fixed;
-  background-size: cover;">
+  background-size: cover; border-radius: 25px;">
                         <?php
                         $userModel = new User();
                         $root = $userModel->getFirstBy(['role' => 'root']);
@@ -1057,7 +1057,7 @@ $isLoggedIn = !empty($_SESSION['user']);
                     <div class="row flex-grow" style="background: linear-gradient(rgb(255, 255, 255), rgba(85, 85, 85, 0.4)), url('Extras/Dashboard/FAQ/faq.jpg');
   background-repeat: no-repeat;
   background-attachment: fixed;
-  background-size: cover;">
+  background-size: cover; border-radius: 25px;">
                         <div class="col-12 grid-margin stretch-card">
                             <div class="card card-rounded">
                                 <div class="card-body">
@@ -1988,6 +1988,7 @@ $total_couriers = $courierModel->countAll(); //renamed
     .hero-section {
         background: linear-gradient(rgba(44, 62, 80, 0.7), rgba(44, 62, 80, 0.7)), url('https://images.unsplash.com/photo-1592838064575-70ed626d3a0e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center;
         background-size: cover;
+        border-radius: 25px;
         color: #fff;
         text-align: center;
         padding: 100px 0;
@@ -2097,6 +2098,7 @@ $total_couriers = $courierModel->countAll(); //renamed
         background-color: var(--dark-bg);
         color: var(--light-text);
         padding: 50px 0 20px;
+        border-radius: 25px;
     }
 
     .footer-content {

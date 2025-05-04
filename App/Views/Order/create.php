@@ -26,7 +26,10 @@
                     <form method="POST" id="booking-frm-id"
                         action="<?php echo INSTALL_URL; ?>?controller=Order&action=create">
                         <input type="hidden" name="send" value="1" />
-                        <div class="row">
+                        <div class="row" style="background: linear-gradient(rgba(255, 255, 255, 0.47), rgba(85, 85, 85, 0.23)), url('Extras/Controllers/bluebackground_order_creation.jpg');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover; border-radius: 25px;">
                             <div class="col-md-6">
                                 <!-- Replace Customer Dropdown with Current User Info -->
                                 <div class="mb-3">
@@ -48,276 +51,248 @@
                                         ?>
                                     </select>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="deliveryDate" class="form-label">Date of Delivery</label>
-                                    <input type="text" class="form-control" id="deliveryDate" name="delivery_date"
-                                        autocomplete="off">
-                                    <span id="dynamic-late-note-2"></span>
-                                </div>
-                            </div>
-                            <!-- Start Destination Section -->
-                            <div class="card mb-4">
-                                <div class="card-header bg-primary text-white">
-                                    <h5>Start Destination</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="form-group mb-3">
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="startLocationType"
-                                                id="startOffice" value="office" checked>
-                                            <label class="form-check-label" for="startOffice">Office</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="startLocationType"
-                                                id="startAddress" value="address">
-                                            <label class="form-check-label" for="startAddress">Address</label>
-                                        </div>
-                                        <div class="invalid-feedback">Please select a start location.</div>
-                                        <!-- Add this line ^ -->
-                                    </div>
-
-                                    <!-- Office Selection -->
-                                    <div class="form-group mb-3" id="startOfficeGroup">
-                                        <label for="startOfficeSelect">Select Office:</label>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control office-autocomplete"
-                                                id="startOfficeInput" placeholder="Type to search offices">
-                                            <select class="form-control d-none" id="startOfficeSelect"
-                                                name="startOffice">
-                                                <option value="">Select an office</option>
-                                            </select>
-                                            <input type="hidden" id="startOfficeCoords" name="startOfficeCoords">
-                                            <input type="hidden" id="startOfficeName" name="startOfficeName">
-                                        </div>
-                                        <div id="startOfficeAutocomplete" class="autocomplete-results"></div>
-                                    </div>
-
-                                    <!-- Address Input -->
-                                    <div class="form-group mb-3 d-none" id="startAddressGroup">
-                                        <label for="startAddressInput">Enter Address:</label>
-                                        <input type="text" class="form-control" id="startAddressInput"
-                                            name="startAddress" placeholder="Enter full address">
-                                        <input type="hidden" id="startAddressCoords" name="startAddressCoords">
-                                        <input type="hidden" id="startAddressName" name="startAddressName">
-                                        <div class="invalid-feedback">Please enter a valid address</div>
-                                        <button type="button" class="btn btn-sm btn-outline-secondary mt-2"
-                                            id="validateStartAddress">Validate Address</button>
-                                    </div>
-                                </div>
                             </div>
 
-                            <!-- End Destination Section -->
-                            <div class="card mb-4">
-                                <div class="card-header bg-success text-white">
-                                    <h5>End Destination</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="form-group mb-3">
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="endLocationType"
-                                                id="endOffice" value="office" checked>
-                                            <label class="form-check-label" for="endOffice">Office</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="endLocationType"
-                                                id="endAddress" value="address">
-                                            <label class="form-check-label" for="endAddress">Address</label>
-                                        </div>
-                                        <div class="invalid-feedback">Please select a start location.</div>
-                                        <!-- Add this line ^ -->
-                                    </div>
-
-                                    <!-- Office Selection -->
-                                    <div class="form-group mb-3" id="endOfficeGroup">
-                                        <label for="endOfficeSelect">Select Office:</label>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control office-autocomplete"
-                                                id="endOfficeInput" placeholder="Type to search offices">
-                                            <select class="form-control d-none" id="endOfficeSelect" name="endOffice">
-                                                <option value="">Select an office</option>
-                                            </select>
-                                            <input type="hidden" id="endOfficeCoords" name="endOfficeCoords">
-                                            <input type="hidden" id="endOfficeName" name="endOfficeName">
-                                        </div>
-                                        <div id="endOfficeAutocomplete" class="autocomplete-results"></div>
-                                    </div>
-
-                                    <!-- Address Input -->
-                                    <div class="form-group mb-3 d-none" id="endAddressGroup">
-                                        <label for="endAddressInput">Enter Address:</label>
-                                        <input type="text" class="form-control" id="endAddressInput" name="endAddress"
-                                            placeholder="Enter full address">
-                                        <input type="hidden" id="endAddressCoords" name="endAddressCoords">
-                                        <input type="hidden" id="endAddressName" name="endAddressName">
-                                        <div class="invalid-feedback">Please enter a valid address</div>
-                                        <button type="button" class="btn btn-sm btn-outline-secondary mt-2"
-                                            id="validateEndAddress">Validate Address</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Map preview: DEBUG -->
-                            <div class="card mb-4">
-                                <div class="card-header bg-info text-white">
-                                    <h5>Route Preview</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div id="map-container" class="map-loading">
-                                        <div class="map-loading-indicator">
-                                            <link rel="stylesheet"
-                                                href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-                                                integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-                                                crossorigin="" />
-                                            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-                                                integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-                                                crossorigin=""></script>
-                                            <div class="spinner-border text-primary" role="status">
-                                                <span class="visually-hidden">Loading map...</span>
-                                            </div>
-                                            <p class="mt-2">Loading map...</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Payment Column -->
-                            <div class="col-md-12">
-                                <!-- Unneeded. -->
-                                <div class="mb-3">
-                                    <label for="productPrice" class="form-label">Product Price</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><?php echo $tpl['currency']; ?></span>
-                                        <input type="text" class="form-control" id="productPrice" name="product_price"
-                                            readonly>
-                                    </div>
-                                </div>
-
-                                <!-- Payment Method Styling Enhancements -->
-                                <div class="payment-methods card mb-4">
-                                    <div class="mb-6">
-                                        <div class="card-header bg-warning text-white">
-                                            <h5>Payment Method</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="payment_method"
-                                                    id="paymentOnline" value="online" checked>
-                                                <label class="form-check-label" for="paymentOnline">
-                                                    Online Payment (PayPal)
-                                                </label>
-                                            </div>
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="payment_method"
-                                                    id="paymentCash" value="cash">
-                                                <label class="form-check-label" for="paymentCash">
-                                                    Cash on Delivery (+1.5% fee)
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <!-- <label for=" paymentMethod" class="form-label">Payment Method</label>
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="radio" name="payment_method"
-                                                        id="paymentOnline" value="online" checked>
-                                                    <label class="form-check-label" for="paymentOnline">
-                                                        Online Payment (PayPal)
-                                                    </label>
-                                                </div>
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="radio" name="payment_method"
-                                                        id="paymentCash" value="cash">
-                                                    <label class="form-check-label" for="paymentCash">
-                                                        Cash on Delivery (+1.5% fee)
-                                                    </label>
-                                                </div> -->
-                                    </div>
-                                </div>
-
-                                <!-- <div class="mb-3">
-                                                    <label for="totalPrice" class="form-label">Total Price</label>
-                                                    <div class="input-group">
-                                                        <span class="input-group-text"><.*?php echo $tpl['currency']; ?^.></span>
-                                                        <input type="text" class="form-control" id="totalPrice" name="total_price" readonly>
-                                                    </div>
-                                                </div> -->
-
-                                <!-- Admins set orders to started or pending automatically, depending on delivery date. Write code later. -->
-                                <!-- <div class="mb-3">
-                                                                                <label for="status" class="form-label">Order Status</label>
-                                                                                <select class="form-select" id="status" name="status" required>
-                                                                                    <option value=''>---</option>
-                                                                                    </*?php
-                                                                                    foreach (Utility::$order_status as $k => $v) {
-                                                                                        ?>
-                                                                                        <option value="</*?php echo $k; ?>"></*?php echo $v; */?></option>
-                                                                                        </*?php
-                                                                                    }
-                                                                                    */?>
-                                                                                </select>
-                                                                            </div> -->
-
-                                <!--  Parcel Selection -->
-                                <div id="parcelRows">
-                                    <div class="row align-items-end mb-12 parcel-row">
-                                        <div class="col-md-12" id="parcelRows">
-                                            <div class="row align-items-end mb-3 parcel-row">
-                                                <div class="col-md-6">
-                                                    <label for="parcelIds" class="form-label">Parcel</label>
-                                                    <select name="parcel_id[]" id="parcelIds" class="form-select"
-                                                        required>
-                                                        <option value="">---</option>
-                                                        <?php
-                                                        foreach ($tpl['pallets'] as $item) {
-                                                            // Only show products with stock greater than zero
-                                                            if ($item['stock'] > 0) {
-                                                                ?>
-                                                                <option value="<?php echo $item['id']; ?>"
-                                                                    data-max-quantity="<?php echo $item['stock']; ?>">
-                                                                    <?php echo htmlspecialchars($item['name']); ?>
-                                                                    (Available:
-                                                                    <?php echo $item['stock']; ?>)
-                                                                </option>
-                                                                <?php
-                                                            }
+                            <!--  Parcel Selection -->
+                            <div id="parcelRows">
+                                <div class="row align-items-end mb-12 parcel-row">
+                                    <div class="col-md-12" id="parcelRows">
+                                        <div class="row align-items-end mb-3 parcel-row">
+                                            <div class="col-md-6">
+                                                <label for="parcelIds" class="form-label">Parcel</label>
+                                                <select name="parcel_id[]" id="parcelIds" class="form-select" required>
+                                                    <option value="">---</option>
+                                                    <?php
+                                                    foreach ($tpl['pallets'] as $item) {
+                                                        // Only show products with stock greater than zero
+                                                        if ($item['stock'] > 0) {
+                                                            ?>
+                                                            <option value="<?php echo $item['id']; ?>"
+                                                                data-max-quantity="<?php echo $item['stock']; ?>">
+                                                                <?php echo htmlspecialchars($item['name']); ?>
+                                                                (Available:
+                                                                <?php echo $item['stock']; ?>)
+                                                            </option>
+                                                            <?php
                                                         }
-                                                        ?>
-                                                    </select>
-                                                    <div class="invalid-feedback">Please select a product with
-                                                        available
-                                                        stock.</div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <label for="quantities" class="form-label">Quantity</label>
-                                                    <input type="number" step="1" min="1" class="form-control"
-                                                        id="quantities" name="quantity[]" required>
-                                                    <div class="invalid-feedback">Please enter a valid quantity
-                                                    </div>
+                                                    }
+                                                    ?>
+                                                </select>
+                                                <div class="invalid-feedback">Please select a product with
+                                                    available
+                                                    stock.</div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="quantities" class="form-label">Quantity</label>
+                                                <input type="number" step="1" min="1" class="form-control"
+                                                    id="quantities" name="quantity[]" required>
+                                                <div class="invalid-feedback">Please enter a valid quantity
                                                 </div>
                                             </div>
+                                        </div>
 
-                                            <!-- Not a plan yet, but can be enhanced for pallets vvv -->
-                                            <!-- <div class="col-md-4">
+                                        <!-- Not a plan yet, but can be enhanced for pallets vvv -->
+                                        <!-- <div class="col-md-4">
                                             <label for="quantities" class="form-label">Quantity</label>
                                             <input type="number" step="1" min="1" class="form-control" id="quantities"
                                                    name="quantity[]" required>
                                             </div> -->
 
-                                            <!-- <div class="col-md-1 text-center d-flex justify-content-center align-items-center">
+                                        <!-- <div class="col-md-1 text-center d-flex justify-content-center align-items-center">
                                             <button type="button" class="btn btn-light d-flex justify-content-center align-items-center rounded-circle add-row" style="width: 36px; height: 36px;">+</button>
                                         </div> -->
-                                            <!-- Not a plan yet, but can be enhanced for pallets ^^^ -->
-                                        </div>
+                                        <!-- Not a plan yet, but can be enhanced for pallets ^^^ -->
                                     </div>
+                                </div>
+                            </div>
+                        </div>
 
-                                    <!-- Time of Delivery -->
-                                    <div class="mb-3">
-                                        <label for="timeOfDelivery" class="form-label">Time of Delivery: <span
-                                                id="currentTimeLabel"></span></label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i
-                                                    class="mdi mdi-clock text-primary"></i></span>
-                                            <input type="text" class="form-control" id="timeOfDelivery"
-                                                name="time_of_delivery" readonly autocomplete="off">
-                                        </div>
+                        <!-- Payment Method Styling Enhancements -->
+                        <div class="payment-methods card mb-4">
+                            <div class="mb-6">
+                                <div class="card-header bg-warning text-white">
+                                    <h5>Payment Method</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="payment_method"
+                                            id="paymentOnline" value="online" checked>
+                                        <label class="form-check-label" for="paymentOnline">
+                                            Online Payment (PayPal)
+                                        </label>
                                     </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="payment_method"
+                                            id="paymentCash" value="cash">
+                                        <label class="form-check-label" for="paymentCash">
+                                            Cash on Delivery (+1.5% fee)
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Start Destination Section -->
+                        <div class="card mb-4" style="background: linear-gradient(rgba(255, 255, 255, 0.58), rgba(85, 85, 85, 0.58)), url('Extras/Controllers/BulgarianMap.png');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover; border-radius: 25px; color: white;">
+                            <div class="card-header bg-primary text-white">
+                                <h5>Start Destination</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group mb-3">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="startLocationType"
+                                            id="startOffice" value="office" checked>
+                                        <label class="form-check-label" for="startOffice">Office</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="startLocationType"
+                                            id="startAddress" value="address">
+                                        <label class="form-check-label" for="startAddress">Address</label>
+                                    </div>
+                                    <div class="invalid-feedback">Please select a start location.</div>
+                                    <!-- Add this line ^ -->
+                                </div>
+
+                                <!-- Office Selection -->
+                                <div class="form-group mb-3" id="startOfficeGroup">
+                                    <label for="startOfficeSelect">Select Office:</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control office-autocomplete"
+                                            id="startOfficeInput" placeholder="Type to search offices">
+                                        <select class="form-control d-none" id="startOfficeSelect" name="startOffice">
+                                            <option value="">Select an office</option>
+                                        </select>
+                                        <input type="hidden" id="startOfficeCoords" name="startOfficeCoords">
+                                        <input type="hidden" id="startOfficeName" name="startOfficeName">
+                                    </div>
+                                    <div id="startOfficeAutocomplete" class="autocomplete-results"></div>
+                                </div>
+
+                                <!-- Address Input -->
+                                <div class="form-group mb-3 d-none" id="startAddressGroup">
+                                    <label for="startAddressInput">Enter Address:</label>
+                                    <input type="text" class="form-control" id="startAddressInput" name="startAddress"
+                                        placeholder="Enter full address">
+                                    <input type="hidden" id="startAddressCoords" name="startAddressCoords">
+                                    <input type="hidden" id="startAddressName" name="startAddressName">
+                                    <div class="invalid-feedback">Please enter a valid address</div>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary mt-2"
+                                        id="validateStartAddress">Validate Address</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- End Destination Section -->
+                        <div class="card mb-4" style="background: linear-gradient(rgba(255, 255, 255, 0.58), rgba(85, 85, 85, 0.58)), url('Extras/Controllers/BulgarianMap.png');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover; border-radius: 25px; color: white;">
+                            <div class="card-header bg-success text-white">
+                                <h5>End Destination</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group mb-3">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="endLocationType"
+                                            id="endOffice" value="office" checked>
+                                        <label class="form-check-label" for="endOffice">Office</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="endLocationType"
+                                            id="endAddress" value="address">
+                                        <label class="form-check-label" for="endAddress">Address</label>
+                                    </div>
+                                    <div class="invalid-feedback">Please select a start location.</div>
+                                    <!-- Add this line ^ -->
+                                </div>
+
+                                <!-- Office Selection -->
+                                <div class="form-group mb-3" id="endOfficeGroup">
+                                    <label for="endOfficeSelect">Select Office:</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control office-autocomplete" id="endOfficeInput"
+                                            placeholder="Type to search offices">
+                                        <select class="form-control d-none" id="endOfficeSelect" name="endOffice">
+                                            <option value="">Select an office</option>
+                                        </select>
+                                        <input type="hidden" id="endOfficeCoords" name="endOfficeCoords">
+                                        <input type="hidden" id="endOfficeName" name="endOfficeName">
+                                    </div>
+                                    <div id="endOfficeAutocomplete" class="autocomplete-results"></div>
+                                </div>
+
+                                <!-- Address Input -->
+                                <div class="form-group mb-3 d-none" id="endAddressGroup">
+                                    <label for="endAddressInput">Enter Address:</label>
+                                    <input type="text" class="form-control" id="endAddressInput" name="endAddress"
+                                        placeholder="Enter full address">
+                                    <input type="hidden" id="endAddressCoords" name="endAddressCoords">
+                                    <input type="hidden" id="endAddressName" name="endAddressName">
+                                    <div class="invalid-feedback">Please enter a valid address</div>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary mt-2"
+                                        id="validateEndAddress">Validate Address</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Map preview: DEBUG -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-info text-white">
+                                <h5>Route Preview</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="map-container" class="map-loading">
+                                    <div class="map-loading-indicator">
+                                        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+                                            integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+                                            crossorigin="" />
+                                        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+                                            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+                                            crossorigin=""></script>
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Loading map...</span>
+                                        </div>
+                                        <p class="mt-2">Loading map...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Map preview: DEBUG ^^^ -->
+
+                        <!-- Delivery Information Section -->
+                        <div class="col-md-12">
+                            <div class="row align-items-end mb-3 ">
+                                <div class="col-md-6">
+                                    <label for="deliveryDate" class="form-label">Date of Delivery</label>
+                                    <input type="text" class="form-control" id="deliveryDate" name="delivery_date"
+                                        autocomplete="off">
+                                    <span id="dynamic-late-note-2"></span>
+                                </div>
+
+                                <!-- Time of Delivery -->
+                                <div class="col-md-6">
+                                    <label for="timeOfDelivery" class="form-label">Time of Delivery: <span
+                                            id="currentTimeLabel"></span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="mdi mdi-clock text-primary"></i></span>
+                                        <input type="text" class="form-control" id="timeOfDelivery"
+                                            name="time_of_delivery" readonly autocomplete="off">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Payment Column -->
+                        <div class="col-md-12">
+                            <!-- Unneeded. -->
+                            <div class="mb-3">
+                                <label for="productPrice" class="form-label">Product Price</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><?php echo $tpl['currency']; ?></span>
+                                    <input type="text" class="form-control" id="productPrice" name="product_price"
+                                        readonly>
                                 </div>
                             </div>
                             <div>
@@ -361,6 +336,35 @@
                     </form>
                 </div>
             </div>
+            <!-- Footer -->
+            <?php
+            $userModel = new App\Models\User();
+            $root = $userModel->getFirstBy(['role' => 'root']);
+            $root_name = $root['name'];
+            $root_phone = $root['phone_number'];
+            $root_email = $root['email'];
+            ?>
+            <footer class="footer">
+                <div class="container">
+                    <div class="footer-content">
+                        <div class="footer-section">
+                            <h3 class="footer-title">Elec-Transport</h3>
+                            <p>Providing quality transportation services nationwide since 2016.</p>
+                        </div>
+                        <div class="footer-section">
+                            <h3 class="footer-title">Contact Us</h3>
+                            <ul class="footer-list">
+                                <li>Varna 9020 - Boul. Yanosh Huniadi 192</li>
+                                <li><?php echo $root_phone ?></li>
+                                <li><?php echo $root_email ?></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="copyright">
+                        <p>&copy; 2025 Elec-Transport. All rights reserved.</p>
+                    </div>
+                </div>
+            </footer>
         </div>
     </div>
 </div>
@@ -1409,7 +1413,7 @@
             </div>
             <div class="payment-amount">
                 <strong>Total Amount: </strong>
-                <span>${document.getElementById('productPrice').value} ${document.querySelector('.input-group-text').textContent}</span>
+                <span>${document.getElementById('productPrice').value} <?php echo $tpl['currency']; ?></span>
             </div>
         </div>
         <div class="payment-popup-footer">
@@ -1471,7 +1475,7 @@
             <p>A 1.5% fee has been added to your total amount.</p>
             <div class="payment-amount">
                 <strong>Total Amount to Pay on Delivery: </strong>
-                <span>${document.getElementById('productPrice').value} ${document.querySelector('.input-group-text').textContent}</span>
+                <span>${document.getElementById('productPrice').value}  <?php echo $tpl['currency']; ?></span>
             </div>
         </div>
         <div class="payment-popup-footer">
@@ -1881,3 +1885,351 @@
         }
     });
 </script>
+
+<!-- For Footer -->
+<style>
+    /* General Styles */
+    :root {
+        --primary-color: #3498db;
+        --secondary-color: #2c3e50;
+        --accent-color: #e74c3c;
+        --light-bg: #f8f9fa;
+        --dark-bg: #343a40;
+        --text-color: #333;
+        --light-text: #f8f9fa;
+    }
+
+    body {
+        font-family: 'Roboto', Arial, sans-serif;
+        color: var(--text-color);
+        line-height: 1.6;
+        background-color: #f5f5f5;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 15px;
+        background-color: rgba(245, 245, 245, 0);
+    }
+
+    /* Override Bootstrap white boxes to make transparent */
+    .card,
+    .card-body {
+        background-color: transparent !important;
+        border: none !important;
+    }
+
+    /* Hero Section Styles */
+    .hero-section {
+        background: linear-gradient(rgba(44, 62, 80, 0.7), rgba(44, 62, 80, 0.7)), url('https://images.unsplash.com/photo-1592838064575-70ed626d3a0e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center;
+        background-size: cover;
+        border-radius: 25px;
+        color: #fff;
+        text-align: center;
+        padding: 100px 0;
+        margin-bottom: 50px;
+    }
+
+    .hero-title {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        color: rgb(25, 13, 190);
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .hero-subtitle {
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+        color: rgb(255, 255, 255);
+    }
+
+    .hero-description {
+        font-size: 1.2rem;
+        max-width: 800px;
+        margin: 0 auto;
+        color: rgb(255, 255, 255);
+    }
+
+    /* Feature Cards Styles */
+    .feature-cards {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        margin-bottom: 50px;
+    }
+
+    .feature-card {
+        flex: 0 0 calc(33.333% - 20px);
+        position: relative;
+        overflow: hidden;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .feature-card-bg {
+        height: 200px;
+        background-size: cover;
+        background-position: center;
+    }
+
+    .feature-card-content {
+        padding: 20px;
+        background-color: #fff;
+        text-align: center;
+    }
+
+    .feature-card-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: var(--secondary-color);
+    }
+
+    /* Quote Section Styles */
+    .quote-section {
+        background: linear-gradient(rgba(52, 152, 219, 0.8), rgba(52, 152, 219, 0.8)), url('https://images.unsplash.com/photo-1567501077737-4a931a4e5e7c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center;
+        background-size: cover;
+        color: #fff;
+        text-align: center;
+        padding: 70px 0;
+        margin: 50px 0;
+    }
+
+    .quote-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .quote-heading {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    .quote-phone {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        color: #fff;
+    }
+
+    .quote-text {
+        font-size: 1.2rem;
+        max-width: 700px;
+        margin: 0 auto 15px;
+    }
+
+    /* Footer Styles */
+    .footer {
+        background-color: var(--dark-bg);
+        color: var(--light-text);
+        padding: 50px 0 20px;
+        border-radius: 25px;
+    }
+
+    .footer-content {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        margin-bottom: 30px;
+    }
+
+    .footer-section {
+        flex: 0 0 calc(50.000% - 30px);
+        margin-bottom: 30px;
+    }
+
+    .footer-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: var(--primary-color);
+    }
+
+    .footer-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .footer-list li {
+        margin-bottom: 10px;
+    }
+
+    .footer-list a {
+        color: var(--light-text);
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .footer-list a:hover {
+        color: var(--primary-color);
+    }
+
+    .copyright {
+        text-align: center;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* About Page Specific Styles */
+    #about {
+        padding: 20px 0;
+    }
+
+    .card-title-dash {
+        color: var(--primary-color);
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+    .card-description {
+        margin-bottom: 20px;
+        line-height: 1.7;
+    }
+
+    .card-rounded {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .border-primary,
+    .border-success,
+    .border-info {
+        border-width: 2px !important;
+    }
+
+    /* .courier-showcase {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-top: 30px;
+    } */
+
+    /* .courier-card {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        flex: 0 0 calc(50% - 10px);
+        display: flex;
+        transition: transform 0.3s ease;
+    } */
+
+    .courier-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    /* .courier-image,
+    .courier-image-placeholder {
+        width: 120px;
+        height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f5f5f5;
+    } */
+
+    .courier-info {
+        padding: 15px;
+        flex: 1;
+    }
+
+    .courier-name {
+        margin: 0 0 10px;
+        color: var(--secondary-color);
+    }
+
+    .courier-description {
+        margin: 0 0 10px;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .courier-phone {
+        margin: 0;
+        font-size: 0.9rem;
+        color: var(--primary-color);
+    }
+
+    .courier-phone i {
+        margin-right: 5px;
+    }
+
+    .display-4 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+
+    /* Responsive styles */
+    @media (max-width: 992px) {
+        .feature-card {
+            flex: 0 0 calc(50% - 15px);
+        }
+
+        .footer-section {
+            flex: 0 0 calc(50% - 15px);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.5rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+        }
+
+        .feature-card {
+            flex: 0 0 100%;
+        }
+
+        .footer-section {
+            flex: 0 0 100%;
+        }
+
+        .quote-phone {
+            font-size: 1.8rem;
+        }
+    }
+
+    /* Additional styles for counters in About page */
+    .text-center .display-4 {
+        transition: all 0.5s ease;
+    }
+
+    /* Custom backgrounds for sections */
+    .bg-light {
+        background-color: #f8f9fa !important;
+    }
+
+    /* Enhance buttons */
+    .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        padding: 10px 25px;
+        border-radius: 5px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: #2980b9;
+        border-color: #2980b9;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    }
+</style>
