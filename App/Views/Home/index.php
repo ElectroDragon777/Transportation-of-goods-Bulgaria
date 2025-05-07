@@ -1314,8 +1314,6 @@ $isLoggedIn = !empty($_SESSION['user']);
                                                         aria-label="Send Message">Send</button>
                                                     <button type="reset" class="btn btn-light"
                                                         aria-label="Clear Message">Clear</button>
-                                                    <div id="messageSentAlert" class="alert alert-success mt-3"
-                                                        style="display:none;">Message sent!</div>
                                                 </form>
                                             <?php else: ?>
                                                 <p class="card-description">Feel free to reach out to us using the contact
@@ -1912,40 +1910,217 @@ $total_couriers = $courierModel->countAll(); //renamed
 </style>
 
 <!-- For Message Sending -->
+<style>
+    /* notification-styles.css */
+    /* Container to manage notifications */
+    .notification-container {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 0 !important;
+        z-index: 9999 !important;
+        pointer-events: none !important;
+        /* Let clicks pass through */
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+
+    /* Core notification styling */
+    .notification-popup {
+        position: fixed !important;
+        top: -100px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        z-index: 9999 !important;
+        padding: 15px 25px !important;
+        border-radius: 5px !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+        transition: top 0.5s ease-in-out !important;
+        display: flex !important;
+        align-items: center !important;
+        width: auto !important;
+        min-width: 250px !important;
+        max-width: 90% !important;
+        pointer-events: auto !important;
+        /* Allow interaction with notification */
+        margin: 0 !important;
+    }
+
+    .notification-popup.success {
+        background-color: #28a745 !important;
+        color: white !important;
+        border-left: 4px solid #1e7e34 !important;
+    }
+
+    .notification-popup.error {
+        background-color: #dc3545 !important;
+        color: white !important;
+        border-left: 4px solid #bd2130 !important;
+    }
+
+    .notification-popup.info {
+        background-color: #17a2b8 !important;
+        color: white !important;
+        border-left: 4px solid #138496 !important;
+    }
+
+    .notification-popup.show {
+        top: 20px !important;
+        /* Slide to this position when shown */
+    }
+
+    .notification-content {
+        display: flex !important;
+        align-items: center !important;
+        flex-grow: 1 !important;
+    }
+
+    .notification-icon {
+        margin-right: 12px !important;
+        font-size: 20px !important;
+    }
+
+    .close-notification {
+        margin-left: 15px !important;
+        background: none !important;
+        border: none !important;
+        color: white !important;
+        font-size: 18px !important;
+        cursor: pointer !important;
+        padding: 0 !important;
+        opacity: 0.8 !important;
+    }
+
+    .close-notification:hover {
+        opacity: 1 !important;
+    }
+</style>
 <script>
+    // Create a container for notifications
+    function ensureNotificationContainer() {
+        // Check if the container already exists
+        if (document.querySelector('.notification-container')) {
+            return document.querySelector('.notification-container');
+        }
+
+        // Create a fresh container
+        const container = document.createElement('div');
+        container.className = 'notification-container';
+        document.body.appendChild(container);
+        return container;
+    }
+
+    // Function to display a notification popup
+    function showNotification(message, type = 'success', duration = 5000) {
+        console.log("Showing notification:", message, type); // Debug log
+
+        // Ensure container exists
+        const container = ensureNotificationContainer();
+
+        // Create the notification element
+        const notification = document.createElement('div');
+        notification.className = `notification-popup ${type}`;
+
+        // Set the appropriate icon
+        let icon = '✓';
+        if (type === 'error') icon = '⚠';
+        if (type === 'info') icon = 'ℹ';
+
+        notification.innerHTML = `
+        <div class="notification-content">
+            <span class="notification-icon">${icon}</span>
+            <span>${message}</span>
+        </div>
+        <button class="close-notification" onclick="closeNotification(this.parentElement)">&times;</button>
+    `;
+
+        // Add to the container
+        container.appendChild(notification);
+
+        // Force reflow to ensure the transition works
+        notification.offsetHeight;
+
+        // Show the notification with animation (wrapped in timeout to ensure DOM update)
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 10);
+
+        // Auto-hide after the specified duration
+        if (duration > 0) {
+            setTimeout(() => {
+                closeNotification(notification);
+            }, duration);
+        }
+
+        return notification;
+    }
+
+    // Function to close a notification
+    function closeNotification(notificationElement) {
+        if (!notificationElement) return;
+
+        // Hide the notification
+        notificationElement.classList.remove('show');
+
+        // Remove from DOM after the transition ends
+        setTimeout(() => {
+            if (notificationElement.parentElement) {
+                notificationElement.parentElement.removeChild(notificationElement);
+            }
+        }, 500); // Match this to the transition time
+    }
+
+    // Modified sendMessage function that uses our notification system
     function sendMessage() {
         const message = document.getElementById('message').value;
         if (message.trim() !== '') {
+            // Show loading indication
+            const loadingNotif = showNotification('Sending message...', 'info', 0);
+
             // AJAX request to send the message
             $.ajax({
-                url: '<?php echo INSTALL_URL; ?>?controller=Messages&action=sendMessage', // URL to your sendMessage action
+                url: '<?php echo INSTALL_URL; ?>?controller=Messages&action=sendMessage',
                 type: 'POST',
-                dataType: 'json', // Expect JSON response
-                data: { message: message }, // Send the message data
+                dataType: 'json',
+                data: { message: message },
                 success: function (response) {
+                    // Close the loading notification
+                    closeNotification(loadingNotif);
+
                     if (response.status === 'success') {
-                        // Display success message
-                        $('#messageSentAlert').text(response.message).fadeIn().delay(3000).fadeOut();
+                        // Display success message as popup
+                        showNotification(response.message || 'Message sent successfully!', 'success');
                         $('#contactForm')[0].reset(); // Clear the form
                     } else {
-                        // Display error message
-                        alert('Error: ' + response.message);
+                        // Display error message as popup
+                        showNotification(response.message || 'Failed to send message.', 'error');
                     }
                 },
                 error: function (xhr, status, error) {
-                    // Handle AJAX errors
+                    // Close the loading notification
+                    closeNotification(loadingNotif);
+
+                    // Handle AJAX errors with popup
                     console.error('AJAX Error:', status, error);
-                    alert('An error occurred while sending the message. Please try again.');
+                    showNotification('An error occurred while sending the message. Please try again.', 'error');
                 }
             });
         } else {
-            alert('Please enter your message.');
+            showNotification('Please enter your message.', 'error');
         }
     }
 
-    // This is to prevent form submission from reloading the page (if it's still happening)
-    $('#contactForm').submit(function (event) {
-        event.preventDefault();
+    // This is to prevent form submission from reloading the page
+    $(document).ready(function () {
+        $('#contactForm').submit(function (event) {
+            event.preventDefault();
+        });
+        // For testing - uncomment to see the notification when the page loads
+        // setTimeout(() => {
+        //     showNotification('Successfully claimed credits! Come back tomorrow for more!', 'success');
+        // }, 1000);
     });
 </script>
 
