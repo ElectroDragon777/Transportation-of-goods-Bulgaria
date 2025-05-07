@@ -34,16 +34,7 @@ class ActivityController extends Controller
 
     function index()
     {
-        // Get messages (existing code)
-        $messageModel = new \App\Models\Message();
-        $messages = $messageModel->getAll(['recipient_id' => $_SESSION['user']['id']]);
         $userModel = new \App\Models\User();
-
-        // Use sender_name from the database
-        foreach ($messages as &$message) {
-            $sender = $userModel->getFirstBy(['id' => $message['sender_id']]);
-            $message['sender_name'] = $sender ? htmlspecialchars($sender['name']) : 'Unknown User';
-        }
 
         // Initialize order model
         $orderModel = new \App\Models\Order();
@@ -122,7 +113,6 @@ class ActivityController extends Controller
         // Set up the template variables
         $tpl = [
             'orders' => $orders,
-            'messages' => $messages,
             'currency' => $this->settings['currency'] ?? 'BGN'
         ];
 

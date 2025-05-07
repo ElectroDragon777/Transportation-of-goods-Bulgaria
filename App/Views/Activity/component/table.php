@@ -28,6 +28,7 @@
             <th>Total Price</th>
             <th>Start Point</th>
             <th>End Destination</th>
+            <th>Created at</th>
             <th>Status</th>
             <th style="text-align: right;">Actions</th>
         </tr>
@@ -38,6 +39,7 @@
             foreach ($tpl['orders'] as $order) {
                 ?>
                 <tr>
+
                     <?php if (in_array($_SESSION['user']['role'], ['admin', 'root'])): ?>
                         <td>
                             <div class="form-check form-check-flat mt-0">
@@ -49,15 +51,10 @@
                         </td>
                     <?php else: ?>
                         <td>
-                            <div class="form-check form-check-flat mt-0">
-                                <label class="form-check-label">
-                                    #<input data-id="<?php echo $order['id']; ?>">
-                                </label>
-                            </div>
+                            #
                         </td>
                     <?php endif; ?>
                     <?php if (($order['customer_name'] == $_SESSION['user']['name']) || ($order['courier_name'] == $_SESSION['user']['name'])): ?>
-
                         <td><?php echo htmlspecialchars($order['id']); ?></td>
                         <td><?php echo htmlspecialchars($order['tracking_number'] ?? 'N/A'); ?></td>
                         <?php if (!in_array($_SESSION['user']['role'], ['courier'])): ?>
@@ -70,15 +67,17 @@
                         <td><?php echo htmlspecialchars($order['delivery_date'] ?? 'N/A'); ?></td>
                         <td><?php echo htmlspecialchars($order['quantity'] ?? '0'); ?></td>
                         <td><?php echo htmlspecialchars($order['product_name'] ?? 'N/A'); ?></td>
-                        <td><?php
-                        if (isset($order['total_amount'])) {
-                            echo class_exists('Utility') ? Utility::getDisplayableAmount(htmlspecialchars($order['total_amount'])) : htmlspecialchars($order['total_amount']);
-                        } else {
-                            echo '0.00';
-                        }
-                        ?></td>
+                        <td><?php echo (class_exists('Utility') ? Utility::getDisplayableAmount(htmlspecialchars($order['total_amount'])) : htmlspecialchars($order['total_amount'])) ?? '0.00'; ?>
+                        </td>
                         <td><?php echo htmlspecialchars($order['start_point'] ?? 'N/A'); ?></td>
                         <td><?php echo htmlspecialchars($order['end_destination'] ?? 'N/A'); ?></td>
+                        <td>
+                            <?php
+                            $timestamp = $order['created_at'];
+                            $date = new DateTime('@' . $timestamp);
+                            echo htmlspecialchars($date->format(str_replace('y', 'Y', $tpl['date_format'])) ?? 'N/A');
+                            ?>
+                        </td>
                         <td><?php
                         if (isset($order['status']) && class_exists('Utility') && isset(Utility::$order_status)) {
                             foreach (Utility::$order_status as $k => $v) {
@@ -107,7 +106,7 @@
                             <?php } ?>
                         </td>
                     <?php else: ?>
-                        <td colspan="13" class="text-center">
+                        <td colspan="15" class="text-center">
                             <div class="alert alert-danger" role="alert">
                                 You cannot view this order as it is not assigned to you.
                             </div>
@@ -119,8 +118,7 @@
         } else {
             ?>
             <tr>
-                <td colspan="<?php echo in_array($_SESSION['user']['role'], ['admin', 'root']) ? '13' : '12'; ?>"
-                    class="text-center">
+                <td colspan="15" class="text-center">
                     No orders found
                 </td>
             </tr>
