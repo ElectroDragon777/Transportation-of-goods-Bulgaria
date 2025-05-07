@@ -16,5 +16,10 @@ class CourierLocationHistory extends Model
         array('name' => 'order_id', 'type' => 'int', 'default' => ':NULL'),
         array('name' => 'timestamp', 'type' => 'timestamp', 'default' => ':NULL') // Corrected default
     );
+
+    public function getLatestLocation($courierId)
+    {
+        return $this->getAll(['user_id' => $courierId], 'timestamp DESC')[0];
+    }
 }
 ?>

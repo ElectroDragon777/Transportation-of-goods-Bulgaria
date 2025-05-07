@@ -259,10 +259,8 @@ class Model
     public function save($data)
     {
         $this->connect();
-        // Вставка на нов запис
-
+        // Insert a new record
         $save = array();
-
         foreach ($this->schema as $field) {
             if (isset($data[$field['name']])) {
                 if (!is_array($data[$field['name']])) {
@@ -281,11 +279,40 @@ class Model
 
         $fields = array_keys($save);
         $values = array_values($save);
-
         $placeholders = implode(',', array_fill(0, count($fields), '?'));
         $query = "INSERT INTO " . $this->getTable() . " (" . implode(',', $fields) . ") VALUES ($placeholders)";
 
-        if ($this->executeQuery($query, $values, str_repeat('s', count($values)))) { // 's' за string
+        // Generate proper parameter types based on schema
+        $param_types = '';
+        foreach ($fields as $field) {
+            // Remove backticks for lookup
+            $clean_field = str_replace('`', '', $field);
+
+            // Find the field type from schema
+            $field_type = 's'; // Default to string
+            foreach ($this->schema as $schema_field) {
+                if ($schema_field['name'] == $clean_field) {
+                    switch ($schema_field['type']) {
+                        case 'int':
+                        case 'tinyint':
+                            $field_type = 'i'; // integer
+                            break;
+                        case 'float':
+                        case 'decimal':
+                        case 'double':
+                            $field_type = 'd'; // double/float
+                            break;
+                        default:
+                            $field_type = 's'; // string
+                    }
+                    break;
+                }
+            }
+
+            $param_types .= $field_type;
+        }
+
+        if ($this->executeQuery($query, $values, $param_types)) {
             return $this->mysqli->insert_id;
         } else {
             return false;
@@ -294,13 +321,10 @@ class Model
 
     public function update($data)
     {
-        // Обновяване на съществуващ запис
+        // Update existing record
         $save = array();
-
         foreach ($this->schema as $field) {
-
             if (isset($data[$field['name']])) {
-
                 if (!is_array($data[$field['name']])) {
                     $save["`" . $field['name'] . "`"] = $data[$field['name']];
                 } else {
@@ -313,18 +337,49 @@ class Model
 
         $fields = array_keys($save);
         $values = array_values($save);
-
         $primaryKeyName = $this->primaryKey ?: 'id';
-
         $set = [];
         foreach ($fields as $field) {
             $set[] = "$field = ?";
         }
 
         $query = "UPDATE " . $this->getTable() . " SET " . implode(',', $set) . " WHERE `$primaryKeyName` = ?";
-        $values[] = $data[$primaryKeyName]; // Добавяме стойността за primary key накрая
+        $values[] = $data[$primaryKeyName]; // Add primary key value at the end
 
-        return $this->executeQuery($query, $values, str_repeat('s', count($values) - 1) . 'i'); // Добавяме 'i' за integer
+        // Generate proper parameter types based on schema
+        $param_types = '';
+        foreach ($fields as $field) {
+            // Remove backticks for lookup
+            $clean_field = str_replace('`', '', $field);
+
+            // Find the field type from schema
+            $field_type = 's'; // Default to string
+            foreach ($this->schema as $schema_field) {
+                if ($schema_field['name'] == $clean_field) {
+                    switch ($schema_field['type']) {
+                        case 'int':
+                        case 'tinyint':
+                            $field_type = 'i'; // integer
+                            break;
+                        case 'float':
+                        case 'decimal':
+                        case 'double':
+                            $field_type = 'd'; // double/float
+                            break;
+                        default:
+                            $field_type = 's'; // string
+                    }
+                    break;
+                }
+            }
+
+            $param_types .= $field_type;
+        }
+
+        // Add 'i' for the primary key which is always an integer
+        $param_types .= 'i';
+
+        return $this->executeQuery($query, $values, $param_types);
     }
 
     public function updateBy($data, $options = null)

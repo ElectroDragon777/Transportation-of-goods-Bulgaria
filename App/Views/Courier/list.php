@@ -63,7 +63,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <?php if (in_array($_SESSION['user']['role'], ['admin', 'root'])) { ?>
+                    <!-- </*?php if (in_array($_SESSION['user']['role'], ['admin', 'root'])) { ?>
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <button id="bulk-delete-couriers-btn" class="btn btn-danger d-none">
@@ -72,7 +72,7 @@
                                 </button>
                             </div>
                         </div>
-                    <?php } ?>
+                    </*?php } ?> -->
                     <div class="table-responsive" id="container-courier-id">
                         <?php
                         include 'component/table.php';
@@ -84,7 +84,7 @@
     </div>
 </div>
 </div>
-
+<!-- 
 <div class="modal fade" id="deleteCourier" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -103,9 +103,9 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->
 
-<div class="modal fade" id="deleteCouriers" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+<!-- <div class="modal fade" id="deleteCouriers" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -123,7 +123,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->
 
 <!-- Share Modal -->
 <div class="modal fade" id="couriersShareModal" tabindex="-1" role="dialog" aria-labelledby="shareModalLabel"

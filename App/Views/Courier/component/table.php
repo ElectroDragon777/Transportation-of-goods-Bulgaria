@@ -45,9 +45,9 @@
                             <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                         </a>
                     <?php } ?>
-                    <a class="btn btn-danger btn-circle delete-courier" href="#" data-id="<?php echo $courier['id']; ?>">
+                    <!-- <a class="btn btn-danger btn-circle delete-courier" href="#" data-id="<?php echo $courier['id']; ?>">
                         <i class="fa fa-trash-o" aria-hidden="true"></i>
-                    </a>
+                    </a> -->
                 </td>
             </tr>
         <?php } ?>

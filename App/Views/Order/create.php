@@ -49,6 +49,16 @@
                                             echo "<option value=\"{$courier['id']}\">{$courier['name']}</option>";
                                         }
                                         ?>
+                                        <?/*php foreach ($tpl['couriers'] as $courier) {
+    // Debug output to check values (remove in production)
+    echo "<!-- Courier ID: {$courier['id']}, Name: {$courier['name']}, is_busy: {$courier['is_busy']} -->";
+
+    // This check is only needed if you aren't already filtering in the controller
+    if (isset($courier['is_busy']) && $courier['is_busy'] == 0) {
+        echo "<option value=\"{$courier['id']}\">{$courier['name']}</option>";
+    }
+}
+*/ ?>
                                     </select>
                                 </div>
                             </div>
@@ -116,7 +126,7 @@
                                 <div class="card-body">
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="payment_method"
-                                            id="paymentOnline" value="online" checked>
+                                            id="paymentOnline" value="online">
                                         <label class="form-check-label" for="paymentOnline">
                                             Online Payment (PayPal)
                                         </label>
@@ -256,6 +266,9 @@
                                             <span class="visually-hidden">Loading map...</span>
                                         </div>
                                         <p class="mt-2">Loading map...</p>
+                                        <input type="hidden" id="deliveryTimeHours" name="delivery_time_hours" value="">
+                                        <input type="hidden" id="deliveryTimeRemMins" name="delivery_time_minutes"
+                                            value="">
                                     </div>
                                 </div>
                             </div>
@@ -272,15 +285,17 @@
                                     <span id="dynamic-late-note-2"></span>
                                 </div>
 
-                                <!-- Time of Delivery -->
+                                <!-- Time of Delivery --> <!-- Broken -->
                                 <div class="col-md-6">
-                                    <label for="timeOfDelivery" class="form-label">Time of Delivery: <span
+                                    <!-- <label for="timeOfDelivery" class="form-label">Time of Delivery: <span
+                                            id="currentTimeLabel"></span></label> -->
+                                    <label for="timeOfDelivery" class="form-label"><span
                                             id="currentTimeLabel"></span></label>
-                                    <div class="input-group">
+                                    <!-- <div class="input-group">
                                         <span class="input-group-text"><i class="mdi mdi-clock text-primary"></i></span>
                                         <input type="text" class="form-control" id="timeOfDelivery"
                                             name="time_of_delivery" readonly autocomplete="off">
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                         </div>
@@ -372,6 +387,11 @@
 
 <!-- Visual appeal for notes -->
 <style>
+    .payment-error {
+        color: #dc3545;
+        margin-top: 0.5rem;
+    }
+
     .note-indicator {
         display: inline-block;
         /* Allows us to control width and height */
@@ -404,7 +424,7 @@
     }
 </style>
 <script>
-    function updateTimeOfDelivery() {
+    function updateCurrentTime() {
         const now = new Date();
         let hours = now.getHours();
         let minutes = now.getMinutes();
@@ -416,17 +436,17 @@
         seconds = seconds < 10 ? '0' + seconds : seconds;
 
         const currentTimeWithSeconds = `${hours}:${minutes}:${seconds}`;
-        const currentTimeWithMinutes = `${hours}:${minutes}`;
+        // const currentTimeWithMinutes = `${hours}:${minutes}`;
 
         document.getElementById('currentTimeLabel').textContent = `(Current Time: ${currentTimeWithSeconds})`;
-        document.getElementById('timeOfDelivery').value = currentTimeWithMinutes;
+        // document.getElementById('timeOfDelivery').value = currentTimeWithMinutes;
     }
 
     // Update the time immediately
-    updateTimeOfDelivery();
+    updateCurrentTime();
 
     // Update the time every second
-    setInterval(updateTimeOfDelivery, 1000);
+    setInterval(updateCurrentTime, 1000);
 </script>
 
 <!-- Time messages, based on local time -->
@@ -842,11 +862,19 @@
                     const distance = (route.distance / 1000).toFixed(1); // km
                     const duration = Math.round(route.duration / 60); // minutes
 
+                    // Calculate delivery time (example - you might need to adjust this)
+                    let durationInHours = Math.floor(duration / 60); // Convert seconds to hours
+                    let remaining_minutes = duration % 60; // Remaining minutes
+
+                    // Set the values of the hidden inputs
+                    document.getElementById('deliveryTimeHours').value = durationInHours;
+                    document.getElementById('deliveryTimeRemMins').value = remaining_minutes;
+
                     // Update end marker popup with route info
                     if (endMarker) {
                         endMarker.setPopupContent(`End Location<br>
                             Distance: ${distance} km<br>
-                            Estimated time: ${duration} min`);
+                            Estimated time: ${durationInHours}h ${remaining_minutes}min`);
                         endMarker.openPopup();
                     }
                 }
@@ -1161,7 +1189,6 @@
         }
 
         // Validate end location
-        // Validate end location
         let endLocationValid = true;
         let endLocationGroup = document.querySelector('input[name="endLocationType"]:checked');
         let endLocationFeedback = document.querySelector('.card-body > .form-group > .invalid-feedback');
@@ -1245,6 +1272,33 @@
                 } else {
                     quantityInput.classList.remove('is-invalid');
                 }
+            }
+        }
+
+        // Add this to your validateFullForm function
+        // Validate payment method
+        const paymentOnline = document.getElementById('paymentOnline');
+        const paymentCash = document.getElementById('paymentCash');
+        if (!paymentOnline.checked && !paymentCash.checked) {
+            // Find the payment method container and add an error message
+            const paymentMethodContainer = document.querySelector('.payment-methods .card-body');
+            if (paymentMethodContainer) {
+                // Create an error message element if it doesn't exist
+                let errorMessage = paymentMethodContainer.querySelector('.payment-error');
+                if (!errorMessage) {
+                    errorMessage = document.createElement('div');
+                    errorMessage.className = 'invalid-feedback payment-error d-block';
+                    paymentMethodContainer.appendChild(errorMessage);
+                }
+                errorMessage.textContent = 'Please select a payment method.';
+                errorMessage.style.display = 'block';
+            }
+            isValid = false;
+        } else {
+            // Remove error message if it exists
+            const errorMessage = document.querySelector('.payment-methods .card-body .payment-error');
+            if (errorMessage) {
+                errorMessage.style.display = 'none';
             }
         }
 
@@ -1369,6 +1423,7 @@
 
         // Check which payment method is selected
         const isOnlinePayment = document.getElementById('paymentOnline').checked;
+        const isCashPayment = document.getElementById('paymentCash').checked;
 
         if (isOnlinePayment) {
             // Show online payment popup
@@ -1702,8 +1757,16 @@
 <!-- Date of Delivery stuff -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Get the date input element
+        // Get the date and time input elements
         const deliveryDateInput = document.getElementById('deliveryDate');
+        const deliveryTimeHoursInput = document.getElementById('deliveryTimeHours');
+        const deliveryTimeMinutesInput = document.getElementById('deliveryTimeRemMins');
+        const estimatedArrivalDisplay = document.getElementById('estimatedArrival'); // To display estimated arrival
+        const timeOfDeliveryInput = document.getElementById('timeOfDelivery'); // The input for time of delivery
+        const dynamicLateNote = document.getElementById('dynamic-late-note-2');
+
+        let settings; // Declare settings globally to access in event listeners
+        let dateFormat;
 
         // Initialize the date picker
         initializeDatePicker();
@@ -1722,9 +1785,13 @@
             })
                 .then(response => response.json())
                 .then(data => {
+                    // Store settings and date format for later use
+                    settings = data.settings;
+                    dateFormat = data.dateFormat || 'Y-m-d';
+
                     // Set up datepicker with the correct format
                     $(deliveryDateInput).datepicker({
-                        format: convertPhpToDatepickerFormat(data.dateFormat || 'Y-m-d'),
+                        format: convertPhpToDatepickerFormat(dateFormat),
                         startDate: today,
                         autoclose: true,
                         todayHighlight: true
@@ -1745,17 +1812,9 @@
                         deliveryDateInput.value = data.estimatedDeliveryDateFormatted;
                     }
 
-                    // Check if today's delivery is possible
-                    if (!data.canDeliver) {
-                        const tomorrow = new Date();
-                        tomorrow.setDate(today.getDate() + 1);
+                    // Update time of delivery initially
+                    updateTimeOfDelivery();
 
-                        // Update the datepicker with tomorrow's date
-                        $(deliveryDateInput).datepicker('update', tomorrow);
-
-                        // Show notification
-                        showLateNotification();
-                    }
                 })
                 .catch(error => {
                     console.error('Error initializing delivery date:', error);
@@ -1771,7 +1830,7 @@
                 'j': 'd',     // Day of the month without leading zeros
                 'm': 'mm',    // Month, 2 digits with leading zeros
                 'n': 'm',     // Month without leading zeros
-                'Y': 'yyyy',  // Year, 4 digits
+                'Y': 'yyyy',   // Year, 4 digits
                 'y': 'yy',    // Year, 2 digits
                 'F': 'MM',    // Month name, long
                 'M': 'M'      // Month name, short
@@ -1784,7 +1843,7 @@
                 'm/d/Y': 'mm/dd/yyyy',
                 'd/m/Y': 'dd/mm/yyyy',
                 'Y/m/d': 'yyyy/mm/dd',
-                'M d, Y': 'M d, yyyy'
+                'M d, Y': 'M d, Y'
             };
 
             // Check if it's a common format
@@ -1807,9 +1866,6 @@
             const today = new Date();
             today.setHours(0, 0, 0, 0); // Reset time part for proper comparison
 
-            // Format selectedDate for server
-            const formattedDate = formatDateForServer(selectedDate);
-
             // Reset to today if past date is selected
             if (selectedDate < today) {
                 $(deliveryDateInput).datepicker('update', today);
@@ -1817,72 +1873,263 @@
                 return;
             }
 
-            // Check if current time + delivery time exceeds closing time for today's date
-            if (isSameDay(selectedDate, today)) {
-                checkTimeConstraints(formattedDate);
+            updateTimeOfDelivery();
+        }
+
+        function updateTimeOfDelivery() {
+            if (!settings) return; // Ensure settings are loaded
+
+            let deliveryHours = parseInt(document.getElementById('deliveryTimeHours').value) || 0;
+            let deliveryMinutes = parseInt(document.getElementById('deliveryTimeRemMins').value) || 0;
+
+            // If we don't have route information yet, use default values
+            if (deliveryHours === 0 && deliveryMinutes === 0) {
+                deliveryHours = 2; // Default to 2 hours
+                deliveryMinutes = 0; // Default to 0 minutes
+            }
+
+            // Get the selected date and current time
+            let selectedDateInput = deliveryDateInput.value;
+            let selectedDate = selectedDateInput ? new Date(selectedDateInput) : new Date();
+            // Fix time zone issue by ensuring the date is correctly set
+            // This addresses the issue where the date might show as "two hours behind"
+            if (selectedDate.toString() === "Invalid Date") {
+                // Try to parse using the date format from the server
+                let parts = selectedDateInput.split(/[-\/]/);
+                if (parts.length === 3) {
+                    // Determine the format based on the dateFormat
+                    if (dateFormat.indexOf('Y') === 0) {
+                        // Format is Y-m-d or Y/m/d
+                        selectedDate = new Date(parts[0], parts[1] - 1, parts[2]);
+                    } else if (dateFormat.indexOf('d') === 0) {
+                        // Format is d-m-Y or d/m/Y
+                        selectedDate = new Date(parts[2], parts[1] - 1, parts[0]);
+                    } else {
+                        // Format is m/d/Y or similar
+                        selectedDate = new Date(parts[2], parts[0] - 1, parts[1]);
+                    }
+                }
+            }
+
+            let currentTime = Math.floor(selectedDate.getTime() / 1000); // Current timestamp in seconds
+
+            function calculateArrivalTime(currentTime, deliveryHours, deliveryMinutes, settings) {
+                // Get current timestamp and date
+                let deliveryTimestamp = (deliveryHours * 3600) + (deliveryMinutes * 60);
+                let now = new Date(); // Current actual time
+
+                // Extract the selected date from the datepicker
+                let selectedDateStr = document.getElementById('deliveryDate').value;
+                let selectedDate = new Date(selectedDateStr);
+
+                // Format to ensure proper date comparison
+                let selectedDateFormatted = formatDate(selectedDate, 'Y-m-d');
+                let currentDateFormatted = formatDate(now, 'Y-m-d');
+
+                // Get business hours
+                let effectiveOpeningTime = parseTime(settings.opening_time);
+                let effectiveClosingTime = parseTime(settings.closing_time);
+
+                // Check if the selected date is different from today
+                if (selectedDateFormatted !== currentDateFormatted) {
+                    console.log("Future date selected:", selectedDateFormatted);
+
+                    // Get day of week for the selected delivery date
+                    let deliveryDayOfWeek = selectedDate.getDay() === 0 ? 7 : selectedDate.getDay(); // 1 (Monday) to 7 (Sunday)
+                    let isWeekend = (deliveryDayOfWeek >= 6); // Saturday or Sunday
+
+                    // Check weekend operation
+                    if (isWeekend && settings.weekend_operation == 0) {
+                        // Weekend delivery requested but weekend operations are disabled
+                        // Find the next Monday
+                        let daysUntilMonday = (8 - deliveryDayOfWeek) % 7;
+                        let nextMonday = new Date(selectedDate);
+                        nextMonday.setDate(selectedDate.getDate() + daysUntilMonday);
+
+                        // Use opening time of the next Monday
+                        let nextMondayOpening = new Date(nextMonday);
+                        nextMondayOpening.setHours(effectiveOpeningTime.getHours(), effectiveOpeningTime.getMinutes(), 0);
+                        let adjustedTimestamp = nextMondayOpening.getTime() / 1000 + deliveryTimestamp;
+
+                        return formatDate(new Date(adjustedTimestamp * 1000), dateFormat) + ' ' +
+                            formatTime(new Date(adjustedTimestamp * 1000));
+                    } else {
+                        // Use the appropriate opening/closing times based on whether it's a weekend
+                        if (isWeekend && settings.weekend_operation == 1) {
+                            effectiveOpeningTime = parseTime(settings.weekend_opening_time);
+                            effectiveClosingTime = parseTime(settings.weekend_closing_time);
+                        }
+
+                        // Use the opening time of the selected date plus delivery time
+                        let selectedDateOpening = new Date(selectedDate);
+                        selectedDateOpening.setHours(effectiveOpeningTime.getHours(), effectiveOpeningTime.getMinutes(), 0);
+                        let scheduledTimestamp = selectedDateOpening.getTime() / 1000 + deliveryTimestamp;
+
+                        return formatDate(new Date(scheduledTimestamp * 1000), dateFormat) + ' ' +
+                            formatTime(new Date(scheduledTimestamp * 1000));
+                    }
+                }
+
+                // For same-day delivery (original logic)
+                let dayOfWeek = now.getDay() === 0 ? 7 : now.getDay(); // 1 for Monday, 7 for Sunday
+                let currentHourMinute = formatTime(now);
+
+                // Handle weekend operation for current day
+                if (settings.weekend_operation == 1) {
+                    if (dayOfWeek >= 6) { // Saturday or Sunday
+                        effectiveOpeningTime = parseTime(settings.weekend_opening_time);
+                        effectiveClosingTime = parseTime(settings.weekend_closing_time);
+                    }
+                } else {
+                    if (dayOfWeek >= 6) { // Saturday or Sunday
+                        // Find the next Monday
+                        let daysUntilMonday = (8 - dayOfWeek) % 7;
+                        let nextMonday = new Date(now);
+                        nextMonday.setDate(now.getDate() + daysUntilMonday);
+                        let nextMondayOpening = new Date(nextMonday);
+                        nextMondayOpening.setHours(effectiveOpeningTime.getHours(), effectiveOpeningTime.getMinutes(), 0);
+                        let arrivalTimestamp = nextMondayOpening.getTime() / 1000 + deliveryTimestamp;
+
+                        return formatDate(new Date(arrivalTimestamp * 1000), dateFormat) + ' ' +
+                            formatTime(new Date(arrivalTimestamp * 1000));
+                    }
+                }
+
+                // Calculate arrival time for current day
+                let arrivalTimestamp = currentTime + deliveryTimestamp;
+                let arrivalDate = new Date(arrivalTimestamp * 1000);
+                let arrivalHourMinute = formatTime(arrivalDate);
+
+                // Check if arrival time is after closing time
+                if (timeToMinutes(arrivalHourMinute) > timeToMinutes(formatTime(new Date(effectiveClosingTime)))) {
+                    // Schedule for next day opening
+                    let nextDay = new Date(now);
+                    nextDay.setDate(now.getDate() + 1);
+                    let nextDayOpening = new Date(nextDay);
+                    nextDayOpening.setHours(effectiveOpeningTime.getHours(), effectiveOpeningTime.getMinutes(), 0);
+                    arrivalTimestamp = nextDayOpening.getTime() / 1000 + deliveryTimestamp;
+
+                    return formatDate(new Date(arrivalTimestamp * 1000), dateFormat) + ' ' +
+                        formatTime(new Date(arrivalTimestamp * 1000));
+                }
+                // Check if current time is before opening time
+                else if (timeToMinutes(currentHourMinute) < timeToMinutes(formatTime(new Date(effectiveOpeningTime)))) {
+                    // Start from today's opening time
+                    let todayOpening = new Date(now);
+                    todayOpening.setHours(effectiveOpeningTime.getHours(), effectiveOpeningTime.getMinutes(), 0);
+                    arrivalTimestamp = todayOpening.getTime() / 1000 + deliveryTimestamp;
+
+                    return formatDate(new Date(arrivalTimestamp * 1000), dateFormat) + ' ' +
+                        formatTime(new Date(arrivalTimestamp * 1000));
+                }
+                // Check if current time is after cut-off time
+                else if (timeToMinutes(currentHourMinute) > timeToMinutes(settings.order_cut_off_time)) {
+                    // Schedule for next business day
+                    let nextDay = new Date(now);
+                    nextDay.setDate(now.getDate() + 1);
+                    let nextDayOfWeek = nextDay.getDay() === 0 ? 7 : nextDay.getDay();
+
+                    if (settings.weekend_operation == 0 && nextDayOfWeek >= 6) {
+                        // If weekend operation is off and next day is weekend, find next Monday
+                        let daysUntilMonday = (8 - nextDayOfWeek) % 7;
+                        let nextMonday = new Date(nextDay);
+                        nextMonday.setDate(nextDay.getDate() + daysUntilMonday);
+                        let nextMondayOpening = new Date(nextMonday);
+                        nextMondayOpening.setHours(effectiveOpeningTime.getHours(), effectiveOpeningTime.getMinutes(), 0);
+                        arrivalTimestamp = nextMondayOpening.getTime() / 1000 + deliveryTimestamp;
+
+                        return formatDate(new Date(arrivalTimestamp * 1000), dateFormat) + ' ' +
+                            formatTime(new Date(arrivalTimestamp * 1000));
+                    } else {
+                        // Next day is a business day
+                        let nextBusinessDayOpening = new Date(nextDay);
+                        nextBusinessDayOpening.setHours(effectiveOpeningTime.getHours(), effectiveOpeningTime.getMinutes(), 0);
+                        arrivalTimestamp = nextBusinessDayOpening.getTime() / 1000 + deliveryTimestamp;
+
+                        return formatDate(new Date(arrivalTimestamp * 1000), dateFormat) + ' ' +
+                            formatTime(new Date(arrivalTimestamp * 1000));
+                    }
+                } else {
+                    // Within business hours, use calculated arrival time
+                    return formatDate(new Date(arrivalTimestamp * 1000), dateFormat) + ' ' +
+                        formatTime(new Date(arrivalTimestamp * 1000));
+                }
+            }
+            function parseTime(timeString) {
+                const [hours, minutes] = timeString.split(':').map(Number);
+                const date = new Date();
+                date.setHours(hours);
+                date.setMinutes(minutes);
+                date.setSeconds(0);
+                date.setMilliseconds(0);
+                return date;
+            }
+
+            function timeToMinutes(timeString) {
+                const [hours, minutes] = timeString.split(':').map(Number);
+                return hours * 60 + minutes;
+            }
+
+            function formatDate(date, format) {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return format.replace('Y', year).replace('m', month).replace('d', day);
+            }
+
+            function formatTime(date) {
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                return `${hours}:${minutes}`;
+            }
+
+            let estimatedArrival = calculateArrivalTime(currentTime, deliveryHours, deliveryMinutes, settings);
+
+            console.log("Estimated Arrival:", estimatedArrival); // ADD THIS LINE
+
+            if (estimatedArrivalDisplay) {
+                estimatedArrivalDisplay.textContent = "Estimated Arrival: " + estimatedArrival;
+            }
+
+            if (timeOfDeliveryInput) {
+                timeOfDeliveryInput.value = estimatedArrival; // Update timeOfDelivery input
+            }
+
+            // Show notification if needed
+            if (settings.order_cut_off_time && formatTime(new Date()) > settings.order_cut_off_time) {
+                showLateNotification();
             }
         }
 
-        function formatDateForServer(date) {
-            return date.getFullYear() + '-' +
-                String(date.getMonth() + 1).padStart(2, '0') + '-' +
-                String(date.getDate()).padStart(2, '0');
-        }
-
-        function isSameDay(date1, date2) {
-            return date1.getFullYear() === date2.getFullYear() &&
-                date1.getMonth() === date2.getMonth() &&
-                date1.getDate() === date2.getDate();
-        }
-
-        function checkTimeConstraints(formattedDate) {
-            const today = new Date();
-
-            // AJAX call to check against server time constraints
-            fetch('<?php echo INSTALL_URL; ?>?controller=Order&action=checkDeliveryTime', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'selected_date=' + formattedDate + '&current_time=' + today.getHours() + ':' + today.getMinutes()
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (!data.canDeliver) {
-                        // Set to next day if delivery not possible today
-                        const tomorrow = new Date();
-                        tomorrow.setDate(today.getDate() + 1);
-
-                        // Update the datepicker with tomorrow's date
-                        $(deliveryDateInput).datepicker('update', tomorrow);
-
-                        // Show notification
-                        showLateNotification();
-                    }
-                })
-                .catch(error => {
-                    console.error('Error checking delivery time:', error);
-                });
-        }
-
         function showLateNotification() {
-            const noteElement = document.getElementById('dynamic-late-note-2');
-            if (noteElement) {
-                noteElement.textContent = " It's too late for delivery today. Your order has been scheduled for tomorrow.";
-                noteElement.style.color = "#dc3545";
+            if (dynamicLateNote) {
+                dynamicLateNote.textContent = " It's too late for delivery today. Your order has been scheduled for the next available day.";
+                dynamicLateNote.style.color = "#dc3545";
 
                 // Fade out the notification after 5 seconds
                 setTimeout(() => {
-                    noteElement.style.transition = "opacity 1s";
-                    noteElement.style.opacity = 0;
+                    dynamicLateNote.style.transition = "opacity 1s";
+                    dynamicLateNote.style.opacity = 0;
                     setTimeout(() => {
-                        noteElement.textContent = "";
-                        noteElement.style.opacity = 1;
-                        noteElement.style.transition = "";
+                        dynamicLateNote.textContent = "";
+                        dynamicLateNote.style.opacity = 1;
+                        dynamicLateNote.style.transition = "";
                     }, 1000);
                 }, 5000);
             }
         }
+
+        // Event listeners for date and time changes
+        if (deliveryDateInput) {
+            deliveryDateInput.addEventListener('change', updateTimeOfDelivery);
+        }
+        if (deliveryTimeHoursInput) {
+            deliveryTimeHoursInput.addEventListener('change', updateTimeOfDelivery);
+        }
+        if (deliveryTimeMinutesInput) {
+            deliveryTimeMinutesInput.addEventListener('change', updateTimeOfDelivery);
+        }
+
     });
 </script>
 

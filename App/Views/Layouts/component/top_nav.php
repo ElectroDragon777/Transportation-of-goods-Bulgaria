@@ -254,7 +254,7 @@ if (!empty($tpl['messages'])) {
                             <a class="dropdown-item" href="<?php echo INSTALL_URL; ?>?controller=Messages&action=index"><i
                                     class="dropdown-item-icon mdi mdi-message-text-outline text-primary me-2"></i> Messages</a>
                         <?php endif; ?>
-                        <a class="dropdown-item"><i
+                        <a class="dropdown-item" href="<?php echo INSTALL_URL; ?>?controller=Activity&action=index"><i
                                 class="dropdown-item-icon mdi mdi-calendar-check-outline text-primary me-2"></i>
                             Activity</a>
                         <!-- <a class="dropdown-item"><i

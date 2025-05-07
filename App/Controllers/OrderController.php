@@ -13,6 +13,23 @@ class OrderController extends Controller
 
     public function __construct()
     {
+        if (empty($_SESSION['user'])) {
+            header("Location: " . INSTALL_URL . "?controller=Auth&action=login", true, 301);
+            exit;
+        }
+
+        // Only restrict access to certain actions for regular users, not the entire controller
+        $currentAction = $_GET['action'] ?? 'index';
+
+        // Admin-only actions - adjust this list as needed
+        $adminOnlyActions = ['list', 'edit', 'delete', 'bulkDelete', 'export', 'print'];
+
+        // If user is trying to access an admin-only action
+        if ($_SESSION['user']['role'] == 'user' && in_array($currentAction, $adminOnlyActions)) {
+            header("Location: " . INSTALL_URL, true, 301);
+            exit;
+        }
+
         $this->settings = $this->loadSettings();
     }
 
@@ -134,16 +151,32 @@ class OrderController extends Controller
             header("Location: " . INSTALL_URL . "?controller=Auth&action=login", true, 301);
             exit;
         }
-        if ($_SESSION['user']['role'] == 'user') {
+        // if ($_SESSION['user']['role'] == 'user') {
+        //     header("Location: " . INSTALL_URL, true, 301);
+        //     exit;
+        // }
+
+        // Only restrict access to certain actions for regular users, not the entire controller
+        $currentAction = $_GET['action'] ?? 'index';
+
+        // Admin-only actions - adjust this list as needed
+        $adminOnlyActions = ['list', 'edit', 'delete', 'bulkDelete', 'export', 'print'];
+
+        // If user is trying to access an admin-only action
+        if ($_SESSION['user']['role'] == 'user' && in_array($currentAction, $adminOnlyActions)) {
             header("Location: " . INSTALL_URL, true, 301);
             exit;
         }
+
+        date_default_timezone_set($this->settings['timezone']);
 
         $orderModel = new \App\Models\Order();
         $OrderPalletsModel = new \App\Models\OrderPallets();
         $palletModel = new \App\Models\Pallet();
         $userModel = new \App\Models\User();
+        $courierModel = new \App\Models\Courier();
         $notificationModel = new \App\Models\Notification();
+        $courierTrackingModel = new \App\Models\CourierTracking(); // Add this line
         $mailer = new \App\Helpers\mailer\Mailer();
         $currency = $this->settings['currency']; // $this->settings['currency_code'], set manually to currency, since local+modded.
 
@@ -165,6 +198,22 @@ class OrderController extends Controller
                 $error_message = "Please select an end office.";
             } elseif ($endLocationType === 'address' && empty($_POST['endAddressCoords'])) {
                 $error_message = "Please enter an end address.";
+            }
+            // Coords extraction
+            // Extract coordinates
+            $startCoords = null;
+            $endCoords = null;
+
+            if ($startLocationType === 'office' && !empty($_POST['startOfficeCoords'])) {
+                $startCoords = explode(',', $_POST['startOfficeCoords']);
+            } elseif ($startLocationType === 'address' && !empty($_POST['startAddressCoords'])) {
+                $startCoords = explode(',', $_POST['startAddressCoords']);
+            }
+
+            if ($endLocationType === 'office' && !empty($_POST['endOfficeCoords'])) {
+                $endCoords = explode(',', $_POST['endOfficeCoords']);
+            } elseif ($endLocationType === 'address' && !empty($_POST['endAddressCoords'])) {
+                $endCoords = explode(',', $_POST['endAddressCoords']);
             }
 
             // Validate quantities against available pallet quantities
@@ -328,6 +377,188 @@ class OrderController extends Controller
                         if (!$updateSuccess) {
                             $error_message = "Failed to update pallet stock for {$pallet['name']}. Please try again.";
                             break;
+                        }
+                    }
+
+                    if ($startCoords && $endCoords) {
+                        // Get courier details
+                        $courierId = $_POST['courier_id'] ?? null;
+                        $courier = $userModel->get($courierId);
+
+                        $courierModel = new \App\Models\Courier();
+                        $courierInfo_ForBusyStat = $courierModel->get($courierId);
+
+                        if ($courier) {
+                            // Calculate estimated arrival time
+
+                            // For simplicity, let's set it to 24 hours from now
+                            // $estimatedArrival = date('Y-m-d H:i:s', strtotime('+24 hours'));
+
+
+                            // Add this code to handle business hours:
+                            $currentTime = time();
+                            $closingTime = strtotime($this->settings['closing_time']);
+                            $openingTime = strtotime($this->settings['opening_time']);
+                            $currentHour = date('H:i', $currentTime);
+
+                            $deliveryHours = (int) $_POST['delivery_time_hours'] ?? 2; // Default to 2 hours if not set
+                            $deliveryMinutes = (int) $_POST['delivery_time_minutes'] ?? 0; // Default to 0 minutes if not set
+
+                            // Function to calculate adjusted arrival time
+                            function calculateArrivalTime(
+                                $currentTime,
+                                $openingTime,
+                                $closingTime,
+                                $deliveryHours,
+                                $deliveryMinutes,
+                                $settings,
+                                $deliveryDate = null // Add parameter for delivery date
+                            ) {
+                                $deliveryTimestamp = ($deliveryHours * 3600) + ($deliveryMinutes * 60);
+                                $arrivalTimestamp = $currentTime + $deliveryTimestamp;
+                                $dayOfWeek = date('N', $currentTime); // 1 for Monday, 7 for Sunday
+                                $currentHourMinute = date('H:i', $currentTime);
+                                $currentDate = date('Y-m-d', $currentTime);
+
+                                $effectiveOpeningTime = strtotime($settings['opening_time']);
+                                $effectiveClosingTime = strtotime($settings['closing_time']);
+
+                                // If a specific delivery date is requested
+                                if ($deliveryDate && $deliveryDate != $currentDate) {
+                                    // Get day of week for the selected delivery date
+                                    $deliveryDayOfWeek = date('N', $deliveryDate);
+
+                                    // Check if delivery date is on a weekend
+                                    $isWeekend = ($deliveryDayOfWeek >= 6); // 6=Saturday, 7=Sunday
+
+                                    if ($isWeekend && $settings['weekend_operation'] == 0) {
+                                        // Weekend delivery requested but weekend operations are disabled
+                                        // Find the next Monday after the requested delivery date
+                                        $deliveryDateObj = new DateTime(date('Y-m-d', $deliveryDate));
+                                        $daysUntilMonday = (8 - $deliveryDayOfWeek) % 7;
+                                        $deliveryDateObj->modify("+$daysUntilMonday days");
+                                        $adjustedDeliveryDate = $deliveryDateObj->getTimestamp();
+
+                                        // Use opening hour of that Monday + delivery time
+                                        return date('Y-m-d H:i:s', strtotime(date('Y-m-d', $adjustedDeliveryDate) . ' ' . date('H:i:s', $effectiveOpeningTime)) + $deliveryTimestamp);
+                                    } else {
+                                        // Use the appropriate opening/closing times based on whether it's a weekend
+                                        if ($isWeekend && $settings['weekend_operation'] == 1) {
+                                            $effectiveOpeningTime = strtotime($settings['weekend_opening_time']);
+                                            $effectiveClosingTime = strtotime($settings['weekend_closing_time']);
+                                        }
+
+                                        // Use the opening hour of the requested day + delivery time
+                                        return date('Y-m-d H:i:s', strtotime(date('Y-m-d', $deliveryDate) . ' ' . date('H:i:s', $effectiveOpeningTime)) + $deliveryTimestamp);
+                                    }
+                                }
+
+                                // For same-day delivery requests, proceed with the original logic:
+                                if ($settings['weekend_operation'] == 1) {
+                                    // Weekend operation is enabled, use weekend times
+                                    if ($dayOfWeek >= 6) { // Saturday or Sunday
+                                        $effectiveOpeningTime = strtotime($settings['weekend_opening_time']);
+                                        $effectiveClosingTime = strtotime($settings['weekend_closing_time']);
+                                    }
+                                } else {
+                                    // Weekend operation is disabled
+                                    if ($dayOfWeek >= 6) { // Saturday or Sunday
+                                        // Find the next Monday
+                                        $daysUntilMonday = (8 - $dayOfWeek) % 7;
+                                        $nextMondayTimestamp = strtotime(date('Y-m-d', strtotime("+$daysUntilMonday days", $currentTime)) . ' ' . date('H:i:s', $effectiveOpeningTime));
+                                        return date('Y-m-d H:i:s', $nextMondayTimestamp + $deliveryTimestamp);
+                                    }
+                                }
+
+                                $arrivalHourMinute = date('H:i', $arrivalTimestamp);
+                                $arrivalDay = date('Y-m-d', $arrivalTimestamp);
+
+                                if (strtotime($arrivalHourMinute) > $effectiveClosingTime) {
+                                    // Arrival is after closing, set to next day opening
+                                    $nextDayTimestamp = strtotime(date('Y-m-d', strtotime('+1 day', $currentTime)) . ' ' . date('H:i:s', $effectiveOpeningTime));
+                                    return date('Y-m-d H:i:s', $nextDayTimestamp + $deliveryTimestamp);
+                                } elseif (strtotime($currentHourMinute) < $effectiveOpeningTime) {
+                                    // Current time is before opening, set to today's opening
+                                    $todayOpeningTimestamp = strtotime($arrivalDay . ' ' . date('H:i:s', $effectiveOpeningTime));
+                                    return date('Y-m-d H:i:s', $todayOpeningTimestamp + $deliveryTimestamp);
+                                } elseif (date('H:i', $currentTime) > date('H:i', strtotime($settings['order_cut_off_time']))) {
+                                    // After cut-off, schedule for the next business day
+                                    $nextDay = strtotime('+1 day', $currentTime);
+                                    $nextDayOfWeek = date('N', $nextDay);
+                                    if ($settings['weekend_operation'] == 0 && $nextDayOfWeek >= 6) {
+                                        // If weekend operation is off and the next day is a weekend, find the next Monday
+                                        $daysUntilMonday = (8 - $nextDayOfWeek) % 7;
+                                        $nextBusinessDayTimestamp = strtotime(date('Y-m-d', strtotime("+$daysUntilMonday days", $nextDay)) . ' ' . date('H:i:s', $effectiveOpeningTime));
+                                        return date('Y-m-d H:i:s', $nextBusinessDayTimestamp + $deliveryTimestamp);
+                                    } else {
+                                        // Otherwise, the next day is a weekday or weekend operation is on
+                                        $nextBusinessDayTimestamp = strtotime(date('Y-m-d', $nextDay) . ' ' . date('H:i:s', $effectiveOpeningTime));
+                                        return date('Y-m-d H:i:s', $nextBusinessDayTimestamp + $deliveryTimestamp);
+                                    }
+                                } else {
+                                    // Arrival is within business hours
+                                    return date('Y-m-d H:i:s', $arrivalTimestamp);
+                                }
+                            }
+
+                            // Get the delivery date from the form
+                            $deliveryDateTimestamp = $deliveryDate; // This should be the timestamp from earlier in your code
+
+                            $estimatedArrival = calculateArrivalTime(
+                                $currentTime,
+                                $openingTime,
+                                $closingTime,
+                                $deliveryHours,
+                                $deliveryMinutes,
+                                $this->settings,
+                                $deliveryDateTimestamp // Pass the delivery date timestamp
+                            );
+
+
+                            // Check if current time is after closing hours
+                            // if (strtotime($currentHour) > $closingTime) {
+                            //     // Set estimated arrival to next day opening time + delivery time
+                            //     $estimatedArrival = date('Y-m-d', strtotime('+1 day')) . ' ' . date('H:i:s', $openingTime);
+                            // } else if (strtotime($currentHour) < $openingTime) {
+                            //     // If before opening hours, set to today's opening time + delivery time
+                            //     $estimatedArrival = date('Y-m-d') . ' ' . date('H:i:s', $openingTime);
+                            // }
+
+                            // Prepare tracking data
+                            $trackingData = [
+                                'courier_name' => $courier['name'],
+                                'order_id' => $orderId,
+                                'user_id' => $courierId,
+                                'start_point_lat' => floatval($startCoords[0]),
+                                'start_point_lng' => floatval($startCoords[1]),
+                                'end_destination_lat' => floatval($endCoords[0]),
+                                'end_destination_lng' => floatval($endCoords[1]),
+                                'current_location_lat' => floatval($startCoords[0]), // Initially at start point
+                                'current_location_lng' => floatval($startCoords[1]), // Initially at start point
+                                'last_updated' => date('Y-m-d H:i:s'),
+                                'estimated_arrival_time' => $estimatedArrival,
+                                'created_at' => date('Y-m-d H:i:s')
+                            ];
+
+                            // Save tracking data
+                            $trackingId = $courierTrackingModel->save($trackingData);
+
+                            if (!$trackingId) {
+                                // Log error but continue with order process
+                                error_log("Failed to create courier tracking for order #$orderId");
+                            } else {
+                                // Successfully saved tracking data, now update the courier's is_busy status
+                                $courierToUpdate = $courierModel->getFirstBy(['user_id' => $courierId]);
+
+                                if ($courierToUpdate) {
+                                    $updateResult = $courierModel->update(['id' => $courierToUpdate['id'], 'is_busy' => 1]);
+                                    if (!$updateResult) {
+                                        error_log("Failed to update courier (user_id: $courierId) is_busy status.");
+                                    }
+                                } else {
+                                    error_log("Courier with user_id: $courierId not found.");
+                                }
+                            }
                         }
                     }
 

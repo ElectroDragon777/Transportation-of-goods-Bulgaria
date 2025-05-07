@@ -11,6 +11,7 @@ class CourierController extends Controller
 {
 
     var $layout = 'admin';
+    var $settings;
 
     public function __construct()
     {
@@ -22,7 +23,43 @@ class CourierController extends Controller
             header("Location: " . INSTALL_URL, true, 301);
             exit;
         }
+        $this->settings = $this->loadSettings();
     }
+    function loadSettings()
+    {
+        $settingModel = new \App\Models\Setting();
+        $settings = $settingModel->getAll();
+        $app_settings = [];
+        foreach ($settings as $setting) {
+            $app_settings[$setting['key']] = $setting['value'];
+        }
+        return $app_settings;
+    }
+
+    public function index()
+    {
+        if ($_SESSION['user']['role'] !== 'courier') {
+            header("Location: " . INSTALL_URL, true, 301);
+            exit;
+        }
+
+        $orderModel = new \App\Models\Order();
+        $courierLocationModel = new \App\Models\CourierLocationHistory();
+
+        // Get the courier's current tracking status
+        $isTracking = false;
+        $currentLocation = $courierLocationModel->getFirstBy(['user_id' => $_SESSION['user']['id']]);
+        if ($currentLocation && isset($currentLocation['is_tracking'])) {
+            $isTracking = (bool) $currentLocation['is_tracking'];
+        }
+
+        $this->view('courier/dashboard', [
+            'active_orders' => $this->getActiveOrders($_SESSION['user']['id']),
+            'completed_orders' => $this->getCompletedOrders($_SESSION['user']['id']),
+            'is_tracking' => $isTracking
+        ]);
+    }
+
 
     function list($layout = 'admin')
     {
@@ -178,31 +215,95 @@ class CourierController extends Controller
         $userModel = new \App\Models\User();
         $courierModel = new \App\Models\Courier();
 
-        $arr = $userModel->get($_GET['id']);
-        $arr2 = $courierModel->getAll(['user_id' => $_GET['id']])[0];
+        // Get user data
+        $userData = $userModel->get($_GET['id']);
+        if (!$userData) {
+            header("Location: " . INSTALL_URL . "?controller=Courier&action=list", true, 301);
+            exit;
+        }
 
-        echo $arr2['name'] . "\n";
-        echo $arr2['user_id'] . "\n";
-        echo $arr2['phone_number'] . "\n";
-        echo $arr2['email'] . "\n";
-        echo $arr2['is_busy'] . "\n";
-        echo $arr2['allowed_tracking'] . "\n";
+        // Get courier data - this looks for the courier with user_id matching the current user
+        $courierData = null;
+        $couriers = $courierModel->getAll(['user_id' => $_GET['id']]);
+        if (!empty($couriers)) {
+            $courierData = $couriers[0];
+        }
+
+        if (!$courierData) {
+            // Handle case where courier doesn't exist for this user
+            $arr = $userData;
+            $arr['error_message'] = "Courier data not found for this user.";
+        } else {
+            // Merge user and courier data for the form
+            $arr = array_merge($userData, $courierData);
+        }
+
+        // Debug - log what data we found
+        error_log("User data: " . print_r($userData, true));
+        error_log("Courier data: " . print_r($courierData, true));
 
         // Check if the form has been submitted
         if (!empty($_POST['id'])) {
-            if ($userModel->existsBy(['email' => $_POST['email']])) {
-                $error_message = "User with this email already exists.";
-            } else if ($_POST['password'] !== $_POST['repeat_password']) {
-                $error_message = "Passwords do not match.";
+            // Form validation
+            $hasError = false;
+            if (!empty($_POST['email']) && $_POST['email'] !== $userData['email']) {
+                if ($userModel->existsBy(['email' => $_POST['email']])) {
+                    $arr['error_message'] = "User with this email already exists.";
+                    $hasError = true;
+                }
             }
-            // Save the data using the Courier model
-            if ($userModel->update($_POST) && $courierModel->update($_POST)) {
-                // Redirect to the list of couriers on successful creation
-                header("Location: " . INSTALL_URL . "?controller=Courier&action=list", true, 301);
-                exit;
-            } else {
-                // If saving fails, set an error message
-                $arr['error_message'] = "Failed to create the courier. Please try again.";
+
+            if (!empty($_POST['password']) && $_POST['password'] !== $_POST['repeat_password']) {
+                $arr['error_message'] = "Passwords do not match.";
+                $hasError = true;
+            }
+
+            if (!$hasError) {
+                // Prepare user data for update
+                $userUpdateData = [
+                    'id' => $_POST['id'],
+                    'name' => $_POST['name'],
+                    'email' => $_POST['email']
+                ];
+
+                // Handle password update if provided
+                if (!empty($_POST['password'])) {
+                    $userUpdateData['password_hash'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
+                }
+
+                // Prepare courier data for update - with the correct courier ID!
+                $courierUpdateData = [
+                    'id' => $courierData['id'], // This is critical!
+                    'name' => $_POST['name'],
+                    'phone_number' => $_POST['phone_number'],
+                    'email' => $_POST['email'],
+                    'user_id' => $_POST['id'],
+                    'is_busy' => isset($_POST['is_busy']) ? (int) $_POST['is_busy'] : $courierData['is_busy'],
+                    'allowed_tracking' => isset($_POST['allowed_tracking']) ? (int) $_POST['allowed_tracking'] : $courierData['allowed_tracking']
+                ];
+
+                // Debug - log what we're trying to update
+                error_log("Updating user with: " . print_r($userUpdateData, true));
+                error_log("Updating courier with: " . print_r($courierUpdateData, true));
+
+                // Update both user and courier
+                $userUpdateSuccess = $userModel->update($userUpdateData);
+                $courierUpdateSuccess = $courierModel->update($courierUpdateData);
+
+                if ($userUpdateSuccess && $courierUpdateSuccess) {
+                    header("Location: " . INSTALL_URL . "?controller=Courier&action=list", true, 301);
+                    exit;
+                } else {
+                    // Log errors for debugging
+                    if (!$userUpdateSuccess) {
+                        error_log("User update failed for ID: " . $_POST['id']);
+                    }
+                    if (!$courierUpdateSuccess) {
+                        error_log("Courier update failed for ID: " . $courierData['id']);
+                    }
+
+                    $arr['error_message'] = "Failed to update the courier. Please try again.";
+                }
             }
         }
 
@@ -482,5 +583,285 @@ class CourierController extends Controller
 
         fclose($output);
         exit;
+    }
+
+    public function updateLocation()
+    {
+        header('Content-Type: application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || empty($_SESSION['user']) || $_SESSION['user']['role'] !== 'courier') {
+            echo json_encode(['status' => 'error', 'message' => 'Unauthorized']);
+            exit;
+        }
+
+        // Validate inputs
+        if (!isset($_POST['latitude']) || !isset($_POST['longitude'])) {
+            echo json_encode(['status' => 'error', 'message' => 'Missing coordinates']);
+            exit;
+        }
+
+        $latitude = floatval($_POST['latitude']);
+        $longitude = floatval($_POST['longitude']);
+
+        // Get user info for courier name
+        $userModel = new \App\Models\User();
+        $courier = $userModel->getFirstBy(['user_id' => $_SESSION['user']['id']]);
+        $courierName = $courier['name'] ?? 'Unknown Courier';
+
+        // Update current location
+        $courierLocationModel = new \App\Models\CourierLocationHistory();
+        $locationData = [
+            'user_id' => $_SESSION['user']['id'],
+            'latitude' => $latitude,
+            'longitude' => $longitude,
+            'last_updated' => date('Y-m-d H:i:s'),
+            'is_tracking' => 1 // Set to actively tracking
+        ];
+
+        $courierLocation = $courierLocationModel->getFirstBy(['user_id' => $_SESSION['user']['id']]);
+        $status = false;
+
+        if (empty($courierLocation)) {
+            $status = $courierLocationModel->save($locationData);
+        } else {
+            $status = $courierLocationModel->update($courierLocation['id'] + $locationData);
+        }
+
+        // Add to location history
+        $historyModel = new \App\Models\CourierLocationHistory();
+        $historyData = [
+            'courier_name' => $courierName,
+            'user_id' => $_SESSION['user']['id'],
+            'current_lat' => $latitude,
+            'current_lng' => $longitude,
+            'timestamp' => date('Y-m-d H:i:s')
+        ];
+
+        // Get active order being delivered by this courier
+        $orderModel = new \App\Models\Order();
+        $activeOrder = $orderModel->getFirstBy([
+            'courier_id' => $_SESSION['user']['id'],
+            'status' => 'shipped'
+        ]);
+
+        if ($activeOrder) {
+            $historyData['order_id'] = $activeOrder['id'];
+
+            // Check if courier has reached destination
+            if ($this->hasReachedDestination($latitude, $longitude, $activeOrder['end_destination'])) {
+                // Update order status to delivered
+                $data = [
+                    'id' => $activeOrder['id'],
+                    'status' => 'delivered',
+                    'last_processed' => date('Y-m-d H:i:s'),
+                    'delivery_date' => date('Y-m-d')
+                ];
+                $orderModel->update($data);
+
+                // Return special status to notify frontend
+                echo json_encode([
+                    'status' => 'success',
+                    'destination_reached' => true,
+                    'order_id' => $activeOrder['id']
+                ]);
+                exit;
+            }
+        }
+
+        $historyModel->save($historyData);
+
+        if ($status) {
+            echo json_encode(['status' => 'success']);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Failed to update location']);
+        }
+        exit;
+    }
+
+    private function hasReachedDestination($currentLat, $currentLng, $destinationString)
+    {
+        // Parse destination string to get coordinates
+        // Format could be something like "42.6977,23.3219" or a city name
+        // For city names, you would need geocoding - this is simplified
+        $destCoords = explode(',', $destinationString);
+
+        if (count($destCoords) == 2) {
+            $destLat = floatval(trim($destCoords[0]));
+            $destLng = floatval(trim($destCoords[1]));
+
+            // Calculate distance using Haversine formula
+            $distance = $this->calculateDistance($currentLat, $currentLng, $destLat, $destLng);
+
+            // Consider destination reached if within 100 meters
+            return $distance <= 0.1; // 0.1 km = 100 meters
+        }
+
+        return false;
+    }
+
+    private function calculateDistance($lat1, $lon1, $lat2, $lon2)
+    {
+        // Haversine formula to calculate distance between two points
+        $earthRadius = 6371; // Radius of the earth in km
+
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLon = deg2rad($lon2 - $lon1);
+
+        $a = sin($dLat / 2) * sin($dLat / 2) +
+            cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+            sin($dLon / 2) * sin($dLon / 2);
+
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+        $distance = $earthRadius * $c; // Distance in km
+
+        return $distance;
+    }
+
+    public function getLocation()
+    {
+        header('Content-Type: application/json');
+
+        if (!empty($_GET['courier_id'])) {
+            $courierLocationModel = new \App\Models\CourierLocationHistory();
+            $location = $courierLocationModel->getFirstBy(['user_id' => $_GET['courier_id']]);
+
+            if ($location) {
+                echo json_encode([
+                    'status' => 'success',
+                    'data' => [
+                        'latitude' => $location['latitude'],
+                        'longitude' => $location['longitude'],
+                        'last_updated' => $location['last_updated'],
+                        'is_tracking' => (bool) $location['is_tracking']
+                    ]
+                ]);
+            } else {
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'Location not found'
+                ]);
+            }
+        } else {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Courier ID not provided'
+            ]);
+        }
+        exit;
+    }
+
+    public function toggleTracking()
+    {
+        $settingsModel = new \App\Models\Setting();
+        header('Content-Type: application/json');
+
+        if (
+            $_SERVER['REQUEST_METHOD'] !== 'POST' ||
+            empty($_SESSION['user']) ||
+            $_SESSION['user']['role'] !== 'courier'
+        ) {
+            echo json_encode(['status' => 'error', 'message' => 'Unauthorized']);
+            exit;
+        }
+
+        $trackingState = isset($_POST['tracking']) ? (int) $_POST['tracking'] : 0;
+
+        $courierLocationModel = new \App\Models\CourierLocationHistory();
+        $currentLocation = $courierLocationModel->getFirstBy(['user_id' => $_SESSION['user']['id']]);
+
+        if ($currentLocation) {
+            // Update existing location record with new tracking state
+            $data = [
+                $currentLocation['id'],
+                'latitude' => $currentLocation['latitude'],
+                'longitude' => $currentLocation['longitude'],
+                'is_tracking' => $trackingState,
+                'last_updated' => date($this->settings['date_format'] . 'H:i:s')
+            ];
+            $result = $courierLocationModel->update($data);
+        } else {
+            // If no location record exists yet, create one with default values
+            $result = $courierLocationModel->save([
+                'user_id' => $_SESSION['user']['id'],
+                'latitude' => 0,
+                'longitude' => 0,
+                'is_tracking' => $trackingState,
+                'last_updated' => date('Y-m-d H:i:s')
+            ]);
+        }
+
+        if ($result) {
+            echo json_encode([
+                'status' => 'success',
+                'tracking' => (bool) $trackingState
+            ]);
+        } else {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Failed to update tracking status'
+            ]);
+        }
+        exit;
+    }
+
+    public function startTracking()
+    {
+        if ($_SESSION['user']['role'] !== 'courier') {
+            header("Location: " . INSTALL_URL, true, 301);
+            exit;
+        }
+
+        $courierLocationModel = new \App\Models\CourierLocationHistory();
+        $currentLocation = $courierLocationModel->getFirstBy(['user_id' => $_SESSION['user']['id']]);
+        $isTracking = $currentLocation && isset($currentLocation['is_tracking']) ? (bool) $currentLocation['is_tracking'] : false;
+
+        $this->view('courier/tracking', [
+            'active_orders' => $this->getActiveOrders($_SESSION['user']['id']),
+            'is_tracking' => $isTracking
+        ]);
+    }
+
+    private function getActiveOrders($courierId)
+    {
+        $orderModel = new \App\Models\Order();
+        $orders = $orderModel->getAll([
+            'courier_id' => $courierId,
+            'status' => 'pending'
+        ]);
+
+        // Enrich orders with additional data
+        // foreach ($orders as &$order) {
+        //     $userModel = new \App\Models\User();
+        //     $customer = $userModel->getById($order['user_id']);
+        //     $order['customer_name'] = $customer ? $customer['name'] : 'Unknown Customer';
+
+        //     // Add courier name
+        //     $courier = $userModel->getById($order['courier_id']);
+        //     $order['courier_name'] = $courier ? $courier['name'] : 'Unknown Courier';
+        // }
+
+        return $orders;
+    }
+
+    private function getCompletedOrders($courierId)
+    {
+        $orderModel = new \App\Models\Order();
+        $orders = $orderModel->getAll([
+            'courier_id' => $courierId,
+            'status' => 'delivered'
+        ]);
+
+        // Enrich orders with additional data
+        foreach ($orders as &$order) {
+            $userModel = new \App\Models\User();
+            $customer = $userModel->getBy($order['user_id']);
+            $order['customer_name'] = $customer ? $customer['name'] : 'Unknown Customer';
+
+            // Add courier name
+            $courier = $userModel->getById($order['courier_id']);
+            $order['courier_name'] = $courier ? $courier['name'] : 'Unknown Courier';
+        }
+
+        return $orders;
     }
 }

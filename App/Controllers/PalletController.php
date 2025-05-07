@@ -20,10 +20,23 @@ class PalletController extends Controller
             header("Location: " . INSTALL_URL . "?controller=Auth&action=login", true, 301);
             exit;
         }
-        if ($_SESSION['user']['role'] == 'user') {
+        // if ($_SESSION['user']['role'] == 'user') {
+        //     header("Location: " . INSTALL_URL, true, 301);
+        //     exit;
+        // }
+
+        // Only restrict access to certain actions for regular users, not the entire controller
+        $currentAction = $_GET['action'] ?? 'index';
+
+        // Admin-only actions - adjust this list as needed
+        $adminOnlyActions = ['list', 'edit', 'delete', 'bulkDelete', 'export', 'print'];
+
+        // If user is trying to access an admin-only action
+        if ($_SESSION['user']['role'] == 'user' && in_array($currentAction, $adminOnlyActions)) {
             header("Location: " . INSTALL_URL, true, 301);
             exit;
         }
+
         $this->settings = $this->loadSettings();
     }
 

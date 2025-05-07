@@ -14,16 +14,17 @@
                     <span class="menu-title">Dashboard</span>
                 </a>
             </li>
-
-            <li class="nav-item nav-category">Personal</li>
-            <li class="nav-item <?php if ($currentController === 'Order' && $currentAction === 'list')
-                echo 'active'; ?>">
-                <a class="nav-link"
-                    href="<?php INSTALL_URL; ?>?controller=Order&action=list&user_id=<?php echo $_SESSION['user']['id']; ?>">
-                    <i class="menu-icon mdi mdi-clipboard-list"></i>
-                    <span class="menu-title">My Orders</span>
-                </a>
-            </li>
+            <?php if (in_array($_SESSION['user']['role'], ['admin', 'root'])): ?>
+                <li class="nav-item nav-category">Personal</li>
+                <li class="nav-item <?php if ($currentController === 'Order' && $currentAction === 'list')
+                    echo 'active'; ?>">
+                    <a class="nav-link"
+                        href="<?php INSTALL_URL; ?>?controller=Order&action=list&user_id=<?php echo $_SESSION['user']['id']; ?>">
+                        <i class="menu-icon mdi mdi-clipboard-list"></i>
+                        <span class="menu-title">My Orders</span>
+                    </a>
+                </li>
+            <?php endif; ?>
             <?php if (in_array($_SESSION['user']['role'], ['admin', 'root'])): ?>
                 <li class="nav-item nav-category">Forms and Data</li>
                 <li class="nav-item <?php if ($currentController === 'Order')
@@ -140,55 +141,22 @@
                         <span class="menu-title">Orders to Deliver</span>
                     </a>
                 </li>
-                <!-- Add Orders and Parcel making (Create Pages only, no LISTS) for Users only v -->
             <?php else: ?>
-                <!-- Only for users -->
+                <!-- Only for users - Changed to direct links instead of dropdowns -->
                 <li class="nav-item nav-category">Ordering</li>
-                <li class="nav-item <?php if ($currentController === 'Pallet')
+                <li class="nav-item <?php if ($currentController === 'Pallet' && $currentAction === 'create')
                     echo 'active'; ?>">
-                    <a class="nav-link" data-bs-toggle="collapse" href="#pallets"
-                        aria-expanded="<?php echo ($currentController === 'Pallet') ? 'true' : 'false'; ?>"
-                        aria-controls="pallets">
-                        <i class="menu-icon mdi mdi-cube-outline"></i>
-                        <span class="menu-title">Parcels</span> <i class="menu-arrow"></i>
+                    <a class="nav-link" href="<?php INSTALL_URL; ?>?controller=Pallet&action=create">
+                        <i class="menu-icon mdi mdi-cube-send"></i>
+                        <span class="menu-title">Create Parcel</span>
                     </a>
-                    <div class="collapse <?php if ($currentController === 'Pallet')
-                        echo 'show'; ?>" id="pallets">
-                        <ul class="nav flex-column sub-menu">
-                            <li class="nav-item <?php if ($currentController === 'Pallet' && $currentAction === 'list')
-                                echo 'active'; ?>">
-                                <a class="nav-link" href="<?php INSTALL_URL; ?>?controller=Pallet&action=list">List Parcels</a>
-                            </li>
-                            <li class="nav-item <?php if ($currentController === 'Pallet' && $currentAction === 'create')
-                                echo 'active'; ?>">
-                                <a class="nav-link" href="<?php INSTALL_URL; ?>?controller=Pallet&action=create">Create
-                                    Parcels</a>
-                            </li>
-                        </ul>
-                    </div>
                 </li>
-                <li class="nav-item <?php if ($currentController === 'Order')
+                <li class="nav-item <?php if ($currentController === 'Order' && $currentAction === 'create')
                     echo 'active'; ?>">
-                    <a class="nav-link" data-bs-toggle="collapse" href="#orders"
-                        aria-expanded="<?php echo ($currentController === 'Order') ? 'true' : 'false'; ?>"
-                        aria-controls="orders">
-                        <i class="menu-icon mdi mdi-cart-outline"></i>
-                        <span class="menu-title">Orders</span>
-                        <i class="menu-arrow"></i>
+                    <a class="nav-link" href="<?php INSTALL_URL; ?>?controller=Order&action=create">
+                        <i class="menu-icon mdi mdi-cart-plus"></i>
+                        <span class="menu-title">Create Order</span>
                     </a>
-                    <div class="collapse <?php if ($currentController === 'Order')
-                        echo 'show'; ?>" id="orders">
-                        <ul class="nav flex-column sub-menu">
-                            <li class="nav-item <?php if ($currentController === 'Order' && $currentAction === 'list')
-                                echo 'active'; ?>">
-                                <a class="nav-link" href="<?php INSTALL_URL; ?>?controller=Order&action=list">List Orders</a>
-                            </li>
-                            <li class="nav-item <?php if ($currentController === 'Order' && $currentAction === 'create')
-                                echo 'active'; ?>">
-                                <a class="nav-link" href="<?php INSTALL_URL; ?>?controller=Order&action=create">Create Order</a>
-                            </li>
-                        </ul>
-                    </div>
                 </li>
             <?php endif; ?>
 

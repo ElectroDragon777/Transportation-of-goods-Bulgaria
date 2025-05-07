@@ -68,6 +68,7 @@
                     <td><?php echo htmlspecialchars($user['name']); ?></td>
                     <td><?php echo htmlspecialchars($user['email']); ?></td>
                     <td><?php echo htmlspecialchars($user['phone_number'] ?? 'N/A'); ?></td>
+                    <td><?php echo htmlspecialchars($user['allowed_tracking'] ?? 'N/A'); ?></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
