@@ -7,25 +7,22 @@ use Core;
 use Core\View;
 use Core\Controller;
 
-class UserController extends Controller
-{
+class UserController extends Controller {
 
     var $layout = 'admin';
 
-    public function __construct()
-    {
+    public function __construct() {
         if (empty($_SESSION['user'])) {
             header("Location: " . INSTALL_URL . "?controller=Auth&action=login", true, 301);
             exit;
         }
-        // if ($_SESSION['user']['role'] == 'user') {
-        //     header("Location: " . INSTALL_URL, true, 301);
-        //     exit;
-        // }
+// if ($_SESSION['user']['role'] == 'user') {
+//     header("Location: " . INSTALL_URL, true, 301);
+//     exit;
+// }
     }
 
-    function list($layout = 'admin')
-    {
+    function list($layout = 'admin') {
         $userModel = new \App\Models\User();
 
         $opts = array();
@@ -45,22 +42,20 @@ class UserController extends Controller
             }
         }
 
-        // Извличане на всички записи от таблицата gallery
+// Извличане на всички записи от таблицата gallery
         $users = $userModel->getAll($opts);
 
-        // Прехвърляне на данни към изгледа
+// Прехвърляне на данни към изгледа
         $this->view($layout, ['users' => $users]);
     }
 
-    function filter()
-    {
+    function filter() {
         $this->list('ajax');
     }
 
-    function print()
-    {
+    function print() {
         if (isset($_POST['userData'])) {
-            // Decode the JSON data
+// Decode the JSON data
             $users = json_decode($_POST['userData'], true);
 
             if (!$users || empty($users)) {
@@ -72,8 +67,7 @@ class UserController extends Controller
         $this->view('ajax', ['users' => $users]);
     }
 
-    public function changeRole()
-    {
+    public function changeRole() {
         $userModel = new \App\Models\User();
 
         if (!empty($_POST['id']) && !empty($_POST['role'])) {
@@ -84,17 +78,16 @@ class UserController extends Controller
             }
         }
 
-        // Return refreshed user list
+// Return refreshed user list
         $users = $userModel->getAll();
         $this->view('ajax', ['users' => $users]);
     }
 
-    function create()
-    {
-        // Create an instance of the User model
+    function create() {
+// Create an instance of the User model
         $userModel = new \App\Models\User();
 
-        // Check if the form has been submitted
+// Check if the form has been submitted
         if (!empty($_POST['send'])) {
             if ($userModel->existsBy(['email' => $_POST['email']])) {
                 $error_message = "User with this email already exists.";
@@ -113,18 +106,17 @@ class UserController extends Controller
             }
         }
 
-        // Pass any error messages to the view
+// Pass any error messages to the view
         $arr = array();
         if (isset($error_message)) {
             $arr['error_message'] = $error_message;
         }
 
-        // Load the view and pass the data to it
+// Load the view and pass the data to it
         $this->view($this->layout, $arr);
     }
 
-    function delete()
-    {
+    function delete() {
         $userModel = new \App\Models\User();
 
         if (!empty($_POST['id'])) {
@@ -138,8 +130,7 @@ class UserController extends Controller
         $this->view('ajax', ['users' => $users]);
     }
 
-    function bulkDelete()
-    {
+    function bulkDelete() {
         $userModel = new \App\Models\User();
 
         if (!empty($_POST['ids']) && is_array($_POST['ids'])) {
@@ -156,59 +147,135 @@ class UserController extends Controller
         $this->view('ajax', ['users' => $users]);
     }
 
-    function edit()
-    {
-        $userModel = new \App\Models\User();
-
+    public function edit() {
+        $userModel = new \App\Models\User(); // Assuming this class exists and is correctly namespaced
+// Get the user ID from POST or GET
         $id = isset($_POST['id']) ? $_POST['id'] : (isset($_GET['id']) ? $_GET['id'] : null);
-        $arr = $userModel->get($id);
 
-        $referer = $_SERVER["HTTP_REFERER"];
-
-        // Check if the form has been submitted
-        if (!empty($_POST['id'])) {
-            if ($userModel->update($_POST)) {
-                // Store notification message in session
-                session_start();
-                $_SESSION['profile_update_message'] = "Profile updated!";
-
-                // Redirect to the profile page on successful update
-
-                //Construct the profile page url.
-                // $profileUrl = "/your_project_directory/profile?id=" . $id; //Replace /your_project_directory with the correct path.
-                $profileUrl = "/Transportation-of-goods-Bulgaria/index.php?controller=User&action=profile&id=" . $id; //Replace /your_project_directory with the correct path.
-                header("Location: " . $profileUrl, true, 301);
-                exit;
-            }
-            // If saving fails, set an error message
-            $arr['error_message'] = "Failed to update the user. Please try again.";
+        if ($id === null) {
+// Handle error: No ID provided
+// Maybe redirect or show an error message
+            echo "Error: No user ID provided.";
+            return;
         }
 
-        // Load the view and pass the data to it
+// Fetch existing user data for the view (e.g., to populate the form initially)
+        $arr = $userModel->get($id);
+        if (!$arr) {
+            echo "Error: User not found.";
+            return;
+        }
+
+// Store the referer URL (though not used in the provided logic snippet, it's good practice)
+// $referer = $_SERVER["HTTP_REFERER"] ?? null; // PHP 7+ null coalesce operator
+// Check if the form has been submitted
+        if (!empty($_POST['id']) && $_POST['id'] == $id) { // Ensure POST ID matches the user being edited
+            if ($userModel->update($_POST)) {
+                $userUpdateSuccess = true;
+                $courierUpdateAttempted = false;
+                $courierUpdateSuccess = false;
+
+// After successful user update, check if the user is a courier and update their details
+// We rely on $_POST['role'] to determine the user's role after the update.
+// Ensure your form submits the 'role' and UserModel's update method handles it.
+                $userRole = isset($_POST['role']) ? $_POST['role'] : null;
+
+// If the role wasn't part of the POST, you might need to re-fetch the user to get the updated role.
+// Example: $updatedUser = $userModel->get($id); $userRole = $updatedUser['role'];
+// For this example, we'll assume $_POST['role'] is the definitive role after update.
+
+                if ($userRole === 'courier') {
+                    $courierUpdateAttempted = true;
+                    $courierModel = new \App\Models\Courier(); // Assuming this class exists
+
+                    $courierData = [];
+// Populate courierData only with fields present in $_POST
+                    if (isset($_POST['name'])) {
+                        $courierData['name'] = $_POST['name'];
+                    }
+                    if (isset($_POST['email'])) {
+                        $courierData['email'] = $_POST['email'];
+                    }
+                    if (isset($_POST['phone_number'])) {
+                        $courierData['phone_number'] = $_POST['phone_number'];
+                    }
+// Add other fields from the 'couriers' table if they are part of the user edit form
+// For example, if 'is_busy' or 'allowed_tracking' were editable on this form:
+// if (isset($_POST['is_busy'])) $courierData['is_busy'] = $_POST['is_busy'];
+// if (isset($_POST['allowed_tracking'])) $courierData['allowed_tracking'] = $_POST['allowed_tracking'];
+
+
+                    if (!empty($courierData)) {
+// The CourierModel needs a method to update based on user_id.
+// This method should update fields like name, email, phone_number in the 'couriers' table.
+                        if ($courierModel->updateDetailsByUserId($id, $courierData)) {
+                            $courierUpdateSuccess = true;
+                        } else {
+// Courier update failed, $courierUpdateSuccess remains false
+                        }
+                    } else {
+// No specific courier data (name, email, phone) was submitted in the form to update.
+// This can be treated as a non-failure, or a partial success if user update worked.
+// If there were no courier-specific fields to update, we can consider it not an error.
+// For simplicity, if $courierData is empty, we can assume no courier update was needed for these fields.
+// If other courier fields were *always* expected, this logic might need adjustment.
+                    }
+                }
+
+// Start session if not already started (ideally done globally at script start)
+                if (session_status() == PHP_SESSION_NONE) {
+                    session_start();
+                }
+
+// Set notification message based on update outcomes
+                if ($userUpdateSuccess) {
+                    if ($courierUpdateAttempted) {
+                        if ($courierUpdateSuccess) {
+                            $_SESSION['profile_update_message'] = "Profile and courier details updated successfully!";
+                        } else {
+                            $_SESSION['profile_update_message'] = "Profile updated, but failed to update associated courier details.";
+// You might want to log the courier update failure or store more detailed error info
+// $_SESSION['courier_update_error'] = "Specific error for courier update...";
+                        }
+                    } else {
+                        $_SESSION['profile_update_message'] = "Profile updated successfully!";
+                    }
+                }
+// Note: The original code only sets $arr['error_message'] on userModel->update failure.
+// If user update is successful, it always redirects.
+// Construct the profile page URL.
+// $profileUrl = "/your_project_directory/profile?id=" . $id; //Replace /your_project_directory
+                $profileUrl = "/Transportation-of-goods-Bulgaria/index.php?controller=User&action=profile&id=" . $id;
+                header("Location: " . $profileUrl, true, 301); // Using 303 See Other might be more appropriate for POST-redirect-GET
+                exit;
+            } else {
+// If user model update fails, set an error message
+                $arr['error_message'] = "Failed to update the user. Please try again.";
+            }
+        }
+
+// Load the view and pass the data to it (either initial data or data with error message)
         $this->view($this->layout, $arr);
     }
 
-    function profile()
-    {
+    function profile() {
         $userModel = new \App\Models\User();
         $user = $userModel->get($_GET['id']);
 
-        // Pass the message to the view
+// Pass the message to the view
         $message = isset($_SESSION['profile_update_message']) ? $_SESSION['profile_update_message'] : null;
         unset($_SESSION['profile_update_message']);
-
 
         $this->view($this->layout, ['user' => $user, 'message' => $message]);
     }
 
-    function uploadProfilePicture()
-    {
+    function uploadProfilePicture() {
         header('Content-Type: application/json');
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['profile_picture'])) {
             $user_id = $_POST['user_id']; // Get user ID
             $userModel = new \App\Models\User();
 
-            // Get current user data to check for existing photo
+// Get current user data to check for existing photo
             $currentUser = $userModel->get($user_id);
             $oldPhotoPath = isset($currentUser['photo_path']) ? $currentUser['photo_path'] : null;
 
@@ -233,16 +300,16 @@ class UserController extends Controller
                     $photoPath = $upload_path . $handle->file_dst_name;
                     $handle->clean();
 
-                    // Update user photo in database
+// Update user photo in database
                     $userModel->update(['id' => $user_id, 'photo_path' => $photoPath]);
                     $_SESSION['user']['photo_path'] = $photoPath;
 
-                    // Delete old photo if it exists and isn't a default photo
+// Delete old photo if it exists and isn't a default photo
                     if ($oldPhotoPath && file_exists($oldPhotoPath) && strpos($oldPhotoPath, 'profile_') !== false) {
                         unlink($oldPhotoPath);
                     }
 
-                    // Return success message - we'll handle notification in JavaScript
+// Return success message - we'll handle notification in JavaScript
                     echo json_encode([
                         'status' => 'success',
                         'photo_path' => $photoPath,
@@ -258,8 +325,7 @@ class UserController extends Controller
         }
     }
 
-    function editPassword()
-    {
+    function editPassword() {
         $userModel = new \App\Models\User();
         $id = isset($_POST['id']) ? $_POST['id'] : (isset($_GET['id']) ? $_GET['id'] : null);
 
@@ -283,11 +349,10 @@ class UserController extends Controller
         $this->view($this->layout, ['id' => $id, 'error_message' => $errorMessage ?? null]);
     }
 
-    function export()
-    {
-        // Check if userData is provided
+    function export() {
+// Check if userData is provided
         if (isset($_POST['userData'])) {
-            // Decode the JSON data
+// Decode the JSON data
             $users = json_decode($_POST['userData'], true);
 
             if (!$users || empty($users)) {
@@ -298,7 +363,7 @@ class UserController extends Controller
 
         $format = isset($_POST['format']) ? $_POST['format'] : 'pdf';
 
-        // Export based on format
+// Export based on format
         switch ($format) {
             case 'pdf':
                 $this->exportAsPDF($users);
@@ -315,8 +380,7 @@ class UserController extends Controller
         }
     }
 
-    private function exportAsPDF($users)
-    {
+    private function exportAsPDF($users) {
         if (ob_get_level()) {
             ob_end_clean();
         }
@@ -334,27 +398,26 @@ class UserController extends Controller
 
         $pdf->AddPage();
 
-        // Generate HTML table with dynamic headers
+// Generate HTML table with dynamic headers
         $html = $this->generateDynamicUserTable($users);
         $pdf->writeHTML($html, true, false, true, false, '');
 
-        // Output PDF
+// Output PDF
         $pdf->Output('users_export.pdf', 'D');
         exit;
     }
 
-    private function generateDynamicUserTable($users)
-    {
-        // Start HTML table
+    private function generateDynamicUserTable($users) {
+// Start HTML table
         $html = '<table border="1" cellpadding="5">
 <thead>
     <tr>';
 
-        // If we have users, use their keys as headers
+// If we have users, use their keys as headers
         if (!empty($users) && is_array($users[0])) {
             $headers = array_keys($users[0]);
 
-            // Add headers to table
+// Add headers to table
             foreach ($headers as $header) {
                 $displayHeader = ucwords(str_replace('_', ' ', $header));
                 $html .= '<th>' . $displayHeader . '</th>';
@@ -364,21 +427,21 @@ class UserController extends Controller
     </thead>
     <tbody>';
 
-            // Add user data
+// Add user data
             foreach ($users as $user) {
                 $html .= '<tr>';
                 foreach ($user as $key => $value) {
-                    // Handle empty values
+// Handle empty values
                     if (empty($value) && $value !== 0) {
                         $value = 'N/A';
                     }
-                    // Sanitize output
+// Sanitize output
                     $html .= '<td>' . htmlspecialchars($value) . '</td>';
                 }
                 $html .= '</tr>';
             }
         } else {
-            // Fallback for no data
+// Fallback for no data
             $html .= '<th>No Data Available</th></tr></thead><tbody><tr><td>No users found</td></tr>';
         }
 
@@ -387,78 +450,76 @@ class UserController extends Controller
         return $html;
     }
 
-    private function exportAsExcel($users)
-    {
-        // Include SimpleXLSXGen
+    private function exportAsExcel($users) {
+// Include SimpleXLSXGen
         require(__DIR__ . '/../Helpers/export/simplexlsxgen/src/SimpleXLSXGen.php');
 
-        // Prepare data
+// Prepare data
         $data = [];
 
-        // First user in array determines headers
+// First user in array determines headers
         if (!empty($users) && is_array($users[0])) {
-            // Use keys from first user for headers, ensuring proper capitalization
+// Use keys from first user for headers, ensuring proper capitalization
             $headers = array_keys($users[0]);
             $headerRow = [];
 
             foreach ($headers as $header) {
-                // Convert user_id to User ID, etc.
+// Convert user_id to User ID, etc.
                 $headerRow[] = ucwords(str_replace('_', ' ', $header));
             }
 
             $data[] = $headerRow;
 
-            // Add users
+// Add users
             foreach ($users as $user) {
                 $row = [];
                 foreach ($user as $value) {
-                    // Handle empty values
+// Handle empty values
                     $row[] = (empty($value) && $value !== 0) ? 'N/A' : $value;
                 }
                 $data[] = $row;
             }
         } else {
-            // Fallback for no data
+// Fallback for no data
             $data[] = ['No Data Available'];
             $data[] = ['No users found'];
         }
 
-        // Create and send file
+// Create and send file
         \Shuchkin\SimpleXLSXGen::fromArray($data)->downloadAs('users_export.xlsx');
         exit;
     }
 
-    private function exportAsCSV($users)
-    {
-        // Set headers for CSV download
+    private function exportAsCSV($users) {
+// Set headers for CSV download
         header('Content-Type: text/csv');
         header('Content-Disposition: attachment; filename="users_export.csv"');
 
-        // Open output stream
+// Open output stream
         $output = fopen('php://output', 'w');
 
-        // Determine headers dynamically from the first user
+// Determine headers dynamically from the first user
         if (!empty($users) && is_array($users[0])) {
             $headers = array_keys($users[0]);
-            // Convert keys to readable headers (e.g., user_id to User ID)
+// Convert keys to readable headers (e.g., user_id to User ID)
             $readableHeaders = array_map(function ($header) {
                 return ucwords(str_replace('_', ' ', $header));
             }, $headers);
 
-            // Add headers
+// Add headers
             fputcsv($output, $readableHeaders);
 
-            // Add data using the actual keys from the data
+// Add data using the actual keys from the data
             foreach ($users as $user) {
                 $row = [];
                 foreach ($user as $value) {
-                    // Handle empty values
+// Handle empty values
                     $row[] = (empty($value) && $value !== 0) ? 'N/A' : $value;
                 }
                 fputcsv($output, $row);
             }
         } else {
-            // Fallback for empty data
+// Fallback for empty data
             fputcsv($output, ['No data available']);
         }
 

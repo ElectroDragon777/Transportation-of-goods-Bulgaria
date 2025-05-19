@@ -10,7 +10,7 @@
                     <li class="nav-item">
                         <!-- ps-0 is no-spacing, set to ps-3! -->
                         <a class="nav-link active ps-3"
-                            href="<?php echo INSTALL_URL; ?>?controller=Order&action=create">Create Order</a>
+                           href="<?php echo INSTALL_URL; ?>?controller=Order&action=create">Create Order</a>
                     </li>
                 </ul>
             </div>
@@ -24,12 +24,12 @@
                     <?php endif; ?>
 
                     <form method="POST" id="booking-frm-id"
-                        action="<?php echo INSTALL_URL; ?>?controller=Order&action=create">
+                          action="<?php echo INSTALL_URL; ?>?controller=Order&action=create">
                         <input type="hidden" name="send" value="1" />
                         <div class="row" style="background: linear-gradient(rgba(255, 255, 255, 0.47), rgba(85, 85, 85, 0.23)), url('Extras/Controllers/bluebackground_order_creation.jpg');
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-size: cover; border-radius: 25px;">
+                             background-repeat: no-repeat;
+                             background-attachment: fixed;
+                             background-size: cover; border-radius: 25px;">
                             <div class="col-md-6">
                                 <!-- Replace Customer Dropdown with Current User Info -->
                                 <div class="mb-3">
@@ -37,7 +37,7 @@
                                     <p class="form-control-static">
                                         Ordering as: <strong><?php echo $_SESSION['user']['name']; ?></strong>
                                         <input type="hidden" name="user_id"
-                                            value="<?php echo $_SESSION['user']['id']; ?>">
+                                               value="<?php echo $_SESSION['user']['id']; ?>">
                                     </p>
                                 </div>
                                 <div class="mb-3">
@@ -46,19 +46,13 @@
                                         <option value=''>---</option>
                                         <?php
                                         foreach ($tpl['couriers'] as $courier) {
-                                            echo "<option value=\"{$courier['id']}\">{$courier['name']}</option>";
+                                            $disabledAttribute = '';
+                                            if (isset($courier['is_busy']) && $courier['is_busy'] == 1) {
+                                                $disabledAttribute = 'disabled';
+                                            }
+                                            echo "<option value=\"" . htmlspecialchars($courier['id']) . "\" " . $disabledAttribute . ">" . htmlspecialchars($courier['name']) . "</option>";
                                         }
                                         ?>
-                                        <?/*php foreach ($tpl['couriers'] as $courier) {
-    // Debug output to check values (remove in production)
-    echo "<!-- Courier ID: {$courier['id']}, Name: {$courier['name']}, is_busy: {$courier['is_busy']} -->";
-
-    // This check is only needed if you aren't already filtering in the controller
-    if (isset($courier['is_busy']) && $courier['is_busy'] == 0) {
-        echo "<option value=\"{$courier['id']}\">{$courier['name']}</option>";
-    }
-}
-*/ ?>
                                     </select>
                                 </div>
                             </div>
@@ -78,8 +72,8 @@
                                                         if ($item['stock'] > 0) {
                                                             ?>
                                                             <option value="<?php echo $item['id']; ?>"
-                                                                data-max-quantity="<?php echo $item['stock']; ?>">
-                                                                <?php echo htmlspecialchars($item['name']); ?>
+                                                                    data-max-quantity="<?php echo $item['stock']; ?>">
+                                                                        <?php echo htmlspecialchars($item['name']); ?>
                                                                 (Available:
                                                                 <?php echo $item['stock']; ?>)
                                                             </option>
@@ -95,7 +89,7 @@
                                             <div class="col-md-6">
                                                 <label for="quantities" class="form-label">Quantity</label>
                                                 <input type="number" step="1" min="1" class="form-control"
-                                                    id="quantities" name="quantity[]" required>
+                                                       id="quantities" name="quantity[]" required>
                                                 <div class="invalid-feedback">Please enter a valid quantity
                                                 </div>
                                             </div>
@@ -126,14 +120,14 @@
                                 <div class="card-body">
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="payment_method"
-                                            id="paymentOnline" value="online">
+                                               id="paymentOnline" value="online">
                                         <label class="form-check-label" for="paymentOnline">
                                             Online Payment (PayPal)
                                         </label>
                                     </div>
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="payment_method"
-                                            id="paymentCash" value="cash">
+                                               id="paymentCash" value="cash">
                                         <label class="form-check-label" for="paymentCash">
                                             Cash on Delivery (+1.5% fee)
                                         </label>
@@ -144,9 +138,9 @@
 
                         <!-- Start Destination Section -->
                         <div class="card mb-4" style="background: linear-gradient(rgba(255, 255, 255, 0.58), rgba(85, 85, 85, 0.58)), url('Extras/Controllers/BulgarianMap.png');
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-size: cover; border-radius: 25px; color: white;">
+                             background-repeat: no-repeat;
+                             background-attachment: fixed;
+                             background-size: cover; border-radius: 25px; color: white;">
                             <div class="card-header bg-primary text-white">
                                 <h5>Start Destination</h5>
                             </div>
@@ -154,12 +148,12 @@
                                 <div class="form-group mb-3">
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="startLocationType"
-                                            id="startOffice" value="office" checked>
+                                               id="startOffice" value="office" checked>
                                         <label class="form-check-label" for="startOffice">Office</label>
                                     </div>
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="startLocationType"
-                                            id="startAddress" value="address">
+                                               id="startAddress" value="address">
                                         <label class="form-check-label" for="startAddress">Address</label>
                                     </div>
                                     <div class="invalid-feedback">Please select a start location.</div>
@@ -171,7 +165,7 @@
                                     <label for="startOfficeSelect">Select Office:</label>
                                     <div class="input-group">
                                         <input type="text" class="form-control office-autocomplete"
-                                            id="startOfficeInput" placeholder="Type to search offices">
+                                               id="startOfficeInput" placeholder="Type to search offices">
                                         <select class="form-control d-none" id="startOfficeSelect" name="startOffice">
                                             <option value="">Select an office</option>
                                         </select>
@@ -185,21 +179,21 @@
                                 <div class="form-group mb-3 d-none" id="startAddressGroup">
                                     <label for="startAddressInput">Enter Address:</label>
                                     <input type="text" class="form-control" id="startAddressInput" name="startAddress"
-                                        placeholder="Enter full address">
+                                           placeholder="Enter full address">
                                     <input type="hidden" id="startAddressCoords" name="startAddressCoords">
                                     <input type="hidden" id="startAddressName" name="startAddressName">
                                     <div class="invalid-feedback">Please enter a valid address</div>
                                     <button type="button" class="btn btn-sm btn-outline-secondary mt-2"
-                                        id="validateStartAddress">Validate Address</button>
+                                            id="validateStartAddress">Validate Address</button>
                                 </div>
                             </div>
                         </div>
 
                         <!-- End Destination Section -->
                         <div class="card mb-4" style="background: linear-gradient(rgba(255, 255, 255, 0.58), rgba(85, 85, 85, 0.58)), url('Extras/Controllers/BulgarianMap.png');
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-size: cover; border-radius: 25px; color: white;">
+                             background-repeat: no-repeat;
+                             background-attachment: fixed;
+                             background-size: cover; border-radius: 25px; color: white;">
                             <div class="card-header bg-success text-white">
                                 <h5>End Destination</h5>
                             </div>
@@ -207,12 +201,12 @@
                                 <div class="form-group mb-3">
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="endLocationType"
-                                            id="endOffice" value="office" checked>
+                                               id="endOffice" value="office" checked>
                                         <label class="form-check-label" for="endOffice">Office</label>
                                     </div>
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="endLocationType"
-                                            id="endAddress" value="address">
+                                               id="endAddress" value="address">
                                         <label class="form-check-label" for="endAddress">Address</label>
                                     </div>
                                     <div class="invalid-feedback">Please select a start location.</div>
@@ -224,7 +218,7 @@
                                     <label for="endOfficeSelect">Select Office:</label>
                                     <div class="input-group">
                                         <input type="text" class="form-control office-autocomplete" id="endOfficeInput"
-                                            placeholder="Type to search offices">
+                                               placeholder="Type to search offices">
                                         <select class="form-control d-none" id="endOfficeSelect" name="endOffice">
                                             <option value="">Select an office</option>
                                         </select>
@@ -238,12 +232,12 @@
                                 <div class="form-group mb-3 d-none" id="endAddressGroup">
                                     <label for="endAddressInput">Enter Address:</label>
                                     <input type="text" class="form-control" id="endAddressInput" name="endAddress"
-                                        placeholder="Enter full address">
+                                           placeholder="Enter full address">
                                     <input type="hidden" id="endAddressCoords" name="endAddressCoords">
                                     <input type="hidden" id="endAddressName" name="endAddressName">
                                     <div class="invalid-feedback">Please enter a valid address</div>
                                     <button type="button" class="btn btn-sm btn-outline-secondary mt-2"
-                                        id="validateEndAddress">Validate Address</button>
+                                            id="validateEndAddress">Validate Address</button>
                                 </div>
                             </div>
                         </div>
@@ -257,18 +251,18 @@
                                 <div id="map-container" class="map-loading">
                                     <div class="map-loading-indicator">
                                         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-                                            integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-                                            crossorigin="" />
+                                              integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+                                              crossorigin="" />
                                         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-                                            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-                                            crossorigin=""></script>
+                                                integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+                                        crossorigin=""></script>
                                         <div class="spinner-border text-primary" role="status">
                                             <span class="visually-hidden">Loading map...</span>
                                         </div>
                                         <p class="mt-2">Loading map...</p>
                                         <input type="hidden" id="deliveryTimeHours" name="delivery_time_hours" value="">
                                         <input type="hidden" id="deliveryTimeRemMins" name="delivery_time_minutes"
-                                            value="">
+                                               value="">
                                     </div>
                                 </div>
                             </div>
@@ -281,7 +275,7 @@
                                 <div class="col-md-6">
                                     <label for="deliveryDate" class="form-label">Date of Delivery</label>
                                     <input type="text" class="form-control" id="deliveryDate" name="delivery_date"
-                                        autocomplete="off">
+                                           autocomplete="off">
                                     <span id="dynamic-late-note-2"></span>
                                 </div>
 
@@ -307,7 +301,7 @@
                                 <div class="input-group">
                                     <span class="input-group-text"><?php echo $tpl['currency']; ?></span>
                                     <input type="text" class="form-control" id="productPrice" name="product_price"
-                                        readonly>
+                                           readonly>
                                 </div>
                             </div>
                             <div>
@@ -342,9 +336,9 @@
                                     <button type="submit" class="btn btn-primary text-white me-0">Create
                                         Order</button>
                                     <a href="javascript:" id="calculate-price-btn-id"
-                                        class="btn btn-primary text-white me-0">Calculate Price</a>
+                                       class="btn btn-primary text-white me-0">Calculate Price</a>
                                     <a href="<?php echo $_SERVER['HTTP_REFERER']; ?>"
-                                        class="btn btn-outline-dark">Cancel</a>
+                                       class="btn btn-outline-dark">Cancel</a>
                                 </div>
                             </div>
                         </div>
@@ -479,32 +473,32 @@
 <script>
     // Office locations directly in the JavaScript
     const officeLocations = [
-        { "city": "Sofia", "lat": 42.6977, "lng": 23.3219 },
-        { "city": "Plovdiv", "lat": 42.1482, "lng": 24.7494 },
-        { "city": "Varna", "lat": 43.2141, "lng": 27.9147 },
-        { "city": "Burgas", "lat": 42.5061, "lng": 27.4678 },
-        { "city": "Ruse", "lat": 43.8545, "lng": 25.9681 },
-        { "city": "Stara Zagora", "lat": 42.4226, "lng": 25.6347 },
-        { "city": "Pleven", "lat": 43.4114, "lng": 24.6158 },
-        { "city": "Sliven", "lat": 42.6784, "lng": 26.3245 },
-        { "city": "Yambol", "lat": 42.4854, "lng": 26.5060 },
-        { "city": "Haskovo", "lat": 41.9341, "lng": 25.5560 },
-        { "city": "Shumen", "lat": 43.2761, "lng": 26.9350 },
-        { "city": "Pernik", "lat": 42.6038, "lng": 23.0342 },
-        { "city": "Dobrich", "lat": 43.5606, "lng": 27.8284 },
-        { "city": "Pazardzhik", "lat": 42.1994, "lng": 24.3317 },
-        { "city": "Blagoevgrad", "lat": 42.0227, "lng": 23.0906 },
-        { "city": "Veliko Tarnovo", "lat": 43.0757, "lng": 25.6172 },
-        { "city": "Gabrovo", "lat": 42.8764, "lng": 25.3259 },
-        { "city": "Vratsa", "lat": 43.2048, "lng": 23.5510 },
-        { "city": "Kazanlak", "lat": 42.6205, "lng": 25.4093 },
-        { "city": "Vidin", "lat": 43.9935, "lng": 22.8724 },
-        { "city": "Montana", "lat": 43.4127, "lng": 23.2357 },
-        { "city": "Kardzhali", "lat": 41.6446, "lng": 25.3649 },
-        { "city": "Lovech", "lat": 43.1304, "lng": 24.7153 },
-        { "city": "Silistra", "lat": 44.1189, "lng": 27.2758 },
-        { "city": "Targovishte", "lat": 43.2500, "lng": 26.5700 },
-        { "city": "Razgrad", "lat": 43.5333, "lng": 26.5167 }
+        {"city": "Sofia", "lat": 42.6977, "lng": 23.3219},
+        {"city": "Plovdiv", "lat": 42.1482, "lng": 24.7494},
+        {"city": "Varna", "lat": 43.2141, "lng": 27.9147},
+        {"city": "Burgas", "lat": 42.5061, "lng": 27.4678},
+        {"city": "Ruse", "lat": 43.8545, "lng": 25.9681},
+        {"city": "Stara Zagora", "lat": 42.4226, "lng": 25.6347},
+        {"city": "Pleven", "lat": 43.4114, "lng": 24.6158},
+        {"city": "Sliven", "lat": 42.6784, "lng": 26.3245},
+        {"city": "Yambol", "lat": 42.4854, "lng": 26.5060},
+        {"city": "Haskovo", "lat": 41.9341, "lng": 25.5560},
+        {"city": "Shumen", "lat": 43.2761, "lng": 26.9350},
+        {"city": "Pernik", "lat": 42.6038, "lng": 23.0342},
+        {"city": "Dobrich", "lat": 43.5606, "lng": 27.8284},
+        {"city": "Pazardzhik", "lat": 42.1994, "lng": 24.3317},
+        {"city": "Blagoevgrad", "lat": 42.0227, "lng": 23.0906},
+        {"city": "Veliko Tarnovo", "lat": 43.0757, "lng": 25.6172},
+        {"city": "Gabrovo", "lat": 42.8764, "lng": 25.3259},
+        {"city": "Vratsa", "lat": 43.2048, "lng": 23.5510},
+        {"city": "Kazanlak", "lat": 42.6205, "lng": 25.4093},
+        {"city": "Vidin", "lat": 43.9935, "lng": 22.8724},
+        {"city": "Montana", "lat": 43.4127, "lng": 23.2357},
+        {"city": "Kardzhali", "lat": 41.6446, "lng": 25.3649},
+        {"city": "Lovech", "lat": 43.1304, "lng": 24.7153},
+        {"city": "Silistra", "lat": 44.1189, "lng": 27.2758},
+        {"city": "Targovishte", "lat": 43.2500, "lng": 26.5700},
+        {"city": "Razgrad", "lat": 43.5333, "lng": 26.5167}
     ];
 
     // Global variables for map and markers
@@ -700,7 +694,7 @@
         // Add "Bulgaria" to the address if not already included
         let searchAddress = address;
         if (!searchAddress.toLowerCase().includes('bulgaria') &&
-            !searchAddress.toLowerCase().includes('българия')) {
+                !searchAddress.toLowerCase().includes('българия')) {
             searchAddress += ', Bulgaria';
         }
 
@@ -714,68 +708,72 @@
         input.nextElementSibling.textContent = "Validating address...";
 
         fetch(nominatimUrl)
-            .then(response => response.json())
-            .then(data => {
-                input.classList.remove('is-validating');
+                .then(response => response.json())
+                .then(data => {
+                    input.classList.remove('is-validating');
 
-                if (data && data.length > 0) {
-                    const result = data[0];
+                    if (data && data.length > 0) {
+                        const result = data[0];
 
-                    // Check if the result is actually in Bulgaria
-                    if (result.address &&
-                        (result.address.country === "Bulgaria" || result.address.country === "България")) {
+                        // Check if the result is actually in Bulgaria
+                        if (result.address &&
+                                (result.address.country === "Bulgaria" || result.address.country === "България")) {
 
-                        // Check if the address has enough detail (street or road or neighborhood)
-                        const hasStreetLevel = result.address.road ||
-                            result.address.street ||
-                            result.address.neighbourhood ||
-                            result.address.suburb;
+                            // Check if the address has enough detail (street or road or neighborhood)
+                            const hasStreetLevel = result.address.road ||
+                                    result.address.street ||
+                                    result.address.neighbourhood ||
+                                    result.address.suburb;
 
-                        if (hasStreetLevel) {
-                            coords.value = `${result.lat},${result.lon}`;
-                            input.classList.add('is-valid');
-                            input.classList.remove('is-invalid');
-                            input.nextElementSibling.textContent = "";
-                            document.getElementById(coordsId.replace('Coords', 'Name')).value = input.value;
+                            if (hasStreetLevel) {
+                                coords.value = `${result.lat},${result.lon}`;
+                                input.classList.add('is-valid');
+                                input.classList.remove('is-invalid');
+                                input.nextElementSibling.textContent = "";
+                                document.getElementById(coordsId.replace('Coords', 'Name')).value = input.value;
 
-                            // Show the validated address in a more readable format
-                            const formattedAddress = result.display_name;
-                            input.value = formattedAddress;
+                                // Show the validated address in a more readable format
+                                const formattedAddress = result.display_name;
+                                input.value = formattedAddress;
 
-                            // Update map with the new location
-                            updateMap();
+                                // Update map with the new location
+                                updateMap();
+                            } else {
+                                input.classList.add('is-invalid');
+                                coords.value = '';
+                                input.nextElementSibling.textContent = "Please provide more specific address details (include street name).";
+                            }
                         } else {
                             input.classList.add('is-invalid');
                             coords.value = '';
-                            input.nextElementSibling.textContent = "Please provide more specific address details (include street name).";
+                            input.nextElementSibling.textContent = "Address must be located in Bulgaria.";
                         }
                     } else {
                         input.classList.add('is-invalid');
                         coords.value = '';
-                        input.nextElementSibling.textContent = "Address must be located in Bulgaria.";
+                        input.nextElementSibling.textContent = "Address not found. Please check for typos or provide more details.";
                     }
-                } else {
+                })
+                .catch(error => {
+                    console.error('Error validating address:', error);
+                    input.classList.remove('is-validating');
                     input.classList.add('is-invalid');
-                    coords.value = '';
-                    input.nextElementSibling.textContent = "Address not found. Please check for typos or provide more details.";
-                }
-            })
-            .catch(error => {
-                console.error('Error validating address:', error);
-                input.classList.remove('is-validating');
-                input.classList.add('is-invalid');
-                input.nextElementSibling.textContent = "Error validating address. Please try again.";
-            });
+                    input.nextElementSibling.textContent = "Error validating address. Please try again.";
+                });
     }
 
     // Update the map with current selections
     function updateMap() {
-        if (!orderMap) return;
+        if (!orderMap)
+            return;
 
         // Clear existing markers and route
-        if (startMarker) orderMap.removeLayer(startMarker);
-        if (endMarker) orderMap.removeLayer(endMarker);
-        if (routeLayer) orderMap.removeLayer(routeLayer);
+        if (startMarker)
+            orderMap.removeLayer(startMarker);
+        if (endMarker)
+            orderMap.removeLayer(endMarker);
+        if (routeLayer)
+            orderMap.removeLayer(routeLayer);
 
         let startCoords = null;
         let endCoords = null;
@@ -813,14 +811,14 @@
         // Add markers if coordinates are available
         if (startCoords) {
             startMarker = L.marker(startCoords)
-                .addTo(orderMap)
-                .bindPopup('Start Location');
+                    .addTo(orderMap)
+                    .bindPopup('Start Location');
         }
 
         if (endCoords) {
             endMarker = L.marker(endCoords)
-                .addTo(orderMap)
-                .bindPopup('End Location');
+                    .addTo(orderMap)
+                    .bindPopup('End Location');
         }
 
         // If both coordinates are available, calculate and display route
@@ -829,7 +827,7 @@
 
             // Fit map to show both markers
             const bounds = L.latLngBounds([startCoords, endCoords]);
-            orderMap.fitBounds(bounds, { padding: [50, 50] });
+            orderMap.fitBounds(bounds, {padding: [50, 50]});
         } else if (startCoords) {
             orderMap.setView(startCoords, 12);
         } else if (endCoords) {
@@ -843,43 +841,43 @@
         const url = `https://router.project-osrm.org/route/v1/driving/${fromLng},${fromLat};${toLng},${toLat}?overview=full&geometries=geojson`;
 
         fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                if (data.routes && data.routes.length > 0) {
-                    const route = data.routes[0];
-                    const routeGeoJSON = route.geometry;
+                .then(response => response.json())
+                .then(data => {
+                    if (data.routes && data.routes.length > 0) {
+                        const route = data.routes[0];
+                        const routeGeoJSON = route.geometry;
 
-                    // Create route layer
-                    routeLayer = L.geoJSON(routeGeoJSON, {
-                        style: {
-                            color: "blue",
-                            weight: 5,
-                            opacity: 0.7
-                        }
-                    }).addTo(orderMap);
+                        // Create route layer
+                        routeLayer = L.geoJSON(routeGeoJSON, {
+                            style: {
+                                color: "blue",
+                                weight: 5,
+                                opacity: 0.7
+                            }
+                        }).addTo(orderMap);
 
-                    // Calculate distance and duration
-                    const distance = (route.distance / 1000).toFixed(1); // km
-                    const duration = Math.round(route.duration / 60); // minutes
+                        // Calculate distance and duration
+                        const distance = (route.distance / 1000).toFixed(1); // km
+                        const duration = Math.round(route.duration / 60); // minutes
 
-                    // Calculate delivery time (example - you might need to adjust this)
-                    let durationInHours = Math.floor(duration / 60); // Convert seconds to hours
-                    let remaining_minutes = duration % 60; // Remaining minutes
+                        // Calculate delivery time (example - you might need to adjust this)
+                        let durationInHours = Math.floor(duration / 60); // Convert seconds to hours
+                        let remaining_minutes = duration % 60; // Remaining minutes
 
-                    // Set the values of the hidden inputs
-                    document.getElementById('deliveryTimeHours').value = durationInHours;
-                    document.getElementById('deliveryTimeRemMins').value = remaining_minutes;
+                        // Set the values of the hidden inputs
+                        document.getElementById('deliveryTimeHours').value = durationInHours;
+                        document.getElementById('deliveryTimeRemMins').value = remaining_minutes;
 
-                    // Update end marker popup with route info
-                    if (endMarker) {
-                        endMarker.setPopupContent(`End Location<br>
+                        // Update end marker popup with route info
+                        if (endMarker) {
+                            endMarker.setPopupContent(`End Location<br>
                             Distance: ${distance} km<br>
                             Estimated time: ${durationInHours}h ${remaining_minutes}min`);
-                        endMarker.openPopup();
+                            endMarker.openPopup();
+                        }
                     }
-                }
-            })
-            .catch(error => console.error('Error fetching route:', error));
+                })
+                .catch(error => console.error('Error fetching route:', error));
     }
 
     // Form validation before submission
@@ -1115,18 +1113,18 @@
             method: 'POST',
             body: formData
         })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    alert(data.error);
-                } else {
-                    document.getElementById('productPrice').value = data.product_price;
-                    // document.getElementById('totalPrice').value = data.total;
-                }
-            })
-            .catch(error => {
-                console.error('Error calculating price:', error);
-            });
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        document.getElementById('productPrice').value = data.product_price;
+                        // document.getElementById('totalPrice').value = data.total;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error calculating price:', error);
+                });
     }
 
     // Comprehensive form validation function
@@ -1730,7 +1728,9 @@
         // Add validation to the form submission
         const orderForm = document.getElementById('booking-frm-id');
         if (orderForm) {
-            const originalValidateOrderForm = validateOrderForm || function () { return true; };
+            const originalValidateOrderForm = validateOrderForm || function () {
+                return true;
+            };
 
             validateOrderForm = function () {
                 let isValid = originalValidateOrderForm();
@@ -1783,56 +1783,56 @@
                 },
                 body: 'current_time=' + today.getHours() + ':' + today.getMinutes()
             })
-                .then(response => response.json())
-                .then(data => {
-                    // Store settings and date format for later use
-                    settings = data.settings;
-                    dateFormat = data.dateFormat || 'Y-m-d';
+                    .then(response => response.json())
+                    .then(data => {
+                        // Store settings and date format for later use
+                        settings = data.settings;
+                        dateFormat = data.dateFormat || 'Y-m-d';
 
-                    // Set up datepicker with the correct format
-                    $(deliveryDateInput).datepicker({
-                        format: convertPhpToDatepickerFormat(dateFormat),
-                        startDate: today,
-                        autoclose: true,
-                        todayHighlight: true
-                    }).on('changeDate', function (e) {
-                        validateDeliveryDate(e.date);
+                        // Set up datepicker with the correct format
+                        $(deliveryDateInput).datepicker({
+                            format: convertPhpToDatepickerFormat(dateFormat),
+                            startDate: today,
+                            autoclose: true,
+                            todayHighlight: true
+                        }).on('changeDate', function (e) {
+                            validateDeliveryDate(e.date);
+                        });
+
+                        // Set initial date - use the date from server or default to today
+                        const initialDate = data.estimatedDeliveryDateHtml ?
+                                new Date(data.estimatedDeliveryDateHtml) :
+                                today;
+
+                        // Update the datepicker with proper date
+                        $(deliveryDateInput).datepicker('update', initialDate);
+
+                        // Set the value directly for the display format
+                        if (data.estimatedDeliveryDateFormatted) {
+                            deliveryDateInput.value = data.estimatedDeliveryDateFormatted;
+                        }
+
+                        // Update time of delivery initially
+                        updateTimeOfDelivery();
+
+                    })
+                    .catch(error => {
+                        console.error('Error initializing delivery date:', error);
+                        // Fallback to today's date
+                        $(deliveryDateInput).datepicker('update', today);
                     });
-
-                    // Set initial date - use the date from server or default to today
-                    const initialDate = data.estimatedDeliveryDateHtml ?
-                        new Date(data.estimatedDeliveryDateHtml) :
-                        today;
-
-                    // Update the datepicker with proper date
-                    $(deliveryDateInput).datepicker('update', initialDate);
-
-                    // Set the value directly for the display format
-                    if (data.estimatedDeliveryDateFormatted) {
-                        deliveryDateInput.value = data.estimatedDeliveryDateFormatted;
-                    }
-
-                    // Update time of delivery initially
-                    updateTimeOfDelivery();
-
-                })
-                .catch(error => {
-                    console.error('Error initializing delivery date:', error);
-                    // Fallback to today's date
-                    $(deliveryDateInput).datepicker('update', today);
-                });
         }
 
         function convertPhpToDatepickerFormat(phpFormat) {
             // Map of PHP date format to Bootstrap datepicker format
             const formatMap = {
-                'd': 'dd',    // Day of the month, 2 digits with leading zeros
-                'j': 'd',     // Day of the month without leading zeros
-                'm': 'mm',    // Month, 2 digits with leading zeros
-                'n': 'm',     // Month without leading zeros
-                'Y': 'yyyy',   // Year, 4 digits
-                'y': 'yy',    // Year, 2 digits
-                'F': 'MM',    // Month name, long
+                'd': 'dd', // Day of the month, 2 digits with leading zeros
+                'j': 'd', // Day of the month without leading zeros
+                'm': 'mm', // Month, 2 digits with leading zeros
+                'n': 'm', // Month without leading zeros
+                'Y': 'yyyy', // Year, 4 digits
+                'y': 'yy', // Year, 2 digits
+                'F': 'MM', // Month name, long
                 'M': 'M'      // Month name, short
             };
 
@@ -1877,7 +1877,8 @@
         }
 
         function updateTimeOfDelivery() {
-            if (!settings) return; // Ensure settings are loaded
+            if (!settings)
+                return; // Ensure settings are loaded
 
             let deliveryHours = parseInt(document.getElementById('deliveryTimeHours').value) || 0;
             let deliveryMinutes = parseInt(document.getElementById('deliveryTimeRemMins').value) || 0;
@@ -1952,7 +1953,7 @@
                         let adjustedTimestamp = nextMondayOpening.getTime() / 1000 + deliveryTimestamp;
 
                         return formatDate(new Date(adjustedTimestamp * 1000), dateFormat) + ' ' +
-                            formatTime(new Date(adjustedTimestamp * 1000));
+                                formatTime(new Date(adjustedTimestamp * 1000));
                     } else {
                         // Use the appropriate opening/closing times based on whether it's a weekend
                         if (isWeekend && settings.weekend_operation == 1) {
@@ -1966,7 +1967,7 @@
                         let scheduledTimestamp = selectedDateOpening.getTime() / 1000 + deliveryTimestamp;
 
                         return formatDate(new Date(scheduledTimestamp * 1000), dateFormat) + ' ' +
-                            formatTime(new Date(scheduledTimestamp * 1000));
+                                formatTime(new Date(scheduledTimestamp * 1000));
                     }
                 }
 
@@ -1991,7 +1992,7 @@
                         let arrivalTimestamp = nextMondayOpening.getTime() / 1000 + deliveryTimestamp;
 
                         return formatDate(new Date(arrivalTimestamp * 1000), dateFormat) + ' ' +
-                            formatTime(new Date(arrivalTimestamp * 1000));
+                                formatTime(new Date(arrivalTimestamp * 1000));
                     }
                 }
 
@@ -2010,7 +2011,7 @@
                     arrivalTimestamp = nextDayOpening.getTime() / 1000 + deliveryTimestamp;
 
                     return formatDate(new Date(arrivalTimestamp * 1000), dateFormat) + ' ' +
-                        formatTime(new Date(arrivalTimestamp * 1000));
+                            formatTime(new Date(arrivalTimestamp * 1000));
                 }
                 // Check if current time is before opening time
                 else if (timeToMinutes(currentHourMinute) < timeToMinutes(formatTime(new Date(effectiveOpeningTime)))) {
@@ -2020,7 +2021,7 @@
                     arrivalTimestamp = todayOpening.getTime() / 1000 + deliveryTimestamp;
 
                     return formatDate(new Date(arrivalTimestamp * 1000), dateFormat) + ' ' +
-                        formatTime(new Date(arrivalTimestamp * 1000));
+                            formatTime(new Date(arrivalTimestamp * 1000));
                 }
                 // Check if current time is after cut-off time
                 else if (timeToMinutes(currentHourMinute) > timeToMinutes(settings.order_cut_off_time)) {
@@ -2039,7 +2040,7 @@
                         arrivalTimestamp = nextMondayOpening.getTime() / 1000 + deliveryTimestamp;
 
                         return formatDate(new Date(arrivalTimestamp * 1000), dateFormat) + ' ' +
-                            formatTime(new Date(arrivalTimestamp * 1000));
+                                formatTime(new Date(arrivalTimestamp * 1000));
                     } else {
                         // Next day is a business day
                         let nextBusinessDayOpening = new Date(nextDay);
@@ -2047,12 +2048,12 @@
                         arrivalTimestamp = nextBusinessDayOpening.getTime() / 1000 + deliveryTimestamp;
 
                         return formatDate(new Date(arrivalTimestamp * 1000), dateFormat) + ' ' +
-                            formatTime(new Date(arrivalTimestamp * 1000));
+                                formatTime(new Date(arrivalTimestamp * 1000));
                     }
                 } else {
                     // Within business hours, use calculated arrival time
                     return formatDate(new Date(arrivalTimestamp * 1000), dateFormat) + ' ' +
-                        formatTime(new Date(arrivalTimestamp * 1000));
+                            formatTime(new Date(arrivalTimestamp * 1000));
                 }
             }
             function parseTime(timeString) {
@@ -2071,10 +2072,21 @@
             }
 
             function formatDate(date, format) {
+                // Get date components
                 const year = date.getFullYear();
                 const month = String(date.getMonth() + 1).padStart(2, '0');
                 const day = String(date.getDate()).padStart(2, '0');
-                return format.replace('Y', year).replace('m', month).replace('d', day);
+
+                // Create a copy of the format string to avoid modifying the original
+                let formattedDate = format;
+
+                // Replace format tokens with actual values
+                // Use specific replacement approach to avoid multiple replacements
+                formattedDate = formattedDate.replace(/Y+/g, year);
+                formattedDate = formattedDate.replace(/m+/g, month);
+                formattedDate = formattedDate.replace(/d+/g, day);
+
+                return formattedDate;
             }
 
             function formatTime(date) {

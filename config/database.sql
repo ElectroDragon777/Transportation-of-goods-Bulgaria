@@ -46,9 +46,7 @@ CREATE TABLE IF NOT EXISTS `couriers` (
   `email` VARCHAR(100) DEFAULT NULL,
   `is_busy` TINYINT(1) DEFAULT 0,  -- Added is_busy status (0=false, 1=true)
   `allowed_tracking` TINYINT(1) DEFAULT 1,  -- Added allowed_tracking status (0=false, 1=true)
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_name` (`name`), -- Add UNIQUE constraint to name
-  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Create the `orders` table
@@ -67,9 +65,7 @@ CREATE TABLE IF NOT EXISTS `orders` (
   `courier_id` INT(11) NOT NULL,
   `tracking_number` VARCHAR(255) DEFAULT NULL,
   `delivery_date` VARCHAR(255) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`),
-  FOREIGN KEY (`courier_id`) REFERENCES `couriers`(`id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Create the `order_pallets` table (Updated from order_products)
@@ -81,9 +77,7 @@ CREATE TABLE IF NOT EXISTS `order_pallets` (
   `pallet_id` INT(11) NOT NULL,
   `price` DECIMAL(10, 2) NOT NULL,
   `subtotal` DECIMAL(10, 2) NOT NULL,
-  PRIMARY KEY (`id`),
-  FOREIGN KEY (`order_id`) REFERENCES `orders`(`id`),
-  FOREIGN KEY (`pallet_id`) REFERENCES `pallets`(`id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Create the `settings` table
@@ -102,8 +96,7 @@ CREATE TABLE `notifications` (
   `link` VARCHAR(255) NULL, -- Optional, to open a specific page
   `is_seen` TINYINT(1) DEFAULT 0, -- 0 = unseen, 1 = seen
   `created_at` BIGINT DEFAULT UNIX_TIMESTAMP(),
-  PRIMARY KEY (`id`),
-  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Create the `messages` table
@@ -114,9 +107,7 @@ CREATE TABLE IF NOT EXISTS `messages` (
   `message` TEXT NOT NULL,
   `is_read` TINYINT(1) DEFAULT 0, -- 0 = unread, 1 = read
   `created_at` BIGINT DEFAULT UNIX_TIMESTAMP(),
-  PRIMARY KEY (`id`),
-  FOREIGN KEY (`sender_id`) REFERENCES `users`(`id`), -- Add foreign key for sender
-  FOREIGN KEY (`recipient_id`) REFERENCES `users`(`id`) -- Add foreign key for recipient
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Create the `courier_tracking` table
@@ -134,10 +125,7 @@ CREATE TABLE IF NOT EXISTS `courier_tracking` (
   `last_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
   `estimated_arrival_time` DATETIME,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  FOREIGN KEY (`courier_id`) REFERENCES `couriers`(`id`),
-  FOREIGN KEY (`order_id`) REFERENCES `orders`(`id`),
-  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Create the `courier_location_history` table
@@ -149,10 +137,7 @@ CREATE TABLE IF NOT EXISTS `courier_location_history` (
   `current_lng` DECIMAL(10, 7) NOT NULL,
   `order_id` INT(11) NOT NULL,
   `timestamp` TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
-  PRIMARY KEY (`id`),
-  FOREIGN KEY (`courier_id`) REFERENCES `couriers`(`id`),
-  FOREIGN KEY (`order_id`) REFERENCES `orders`(`id`),
-  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `settings` (`key`, `value`)

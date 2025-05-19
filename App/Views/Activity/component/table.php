@@ -1,23 +1,17 @@
 <table class="table select-table" id="order-table-id">
     <thead>
         <tr>
-            <?php if (in_array($_SESSION['user']['role'], ['admin', 'root'])): ?>
-                <th>
-                    <div class="form-check form-check-flat mt-0">
-                        <label class="form-check-label">
+            <th>
+                <div class="form-check form-check-flat mt-0">
+                    <label class="form-check-label">
+                        <?php if (in_array($_SESSION['user']['role'], ['admin', 'root'])): ?>
                             <input type="checkbox" class="form-check-input" id="select-all-orders">
-                        </label>
-                    </div>
-                </th>
-            <?php else: ?>
-                <th>
-                    <div class="form-check form-check-flat mt-0">
-                        <label class="form-check-label">
+                        <?php else: ?>
                             #
-                        </label>
-                    </div>
-                </th>
-            <?php endif; ?>
+                        <?php endif; ?>
+                    </label>
+                </div>
+            </th>
             <th>Order ID</th>
             <th>Tracking Number</th>
             <th>Customer</th>
@@ -39,21 +33,18 @@
             foreach ($tpl['orders'] as $order) {
                 ?>
                 <tr>
-
-                    <?php if (in_array($_SESSION['user']['role'], ['admin', 'root'])): ?>
-                        <td>
-                            <div class="form-check form-check-flat mt-0">
-                                <label class="form-check-label">
+                    <td>
+                        <div class="form-check form-check-flat mt-0">
+                            <label class="form-check-label">
+                                <?php if (in_array($_SESSION['user']['role'], ['admin', 'root'])): ?>
                                     <input type="checkbox" class="form-check-input order-checkbox"
-                                        data-id="<?php echo $order['id']; ?>">
-                                </label>
-                            </div>
-                        </td>
-                    <?php else: ?>
-                        <td>
-                            #
-                        </td>
-                    <?php endif; ?>
+                                           data-id="<?php echo $order['id']; ?>">
+                                       <?php else: ?>
+                                    #
+                                <?php endif; ?>
+                            </label>
+                        </div>
+                    </td>
                     <?php if (($order['customer_name'] == $_SESSION['user']['name']) || ($order['courier_name'] == $_SESSION['user']['name'])): ?>
                         <td><?php echo htmlspecialchars($order['id']); ?></td>
                         <td><?php echo htmlspecialchars($order['tracking_number'] ?? 'N/A'); ?></td>
@@ -79,25 +70,25 @@
                             ?>
                         </td>
                         <td><?php
-                        if (isset($order['status']) && class_exists('Utility') && isset(Utility::$order_status)) {
-                            foreach (Utility::$order_status as $k => $v) {
-                                if ($k == $order['status']) {
-                                    echo $v;
-                                    break;
+                            if (isset($order['status']) && class_exists('Utility') && isset(Utility::$order_status)) {
+                                foreach (Utility::$order_status as $k => $v) {
+                                    if ($k == $order['status']) {
+                                        echo $v;
+                                        break;
+                                    }
                                 }
+                            } else {
+                                echo htmlspecialchars($order['status'] ?? 'Unknown');
                             }
-                        } else {
-                            echo htmlspecialchars($order['status'] ?? 'Unknown');
-                        }
-                        ?></td>
+                            ?></td>
                         <td style="text-align: right;">
                             <a class="btn btn-light btn-circle mdc-ripple-upgraded"
-                                href="<?php echo INSTALL_URL; ?>?controller=Order&action=details&id=<?php echo $order['id'] ?>">
+                               href="<?php echo INSTALL_URL; ?>?controller=Order&action=details&id=<?php echo $order['id'] ?>">
                                 <i class="fa fa-eye" aria-hidden="true"></i>
                             </a>
                             <?php if (in_array($_SESSION['user']['role'], ['admin', 'root'])) { ?>
                                 <a class="btn btn-info btn-circle mdc-ripple-upgraded"
-                                    href="<?php echo INSTALL_URL; ?>?controller=Order&action=edit&order_id=<?php echo $order['id'] ?>">
+                                   href="<?php echo INSTALL_URL; ?>?controller=Order&action=edit&order_id=<?php echo $order['id'] ?>">
                                     <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                                 </a>
                                 <a class="btn btn-danger btn-circle delete-order" href="#" data-id="<?php echo $order['id']; ?>">
@@ -106,7 +97,8 @@
                             <?php } ?>
                         </td>
                     <?php else: ?>
-                        <td colspan="15" class="text-center">
+                        <!-- Use the exact same number of columns as in the header -->
+                        <td colspan="14" class="text-center">
                             <div class="alert alert-danger" role="alert">
                                 You cannot view this order as it is not assigned to you.
                             </div>
@@ -118,7 +110,8 @@
         } else {
             ?>
             <tr>
-                <td colspan="15" class="text-center">
+                <!-- Use the exact same number of columns as in the header -->
+                <td colspan="14" class="text-center">
                     No orders found
                 </td>
             </tr>

@@ -5,14 +5,12 @@ namespace App\Controllers;
 use App\Models\Order;
 use Core\Controller;
 
-class OrderController extends Controller
-{
+class OrderController extends Controller {
 
     var $layout = 'admin';
     var $settings;
 
-    public function __construct()
-    {
+    public function __construct() {
         if (empty($_SESSION['user'])) {
             header("Location: " . INSTALL_URL . "?controller=Auth&action=login", true, 301);
             exit;
@@ -33,8 +31,7 @@ class OrderController extends Controller
         $this->settings = $this->loadSettings();
     }
 
-    function loadSettings()
-    {
+    function loadSettings() {
         $settingModel = new \App\Models\Setting();
         $settings = $settingModel->getAll();
         $app_settings = [];
@@ -44,8 +41,7 @@ class OrderController extends Controller
         return $app_settings;
     }
 
-    function list($layout = 'admin')
-    {
+    function list($layout = 'admin') {
         $orderModel = new \App\Models\Order();
         $userModel = new \App\Models\User();
 
@@ -113,18 +109,14 @@ class OrderController extends Controller
             // echo "<b>Quantity from DB:</b> ";
             // var_dump($order['quantity']);
             // echo "<br>";
-
             // echo "<b>\$order['quantity'] before utility:</b> ";
             // var_dump($order['quantity']);
             // echo "<br>";
-
             // $displayableQuantity = $order['quantity']; // Direct assignment for quantity
             // echo "<b>Quantity after direct assignment:</b> ";
             // var_dump($displayableQuantity);
             // echo "<br>";
-
             // $order['quantity'] = $displayableQuantity;
-
             // echo "<b>\$order['quantity'] after assignment:</b> ";
             // var_dump($order['quantity']);
             // echo "<br><br>";
@@ -140,13 +132,11 @@ class OrderController extends Controller
         $this->view($layout, $arr);
     }
 
-    function filter()
-    {
+    function filter() {
         $this->list('ajax');
     }
 
-    function create()
-    {
+    function create() {
         if (empty($_SESSION['user'])) {
             header("Location: " . INSTALL_URL . "?controller=Auth&action=login", true, 301);
             exit;
@@ -155,7 +145,6 @@ class OrderController extends Controller
         //     header("Location: " . INSTALL_URL, true, 301);
         //     exit;
         // }
-
         // Only restrict access to certain actions for regular users, not the entire controller
         $currentAction = $_GET['action'] ?? 'index';
 
@@ -308,7 +297,6 @@ class OrderController extends Controller
                 $codFee = $cashOnDelivery ? $productPrice * 0.015 : 0;
                 $totalAmount = $productPrice + $codFee;
                 // $totalQuantity = ; // Total quantity is the sum of all quantities. Hardcoded since no discounts, we couriers.
-
                 // Create order data
                 $orderData = [
                     'last_processed' => time(),
@@ -358,7 +346,7 @@ class OrderController extends Controller
                             'pallet_id' => $palletId,
                             'quantity' => $quantity,
                             'category' => $pallet['category'], // Category of the pallet
-                            'price' => $itemPrice,  // Individual pallet price (no COD)
+                            'price' => $itemPrice, // Individual pallet price (no COD)
                             'subtotal' => $itemCodFee  // This item's COD fee
                         ];
 
@@ -390,11 +378,8 @@ class OrderController extends Controller
 
                         if ($courier) {
                             // Calculate estimated arrival time
-
                             // For simplicity, let's set it to 24 hours from now
                             // $estimatedArrival = date('Y-m-d H:i:s', strtotime('+24 hours'));
-
-
                             // Add this code to handle business hours:
                             $currentTime = time();
                             $closingTime = strtotime($this->settings['closing_time']);
@@ -406,13 +391,13 @@ class OrderController extends Controller
 
                             // Function to calculate adjusted arrival time
                             function calculateArrivalTime(
-                                $currentTime,
-                                $openingTime,
-                                $closingTime,
-                                $deliveryHours,
-                                $deliveryMinutes,
-                                $settings,
-                                $deliveryDate = null // Add parameter for delivery date
+                                    $currentTime,
+                                    $openingTime,
+                                    $closingTime,
+                                    $deliveryHours,
+                                    $deliveryMinutes,
+                                    $settings,
+                                    $deliveryDate = null // Add parameter for delivery date
                             ) {
                                 $deliveryTimestamp = ($deliveryHours * 3600) + ($deliveryMinutes * 60);
                                 $arrivalTimestamp = $currentTime + $deliveryTimestamp;
@@ -505,15 +490,14 @@ class OrderController extends Controller
                             $deliveryDateTimestamp = $deliveryDate; // This should be the timestamp from earlier in your code
 
                             $estimatedArrival = calculateArrivalTime(
-                                $currentTime,
-                                $openingTime,
-                                $closingTime,
-                                $deliveryHours,
-                                $deliveryMinutes,
-                                $this->settings,
-                                $deliveryDateTimestamp // Pass the delivery date timestamp
+                                    $currentTime,
+                                    $openingTime,
+                                    $closingTime,
+                                    $deliveryHours,
+                                    $deliveryMinutes,
+                                    $this->settings,
+                                    $deliveryDateTimestamp // Pass the delivery date timestamp
                             );
-
 
                             // Check if current time is after closing hours
                             // if (strtotime($currentHour) > $closingTime) {
@@ -523,7 +507,6 @@ class OrderController extends Controller
                             //     // If before opening hours, set to today's opening time + delivery time
                             //     $estimatedArrival = date('Y-m-d') . ' ' . date('H:i:s', $openingTime);
                             // }
-
                             // Prepare tracking data
                             $trackingData = [
                                 'courier_name' => $courier['name'],
@@ -606,17 +589,17 @@ class OrderController extends Controller
         $arr = [
             'users' => $userModel->getAll(),
             'pallets' => $palletModel->getAll(),
-            'couriers' => $userModel->getAll(['role' => 'courier']),
+            'couriers' => $courierModel->getAll(),
             'currency' => $currency,
             'error_message' => $error_message ?? null
         ];
+
         $this->view($this->layout, $arr);
     }
 
     // Add for Status Change stuff later
 
-    function details()
-    {
+    function details() {
         $orderModel = new \App\Models\Order();
         $OrderPalletsModel = new \App\Models\OrderPallets();
         $palletModel = new \App\Models\Pallet();
@@ -672,8 +655,7 @@ class OrderController extends Controller
         $this->view($this->layout, $data);
     }
 
-    function delete()
-    {
+    function delete() {
         if (empty($_SESSION['user'])) {
             header("Location: " . INSTALL_URL . "?controller=Auth&action=login", true, 301);
             exit;
@@ -716,8 +698,7 @@ class OrderController extends Controller
         $this->view('ajax', ['orders' => $orders, 'currency' => $this->settings['currency']]); // $this->settings['currency_code'], set manually to currency, since local+modded.
     }
 
-    function pay()
-    {
+    function pay() {
         if (!empty($_GET['order_id'])) {
             $orderId = $_GET['order_id'];
             $orderModel = new \App\Models\Order();
@@ -738,8 +719,7 @@ class OrderController extends Controller
     }
 
     // Controller method to handle the return from PayPal
-    public function pay_success()
-    {
+    public function pay_success() {
         // Get the order ID from the URL parameter
         $orderId = $_GET['order_id'];
 
@@ -757,8 +737,7 @@ class OrderController extends Controller
     }
 
     // Controller method to handle the cancellation from PayPal
-    public function pay_cancel()
-    {
+    public function pay_cancel() {
         // Get the order ID from the URL parameter
         $orderId = $_GET['order_id'];
 
@@ -774,8 +753,7 @@ class OrderController extends Controller
         }
     }
 
-    function paypal_ipn()
-    {
+    function paypal_ipn() {
         // PayPal verifies the IPN message
         $orderModel = new \App\Models\Order();
         $notificationModel = new \App\Models\Notification();
@@ -790,7 +768,7 @@ class OrderController extends Controller
             'cmd' => '_notify-validate',
             'tx' => $_POST['txn_id'], // PayPal transaction ID
             'amt' => $_POST['mc_gross'], // Total amount paid
-            // 'currency_code' => $_POST['mc_currency'], // Currency code
+                // 'currency_code' => $_POST['mc_currency'], // Currency code
         );
 
         // Send the IPN data back to PayPal for validation
@@ -829,8 +807,7 @@ class OrderController extends Controller
         }
     }
 
-    function bulkDelete()
-    {
+    function bulkDelete() {
         if (empty($_SESSION['user'])) {
             header("Location: " . INSTALL_URL . "?controller=Auth&action=login", true, 301);
             exit;
@@ -868,8 +845,7 @@ class OrderController extends Controller
         $this->view('ajax', ['orders' => $orders, 'currency' => $this->settings['currency']]); // $this->settings['currency_code'], set manually to currency, since local+modded.
     }
 
-    function print()
-    {
+    function print() {
         if (isset($_POST['orderData'])) {
             // Decode the JSON data
             $orders = json_decode($_POST['orderData'], true);
@@ -883,8 +859,7 @@ class OrderController extends Controller
         $this->view('ajax', ['orders' => $orders]);
     }
 
-    function edit()
-    {
+    function edit() {
         if (empty($_SESSION['user'])) {
             header("Location: " . INSTALL_URL . "?controller=Auth&action=login", true, 301);
             exit;
@@ -1087,8 +1062,7 @@ class OrderController extends Controller
         $this->view($this->layout, $arr);
     }
 
-    function calculatePrice()
-    {
+    function calculatePrice() {
         // var_dump($_POST); // Add this line to inspect the $_POST array
 
         $palletModel = new \App\Models\Pallet();
@@ -1160,8 +1134,7 @@ class OrderController extends Controller
     /**
      * Calculate price for a pallet based on weight and dimensions
      */
-    private function calculatePalletPrice($weight, $length, $width, $height)
-    {
+    private function calculatePalletPrice($weight, $length, $width, $height) {
         // Check if this is a large dimension package
         $maxDimension = max($length, $width, $height);
         $minDimension = min($length, $width, $height);
@@ -1197,11 +1170,9 @@ class OrderController extends Controller
             $extraKg = max(0, $weight - 50);
             return 30 + ($extraKg * 0.9);
         }
-
     }
 
-    function export()
-    {
+    function export() {
         // Check if orderData is provided
         if (isset($_POST['orderData'])) {
             // Decode the JSON data
@@ -1232,8 +1203,7 @@ class OrderController extends Controller
         }
     }
 
-    private function exportAsPDF($orders)
-    {
+    private function exportAsPDF($orders) {
         if (ob_get_level()) {
             ob_end_clean();
         }
@@ -1260,8 +1230,7 @@ class OrderController extends Controller
         exit;
     }
 
-    private function generateDynamicOrderTable($orders)
-    {
+    private function generateDynamicOrderTable($orders) {
         // Start HTML table
         $html = '<table border="1" cellpadding="5">
 <thead>
@@ -1317,8 +1286,7 @@ class OrderController extends Controller
         return $html;
     }
 
-    private function exportAsExcel($orders)
-    {
+    private function exportAsExcel($orders) {
         require(__DIR__ . '/../Helpers/export/simplexlsxgen/src/SimpleXLSXGen.php');
 
         $data = [];
@@ -1340,8 +1308,7 @@ class OrderController extends Controller
         exit;
     }
 
-    private function exportAsCSV($orders)
-    {
+    private function exportAsCSV($orders) {
         header('Content-Type: text/csv');
         header('Content-Disposition: attachment; filename="orders_export.csv"');
 
@@ -1363,184 +1330,183 @@ class OrderController extends Controller
         exit;
     }
 
-    private function generateOrderEmail($order, $customer, $courier, $pallets, $title)
-    {
+    private function generateOrderEmail($order, $customer, $courier, $pallets, $title) {
         ob_start();
         ?>
         <!DOCTYPE html>
         <html>
 
-        <head>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1">
-            <title>Order Confirmation</title>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    background-color: #f4f4f4;
-                    margin: 0;
-                    padding: 0;
-                }
+            <head>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1">
+                <title>Order Confirmation</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        background-color: #f4f4f4;
+                        margin: 0;
+                        padding: 0;
+                    }
 
-                .email-container {
-                    max-width: 600px;
-                    margin: 20px auto;
-                    background: #ffffff;
-                    border-radius: 10px;
-                    overflow: hidden;
-                    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-                }
+                    .email-container {
+                        max-width: 600px;
+                        margin: 20px auto;
+                        background: #ffffff;
+                        border-radius: 10px;
+                        overflow: hidden;
+                        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                    }
 
-                .header {
-                    background: #0073e6;
-                    color: #ffffff;
-                    text-align: center;
-                    padding: 20px;
-                    font-size: 24px;
-                }
+                    .header {
+                        background: #0073e6;
+                        color: #ffffff;
+                        text-align: center;
+                        padding: 20px;
+                        font-size: 24px;
+                    }
 
-                .content {
-                    padding: 20px;
-                }
+                    .content {
+                        padding: 20px;
+                    }
 
-                .order-details {
-                    display: flex;
-                    flex-wrap: wrap;
-                    gap: 20px;
-                    margin-bottom: 20px;
-                }
-
-                .detail-column {
-                    flex: 1 1 45%;
-                }
-
-                .detail-column p {
-                    margin: 5px 0;
-                    font-size: 14px;
-                }
-
-                .pallets-table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    margin-top: 20px;
-                }
-
-                .pallets-table th,
-                .pallets-table td {
-                    padding: 12px;
-                    border: 1px solid #ddd;
-                    text-align: left;
-                }
-
-                .pallets-table th {
-                    background: #0073e6;
-                    color: white;
-                    font-weight: bold;
-                }
-
-                .footer {
-                    text-align: center;
-                    padding: 15px;
-                    background: #f8f8f8;
-                    font-size: 12px;
-                    color: #666;
-                }
-
-                @media screen and (max-width: 600px) {
                     .order-details {
-                        flex-direction: column;
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: 20px;
+                        margin-bottom: 20px;
                     }
 
                     .detail-column {
-                        width: 100%;
+                        flex: 1 1 45%;
                     }
-                }
-            </style>
-        </head>
 
-        <body>
-            <div class="email-container">
-                <div class="header">
-                    <?= htmlspecialchars($title) ?>
-                </div>
-                <div class="content">
-                    <p style="font-size: 16px; color: #333;">Thank you for your order! Below are the details:</p>
-                    <div class="order-details">
-                        <div class="detail-column">
-                            <p><strong>Order ID:</strong>
-                                <?= htmlspecialchars($order['id']) ?>
-                            </p>
-                            <p><strong>Customer:</strong>
-                                <?= htmlspecialchars($customer['name']) ?>
-                            </p>
-                            <p><strong>Address:</strong>
-                                <?= htmlspecialchars($order['address']) ?>
-                            </p>
-                            <p><strong>Region:</strong>
-                                <?= htmlspecialchars($order['region']) ?>
-                            </p>
-                        </div>
-                        <div class="detail-column">
-                            <p><strong>Tracking Number:</strong>
-                                <?php echo htmlspecialchars($order['tracking_number']); ?>
-                            </p>
-                            <p><strong>Courier:</strong>
-                                <?= htmlspecialchars($courier['name']) ?>
-                            </p>
-                            <p><strong>Delivery Date:</strong>
-                                <?= date($this->settings['date_format'], $order['delivery_date']) ?>
-                            </p>
-                            <p><strong>Status:</strong>
-                                <?= \Utility::$order_status[$order['status']] ?? 'Unknown' ?>
-                            </p>
-                            <p><strong>Total Price:</strong>
-                                <?= \Utility::getDisplayableAmount(htmlspecialchars(number_format($order['total_amount'], 2))) ?>
-                            </p>
-                        </div>
+                    .detail-column p {
+                        margin: 5px 0;
+                        font-size: 14px;
+                    }
+
+                    .pallets-table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin-top: 20px;
+                    }
+
+                    .pallets-table th,
+                    .pallets-table td {
+                        padding: 12px;
+                        border: 1px solid #ddd;
+                        text-align: left;
+                    }
+
+                    .pallets-table th {
+                        background: #0073e6;
+                        color: white;
+                        font-weight: bold;
+                    }
+
+                    .footer {
+                        text-align: center;
+                        padding: 15px;
+                        background: #f8f8f8;
+                        font-size: 12px;
+                        color: #666;
+                    }
+
+                    @media screen and (max-width: 600px) {
+                        .order-details {
+                            flex-direction: column;
+                        }
+
+                        .detail-column {
+                            width: 100%;
+                        }
+                    }
+                </style>
+            </head>
+
+            <body>
+                <div class="email-container">
+                    <div class="header">
+                        <?= htmlspecialchars($title) ?>
                     </div>
-                    <h3 style="color: #0073e6; margin-top: 20px;">Order Summary</h3>
-                    <table class="pallets-table">
-                        <thead>
-                            <tr>
-                                <th>pallet</th>
-                                <th>Qty</th>
-                                <th>Price</th>
-                                <th>Subtotal</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($pallets as $pallet) { ?>
+                    <div class="content">
+                        <p style="font-size: 16px; color: #333;">Thank you for your order! Below are the details:</p>
+                        <div class="order-details">
+                            <div class="detail-column">
+                                <p><strong>Order ID:</strong>
+                                    <?= htmlspecialchars($order['id']) ?>
+                                </p>
+                                <p><strong>Customer:</strong>
+                                    <?= htmlspecialchars($customer['name']) ?>
+                                </p>
+                                <p><strong>Address:</strong>
+                                    <?= htmlspecialchars($order['address']) ?>
+                                </p>
+                                <p><strong>Region:</strong>
+                                    <?= htmlspecialchars($order['region']) ?>
+                                </p>
+                            </div>
+                            <div class="detail-column">
+                                <p><strong>Tracking Number:</strong>
+                                    <?php echo htmlspecialchars($order['tracking_number']); ?>
+                                </p>
+                                <p><strong>Courier:</strong>
+                                    <?= htmlspecialchars($courier['name']) ?>
+                                </p>
+                                <p><strong>Delivery Date:</strong>
+                                    <?= date($this->settings['date_format'], $order['delivery_date']) ?>
+                                </p>
+                                <p><strong>Status:</strong>
+                                    <?= \Utility::$order_status[$order['status']] ?? 'Unknown' ?>
+                                </p>
+                                <p><strong>Total Price:</strong>
+                                    <?= \Utility::getDisplayableAmount(htmlspecialchars(number_format($order['total_amount'], 2))) ?>
+                                </p>
+                            </div>
+                        </div>
+                        <h3 style="color: #0073e6; margin-top: 20px;">Order Summary</h3>
+                        <table class="pallets-table">
+                            <thead>
                                 <tr>
-                                    <td>
-                                        <?= htmlspecialchars($pallet['name']) ?>
-                                    </td>
-                                    <td>
-                                        <?= htmlspecialchars($pallet['quantity']) ?>
-                                    </td>
-                                    <td>
-                                        <?= \Utility::getDisplayableAmount(htmlspecialchars(number_format($pallet['price'], 2))) ?>
-                                    </td>
-                                    <td>
-                                        <?= \Utility::getDisplayableAmount(htmlspecialchars(number_format($pallet['subtotal'], 2))) ?>
-                                    </td>
+                                    <th>pallet</th>
+                                    <th>Qty</th>
+                                    <th>Price</th>
+                                    <th>Subtotal</th>
                                 </tr>
-                            <?php } ?>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($pallets as $pallet) { ?>
+                                    <tr>
+                                        <td>
+                                            <?= htmlspecialchars($pallet['name']) ?>
+                                        </td>
+                                        <td>
+                                            <?= htmlspecialchars($pallet['quantity']) ?>
+                                        </td>
+                                        <td>
+                                            <?= \Utility::getDisplayableAmount(htmlspecialchars(number_format($pallet['price'], 2))) ?>
+                                        </td>
+                                        <td>
+                                            <?= \Utility::getDisplayableAmount(htmlspecialchars(number_format($pallet['subtotal'], 2))) ?>
+                                        </td>
+                                    </tr>
+                                <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="footer">
+                        <p>If you have any questions, please contact our customer service.</p>
+                        <p>This is an automated email, please do not reply.</p>
+                    </div>
                 </div>
-                <div class="footer">
-                    <p>If you have any questions, please contact our customer service.</p>
-                    <p>This is an automated email, please do not reply.</p>
-                </div>
-            </div>
-        </body>
+            </body>
 
         </html>
         <?php
         return ob_get_clean();
     }
-    public function checkDeliveryTime()
-    {
+
+    public function checkDeliveryTime() {
         // Get closing time from settings
         $closingTime = isset($this->settings['closing_time']) ? $this->settings['closing_time'] : '17:00';
         list($closingHour, $closingMinute) = explode(':', $closingTime);
@@ -1559,7 +1525,6 @@ class OrderController extends Controller
 
         // Estimated delivery time in minutes
         $deliveryTimeMinutes = isset($_POST['delivery_time']) ? intval($_POST['delivery_time']) : 0; // Default none
-
         // Calculate estimated delivery completion time
         $estimatedCompletionDateTime = clone $currentDateTime;
         $estimatedCompletionDateTime->modify("+$deliveryTimeMinutes minutes");
