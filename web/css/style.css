@@ -393,3 +393,10 @@ body {
         opacity: 0;
     }
 }
+
+#tracking-map-container,
+#courier-location-map {
+    height: 450px; /* Or your desired height */
+    width: 100%;
+    border: 1px solid #ccc; /* Add a border temporarily to visually confirm its size and position */
+}

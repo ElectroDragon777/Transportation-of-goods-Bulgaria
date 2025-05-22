@@ -2,7 +2,6 @@
 
 namespace App\Controllers;
 
-use App\Models\Order;
 use Core\Controller;
 
 class OrderController extends Controller {
@@ -44,6 +43,7 @@ class OrderController extends Controller {
     function list($layout = 'admin') {
         $orderModel = new \App\Models\Order();
         $userModel = new \App\Models\User();
+        $courierModel = new \App\Models\Courier();
 
         $opts = array();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -80,7 +80,7 @@ class OrderController extends Controller {
 
         // Retrieve all orders from the database
         if (!empty($_GET['courier_id']) && $_GET['courier_id'] == $_SESSION['user']['id']) { //User role checking orders
-            $opts['courier_id'] = $_GET['courier_id'];
+            $opts['courier_id'] = $courierModel->get(['user_id' => $_GET['courier_id']])['id'];
         }
 
         $orders = $orderModel->getAll($opts);
@@ -136,9 +136,82 @@ class OrderController extends Controller {
         $this->list('ajax');
     }
 
+    public function completeOrder() {
+        // Basic input validation
+        if (!isset($_GET['order_id']) || !ctype_digit((string) $_GET['order_id']) || (int) $_GET['order_id'] <= 0) {
+            // Handle invalid or missing order_id
+            // You might redirect back with an error message, or show an error page
+            // For simplicity, we'll just echo an error and exit.
+            // In a real app, use a proper error handling/templating system.
+            http_response_code(400); // Bad Request
+            echo "Error: Invalid or missing Order ID.";
+            // You might want to log this error
+            // error_log("Attempt to complete order with invalid ID: " . ($_GET['order_id'] ?? 'NONE'));
+            exit;
+        }
+
+        $orderId = (int) $_GET['order_id'];
+        $orderModel = new \App\Models\Order(); // Ensure this namespace and class exist
+        $order = $orderModel->get($orderId);
+
+        if (!$order) {
+            // Handle order not found
+            http_response_code(404); // Not Found
+            echo "Error: Order with ID {$orderId} not found.";
+            // error_log("Attempt to complete non-existent order ID: " . $orderId);
+            exit;
+        }
+
+        // Check if the order is already delivered to prevent redundant updates
+        if (isset($order['status']) && $order['status'] === 'delivered') {
+            // Optionally, redirect to an order details page or show a message
+            // echo "Order {$orderId} is already marked as delivered.";
+            // For now, just proceed as if it was a fresh update or redirect to a "success" page
+            // header('Location: index.php?controller=Order&action=view&order_id=' . $orderId . '&status=already_delivered');
+            // exit;
+        }
+
+        try {
+            // Prepare the update data
+            // It's safer to only update specific fields rather than the whole $order array
+            // if your $orderModel->update() method expects an array of changes.
+            // If $orderModel->update() expects the full object and you've modified it, that's fine too.
+
+            $updateData = [
+                'id' => $orderId, // Assuming 'id' is the primary key used by update
+                'status' => 'delivered',
+                    // Potentially update other fields like 'delivery_date'
+                    // 'delivery_date' => date('Y-m-d H:i:s')
+            ];
+
+            $success = $orderModel->update($updateData); // Or $orderModel->update($orderId, ['status' => 'delivered']);
+            // Or if your update method is: $order['status'] = 'delivered'; $orderModel->update($order);
+
+            if ($success) {
+                // Redirect to a success page, order details, or dashboard
+                // Add a success message to session flash data if your framework supports it
+                // $_SESSION['flash_message'] = "Order #{$orderId} has been successfully marked as delivered.";
+                header("Location: " . INSTALL_URL . "?controller=Order&action=details&id=$orderId"); // Example redirect
+                exit;
+            } else {
+                // Handle update failure
+                http_response_code(500); // Internal Server Error
+                echo "Error: Failed to update order status. Please try again.";
+                // error_log("Failed to update order ID: " . $orderId . " to delivered status.");
+                exit;
+            }
+        } catch (Exception $e) {
+            // Handle any exceptions during the update process
+            http_response_code(500);
+            echo "An unexpected error occurred: " . $e->getMessage();
+            // error_log("Exception during completeOrder for ID {$orderId}: " . $e->getMessage
+            exit;
+        }
+    }
+
     function create() {
         if (empty($_SESSION['user'])) {
-            header("Location: " . INSTALL_URL . "?controller=Auth&action=login", true, 301);
+            header("Location: " . INSTALL_URL . " ? controller = Auth&action = login", true, 301);
             exit;
         }
         // if ($_SESSION['user']['role'] == 'user') {
@@ -307,7 +380,7 @@ class OrderController extends Controller {
                     'start_point' => $startLocationType === 'office' ? ($_POST['startOfficeName'] . " (Office)") : $_POST['startAddressName'],
                     'end_destination' => $endLocationType === 'office' ? ($_POST['endOfficeName'] . " (Office)") : $_POST['endAddressName'],
                     'status' => $_POST['status'] ?? 'pending',
-                    'product_name' => ($pallet['name'] . " (" . ucfirst($pallet['category']) . ")") ?? 'Whatever, now it is a parcel and it is a product. Therefore, it is a product.',
+                    'product_name' => ($pallet['name'] . " (" . ucfirst($pallet ['category']) . ")") ?? 'Whatever, now it is a parcel and it is a product. Therefore, it is a product.',
                     'product_price' => $productPrice,
                     'total_amount' => $totalAmount,
                     'created_at' => time()
@@ -758,7 +831,7 @@ class OrderController extends Controller {
         $orderModel = new \App\Models\Order();
         $notificationModel = new \App\Models\Notification();
         $userModel = new \App\Models\User();
-        $orderId = $_POST['custom']; // Get the order ID from PayPal's "custom" field
+        $orderId = $_POST['custom']; //  Get the order ID from PayPal's "custom" field
         $order = $orderModel->get($orderId);
         $user = $userModel->getFirstBy(['id' => $order['user_id']]);
 
@@ -801,7 +874,7 @@ class OrderController extends Controller {
             $notificationModel->save([
                 'user_id' => $user['id'],
                 'message' => "Your order #$orderId has been cancelled!",
-                'link' => INSTALL_URL . "?controller=Order&action=pay_cancel&order_id=$orderId",
+                'link' => INSTALL_URL . "?controller=Order&action=pay_cancel&order_id= $orderId",
                 'created_at' => time()
             ]);
         }
@@ -1003,7 +1076,7 @@ class OrderController extends Controller {
                     $updatedStock = $palletDetails['stock'] - $stockChange;
 
                     if (!$palletModel->update(['id' => $palletId, 'stock' => $updatedStock])) {
-                        $error_message = "Failed to update pallet stock for {$palletDetails['name']}. Please try again.";
+                        $error_message = "Failed to update p allet stock for {$palletDetails['name']}. Please try again.";
                         break;
                     }
                 }
@@ -1016,7 +1089,7 @@ class OrderController extends Controller {
                     'link' => INSTALL_URL . "?controller=Order&action=details&id=$orderId",
                     'created_at' => time()
                 ]);
-                if ($this->settings['email_sending'] == 'enabled') {
+                if ($this->settings['email_sending'] == 'en abled') {
                     $order = $orderModel->get($orderId);
                     $customer = $userModel->get($order['user_id']);
                     $courier = $userModel->get($order['courier_id']);
@@ -1031,7 +1104,7 @@ class OrderController extends Controller {
 
                     $mailer->sendMail($customer['email'], "Order Update #{$orderId}", $emailContent);
                 }
-                header("Location: " . INSTALL_URL . "?controller=Order&action=list", true, 301);
+                header("Location: " . INSTALL_URL . "?controller=Order&action=list ", true, 301);
                 exit;
             }
         }
@@ -1115,7 +1188,7 @@ class OrderController extends Controller {
         $cashOnDelivery = (isset($_POST['payment_method'])) && ($_POST['payment_method'] == 'cash');
 
         if ($cashOnDelivery) {
-            $codFee = $total * 0.015; // 1.5% of total amount
+            $codFee = $total * 0.015; // 1.5% of  total amount
             $total += $codFee;
         }
 
@@ -1385,7 +1458,7 @@ class OrderController extends Controller {
                         font-size: 14px;
                     }
 
-                    .pallets-table {
+                    .p allets-table {
                         width: 100%;
                         border-collapse: collapse;
                         margin-top: 20px;
@@ -1404,7 +1477,7 @@ class OrderController extends Controller {
                         font-weight: bold;
                     }
 
-                    .footer {
+                    .foot er {
                         text-align: center;
                         padding: 15px;
                         background: #f8f8f8;
@@ -1495,7 +1568,7 @@ class OrderController extends Controller {
                         </table>
                     </div>
                     <div class="footer">
-                        <p>If you have any questions, please contact our customer service.</p>
+                        <p>If you have any questions, please contact our c ustomer service.</p>
                         <p>This is an automated email, please do not reply.</p>
                     </div>
                 </div>

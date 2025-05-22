@@ -129,29 +129,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Courier's Current Location Map (only for couriers) -->
-                    <?php if ($_SESSION['user']['role'] === 'courier'): ?>
-                        <div class="card shadow-sm grid-margin stretch-card mt-4">
-                            <div class="card-body">
-                                <h5 class="card-title mb-4">Your Current Location</h5>
-                                <p class="card-description">This shows your real-time location when tracking is enabled</p>
-
-                                <!-- Dedicated courier location map -->
-                                <div id="courier-location-map" style="height: 400px; width: 100%; border-radius: 8px; margin-top: 15px;">
-                                    <div class="d-flex justify-content-center align-items-center h-100">
-                                        <div class="spinner-border text-primary" role="status">
-                                            <span class="visually-hidden">Loading map...</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="mt-3 text-center">
-                                    <p id="location-status">Waiting for location data...</p>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endif; ?>
                 </div>
 
                 <!-- Tracking Tab -->
@@ -178,8 +155,8 @@
                                         <label class="form-label">Select Order</label>
                                         <select class="form-select" id="order-select">
                                             <option value="">Select Order</option>
-                                            <?php if (isset($activeOrders) && is_array($activeOrders)): ?>
-                                                <?php foreach ($activeOrders as $order): ?>
+                                            <?php if (isset($tpl['activeOrders']) && is_array($tpl['activeOrders'])): ?>
+                                                <?php foreach ($tpl['activeOrders'] as $order): ?>
                                                     <option value="<?= $order['id'] ?>"><?= htmlspecialchars($order['product_name']) ?> (<?= $order['tracking_number'] ?>)</option>
                                                 <?php endforeach; ?>
                                             <?php endif; ?>
@@ -193,8 +170,8 @@
                                         <label class="form-label">Your Active Order</label>
                                         <select class="form-select" id="order-select">
                                             <option value="">Select Order</option>
-                                            <?php if (isset($activeOrders) && is_array($activeOrders)): ?>
-                                                <?php foreach ($activeOrders as $order): ?>
+                                            <?php if (isset($tpl['activeOrders']) && is_array($tpl['activeOrders'])): ?>
+                                                <?php foreach ($tpl['activeOrders'] as $order): ?>
                                                     <option value="<?= $order['id'] ?>"><?= htmlspecialchars($order['product_name']) ?> (<?= $order['tracking_number'] ?>)</option>
                                                 <?php endforeach; ?>
                                             <?php endif; ?>
@@ -235,7 +212,7 @@
                             </div>
 
                             <!-- No Active Orders Panel for Couriers -->
-                            <?php if ($_SESSION['user']['role'] === 'courier' && empty($activeOrders)): ?>
+                            <?php if ($_SESSION['user']['role'] === 'courier' && empty($tpl['activeOrders'])): ?>
                                 <div class="card shadow-sm mb-4 mt-4">
                                     <div class="card-body">
                                         <h6 class="card-title">Tracking Status</h6>
@@ -609,6 +586,7 @@
         let watchPositionId = null;
         let selectedOrderId = null;
         let pathHistory = [];
+        let orderIdForCompletion = null;
 
         // DOM elements
         const toggleTrackingBtn = document.getElementById('toggle-tracking');
@@ -618,6 +596,8 @@
         const trackingInfoEl = document.getElementById('tracking-info');
 
         document.addEventListener('DOMContentLoaded', function () {
+            console.log('DOM loaded, initializing tracking...');
+
             // Initialize tracking feature
             initTracking();
 
@@ -634,68 +614,185 @@
                 orderSelect.addEventListener('change', handleOrderChange);
             }
 
-            // Initialize the tracking map if not already done in initTracking
+            // Initialize the tracking map for non-courier users
             if ('<?= $_SESSION['user']['role'] ?>' !== 'courier') {
-                initTrackingMap();
+                setTimeout(() => {
+                    initTrackingMap();
+                }, 100);
             }
 
-            // ADD SNIPPET 5 HERE - Special case for couriers without orders
-            if ('<?= $_SESSION['user']['role'] ?>' === 'courier' && <?= empty($activeOrders) ? 'true' : 'false' ?>) {
+            // Special case for couriers without orders
+            if ('<?= $_SESSION['user']['role'] ?>' === 'courier' && <?= empty($tpl['activeOrders']) ? 'true' : 'false' ?>) {
                 const courierLocationMap = document.getElementById('courier-location-map');
                 if (courierLocationMap) {
-                    // Initialize a special map just for courier location
-                    trackingMap = L.map('courier-location-map', {
-                        zoomControl: true,
-                        attributionControl: true,
-                        minZoom: 5,
-                        maxZoom: 18
-                    }).setView([42.7339, 25.4858], 7); // Default view of Bulgaria
-
-                    // Add OpenStreetMap tiles
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-                        subdomains: 'abc',
-                        maxZoom: 19
-                    }).addTo(trackingMap);
-
-                    // Fix map rendering
                     setTimeout(() => {
-                        trackingMap.invalidateSize(true);
-                        loadCourierCurrentLocation();
-                    }, 200);
+                        initCourierLocationMap();
+                    }, 100);
                 }
             }
         });
 
-        // Initialize tracking map
-        function initTrackingMap() {
-            const mapContainer = document.getElementById('tracking-map-container');
+        function showDestinationReachedNotification() {
+            if (!selectedOrderId) {
+                console.error("Cannot show destination reached: selectedOrderId is not set.");
+                return;
+            }
+            orderIdForCompletion = selectedOrderId; // Store the current order ID
+
+            // Check if a modal already exists, remove it to prevent duplicates
+            const existingModal = document.getElementById('destinationReachedModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+
+            // Create Modal HTML
+            const modalHTML = `
+        <div class="modal fade" id="destinationReachedModal" tabindex="-1" aria-labelledby="destinationReachedModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="destinationReachedModalLabel">Destination Reached!</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        The courier has reached the destination for order ID: <strong>${orderIdForCompletion}</strong>.
+                        <br><br>
+                        Do you want to mark this order as 'Delivered'?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-success" id="confirmCompleteOrderBtn">Yes, Mark as Delivered</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+            // Append modal to body
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+            // Get modal element and Bootstrap modal instance
+            const destinationModalElement = document.getElementById('destinationReachedModal');
+            const destinationModal = new bootstrap.Modal(destinationModalElement);
+
+            // Add event listener for the confirmation button
+            const confirmBtn = document.getElementById('confirmCompleteOrderBtn');
+            if (confirmBtn) {
+                confirmBtn.addEventListener('click', function () {
+                    if (orderIdForCompletion) {
+                        console.log('Completing order:', orderIdForCompletion);
+                        window.location.href = `index.php?controller=Order&action=completeOrder&order_id=${orderIdForCompletion}`;
+                    } else {
+                        console.error("orderIdForCompletion is null, cannot redirect.");
+                    }
+                    destinationModal.hide(); // Hide modal after action
+                });
+            }
+
+            // Show the modal
+            destinationModal.show();
+
+            // Cleanup when modal is hidden
+            destinationModalElement.addEventListener('hidden.bs.modal', function () {
+                destinationModalElement.remove(); // Remove modal from DOM after it's hidden to prevent issues
+                orderIdForCompletion = null; // Clear the stored order ID
+            });
+
+            // Original non-modal notification (can be removed or kept as an alternative)
+            /*
+             const notification = document.createElement('div');
+             notification.className = 'alert alert-success alert-dismissible fade show';
+             notification.setAttribute('role', 'alert');
+             notification.innerHTML = `
+             <strong>Destination Reached!</strong> Order has been marked as delivered.
+             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+             `;
+             const mainContainer = document.querySelector('.container-fluid') || document.body; // Fallback to body
+             mainContainer.prepend(notification);
+             
+             setTimeout(() => {
+             notification.classList.remove('show');
+             setTimeout(() => notification.remove(), 500);
+             }, 10000);
+             */
+        }
+
+
+        // Initialize tracking map for courier location (when no orders)
+        function initCourierLocationMap() {
+            const mapContainer = document.getElementById('courier-location-map');
             if (!mapContainer)
                 return;
 
-            // Clear container
-            mapContainer.innerHTML = '';
-
-            // Create map
             try {
-                trackingMap = L.map('tracking-map-container', {
+                trackingMap = L.map('courier-location-map', {
                     zoomControl: true,
                     attributionControl: true,
                     minZoom: 5,
                     maxZoom: 18
-                }).setView([42.7339, 25.4858], 7); // Default view of Bulgaria
+                }).setView([42.7339, 25.4858], 7);
 
-                // Add OpenStreetMap tiles
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
                     subdomains: 'abc',
                     maxZoom: 19
                 }).addTo(trackingMap);
 
-                // Fix map rendering
                 setTimeout(() => {
                     trackingMap.invalidateSize(true);
+                    loadCourierCurrentLocation();
                 }, 200);
+            } catch (e) {
+                console.error('Error initializing courier location map:', e);
+            }
+        }
+
+        // Initialize tracking map
+        function initTrackingMap() {
+            const mapContainer = document.getElementById('tracking-map-container');
+            if (!mapContainer) {
+                console.log('Map container not found for tracking-map-container');
+                return;
+            }
+
+            if (trackingMap && typeof trackingMap.remove === 'function') {
+                trackingMap.remove();
+                trackingMap = null;
+            }
+            // mapContainer.innerHTML = ''; // Not strictly necessary if removing the map instance
+
+            try {
+                trackingMap = L.map('tracking-map-container', {
+                    zoomControl: true,
+                    attributionControl: true,
+                    minZoom: 5,
+                    maxZoom: 18
+                }).setView([42.7339, 25.4858], 7); // Default view
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                    subdomains: 'abc',
+                    maxZoom: 19
+                }).addTo(trackingMap);
+
+                initialDataSet = false; // Reset flag when map is re-initialized
+
+                // Call invalidateSize. If the container isn't visible/sized yet,
+                // this won't fully fix it until it becomes visible.
+                setTimeout(() => {
+                    if (trackingMap) {
+                        console.log('Calling invalidateSize in initTrackingMap timeout');
+                        trackingMap.invalidateSize(true);
+                        // If an order is selected, and data hasn't been applied after invalidateSize,
+                        // re-fetch or re-apply. This helps if fetch happened too early.
+                        if (selectedOrderId && !initialDataSet && '<?= $_SESSION['user']['role'] ?>' !== 'courier') {
+                            console.log('Re-fetching data after initial invalidateSize for selected order.');
+                            fetchTrackingData(selectedOrderId);
+                        }
+                    }
+                }, 300); // Give a bit of time for DOM
+
+                console.log('Tracking map initialized');
             } catch (e) {
                 console.error('Error initializing tracking map:', e);
                 mapContainer.innerHTML = '<div class="alert alert-danger">Failed to initialize map: ' + e.message + '</div>';
@@ -704,41 +801,199 @@
 
         // Handle courier selection change
         function handleCourierChange() {
-            if (!courierSelect || !courierSelect.value)
+            if (!courierSelect || !courierSelect.value) {
+                console.log('No courier selected');
                 return;
+            }
 
-            // If tracking a previous order, stop it
+            console.log('Courier selected:', courierSelect.value);
             stopTracking();
-
-            // Get courier location
             fetchCourierLocation(courierSelect.value);
         }
 
         // Handle order selection change
         function handleOrderChange() {
-            if (!orderSelect || !orderSelect.value)
+            if (!orderSelect || !orderSelect.value) {
+                console.log('No order selected');
+                // Clear tracking info
+                if (trackingInfoEl) {
+                    trackingInfoEl.innerHTML = '<div class="alert alert-info">Select an order to see tracking information</div>';
+                }
+                // If a courier deselects an order while tracking,
+                // revert to general location updates (no order_id)
+                if ('<?= $_SESSION['user']['role'] ?>' === 'courier' && isTrackingEnabled) {
+                    selectedOrderId = null; // Clear it globally
+                    if (watchPositionId !== null) {
+                        console.log('Order deselected by courier. Restarting general location tracking.');
+                        stopLocationTracking();
+                        startLocationTracking(); // Will now use selectedOrderId = null
+                    }
+                } else {
+                    selectedOrderId = null; // Clear for non-couriers too
+                    stopTracking(); // Stop viewer's interval
+                }
                 return;
+            }
 
-            selectedOrderId = orderSelect.value;
+            selectedOrderId = orderSelect.value; // Update the global selectedOrderId
+            console.log('Order selected:', selectedOrderId);
 
-            // Clear previous tracking
-            stopTracking();
+            // For non-courier viewers, or if courier tracking is not yet active
+            stopTracking(); // Clears viewer's map layers, stops viewer's interval
+            fetchTrackingData(selectedOrderId); // Fetch data for the newly selected order
+            startTrackingInterval(); // Start viewer's interval to periodically update
 
-            // Start tracking the selected order
-            fetchTrackingData(selectedOrderId);
-            startTrackingInterval();
+            // FOR COURIERS: If live tracking is already enabled,
+            // we need to stop and restart it to associate with the new order.
+            if ('<?= $_SESSION['user']['role'] ?>' === 'courier' && isTrackingEnabled) {
+                console.log('Courier changed active order. Restarting location watch to associate with new order:', selectedOrderId);
+                if (watchPositionId !== null) {
+                    stopLocationTracking(); // Stop the old watch (which might be associated with a different/no order)
+                }
+                // startLocationTracking will pick up the new selectedOrderId from the global variable
+                // or directly from orderSelect.value
+                startLocationTracking();
+            }
+        }
+
+        function startLocationTracking() {
+            if (!navigator.geolocation) {
+                console.error('Geolocation is not supported by this browser.');
+                return;
+            }
+
+            // Ensure selectedOrderId is correctly set from the dropdown at the moment tracking starts/restarts
+            // This is crucial for associating the watch with the correct order.
+            let orderIdForThisWatch = null;
+            if (orderSelect && orderSelect.value) {
+                orderIdForThisWatch = orderSelect.value;
+            } else {
+                // Fallback to the global selectedOrderId if orderSelect isn't available or has no value
+                // This might happen if tracking is started before an order is chosen from dropdown
+                orderIdForThisWatch = selectedOrderId;
+            }
+            // Update the global selectedOrderId as well, if it was derived from orderSelect
+            if (orderSelect && orderSelect.value) {
+                selectedOrderId = orderSelect.value;
+            }
+
+
+            console.log('Starting location watch. Order ID for this session:', orderIdForThisWatch);
+
+            watchPositionId = navigator.geolocation.watchPosition(
+                    function (position) {
+                        const {latitude, longitude} = position.coords;
+                        updateCourierMarker(latitude, longitude);
+                        // Use the orderIdForThisWatch captured when this specific watchPosition was initiated
+                        updateLocationOnServer(latitude, longitude, orderIdForThisWatch);
+                    },
+                    function (error) {
+                        console.error('Geolocation error:', error);
+                        // Optionally, attempt to restart or notify user. For now, just stop.
+                        stopLocationTracking(); // Stop on error
+
+                        if (trackingIndicator) {
+                            trackingIndicator.className = 'badge bg-danger';
+                            trackingIndicator.textContent = 'Tracking Failed: ' + error.message;
+                        }
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000, // Time (in ms) until the error callback is invoked.
+                        maximumAge: 0       // Force a fresh position.
+                    }
+            );
+        }
+
+        function showDestinationReachedNotification() {
+            if (!selectedOrderId && !orderIdForCompletion) { // Check both, orderIdForCompletion might be set from previous call
+                console.error("Cannot show destination reached: selectedOrderId or orderIdForCompletion is not set.");
+                return;
+            }
+            // If orderIdForCompletion is not set by an earlier step, use the current selectedOrderId
+            // This is important if the notification is triggered directly by updateLocationOnServer's response
+            if (!orderIdForCompletion) {
+                orderIdForCompletion = selectedOrderId;
+            }
+
+
+            // Check if a modal already exists, remove it to prevent duplicates
+            const existingModal = document.getElementById('destinationReachedModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+
+            // Create Modal HTML
+            const modalHTML = `
+        <div class="modal fade" id="destinationReachedModal" tabindex="-1" aria-labelledby="destinationReachedModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="destinationReachedModalLabel">Destination Reached!</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        The courier has reached the destination for order ID: <strong>${orderIdForCompletion}</strong>.
+                        <br><br>
+                        Do you want to mark this order as 'Delivered'?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-success" id="confirmCompleteOrderBtn">Yes, Mark as Delivered</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+            // Append modal to body
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+            // Get modal element and Bootstrap modal instance
+            const destinationModalElement = document.getElementById('destinationReachedModal');
+            const destinationModal = new bootstrap.Modal(destinationModalElement);
+
+            // Add event listener for the confirmation button
+            const confirmBtn = document.getElementById('confirmCompleteOrderBtn');
+            if (confirmBtn) {
+                confirmBtn.addEventListener('click', function () {
+                    if (orderIdForCompletion) {
+                        console.log('Completing order:', orderIdForCompletion);
+                        window.location.href = `index.php?controller=Order&action=completeOrder&order_id=${orderIdForCompletion}`;
+                    } else {
+                        console.error("orderIdForCompletion is null, cannot redirect.");
+                    }
+                    destinationModal.hide(); // Hide modal after action
+                });
+            }
+
+            // Show the modal
+            destinationModal.show();
+
+            // Cleanup when modal is hidden
+            destinationModalElement.addEventListener('hidden.bs.modal', function () {
+                destinationModalElement.remove(); // Remove modal from DOM after it's hidden to prevent issues
+                orderIdForCompletion = null; // Clear the stored order ID
+            });
         }
 
         // Fetch courier location
         function fetchCourierLocation(courierId) {
+            console.log('Fetching courier location for ID:', courierId);
+
             fetch(`index.php?controller=CourierTracking&action=getCourierLocation&courier_id=${courierId}`)
-                    .then(response => response.json())
+                    .then(response => {
+                        console.log('Courier location response status:', response.status);
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
                     .then(data => {
+                        console.log('Courier location data:', data);
                         if (data.status === 'success') {
-                            // Update the map with courier's location
                             updateCourierMarker(data.location.lat, data.location.lng);
 
-                            // If courier has an active order, select it
                             if (data.location.order_id && orderSelect) {
                                 orderSelect.value = data.location.order_id;
                                 selectedOrderId = data.location.order_id;
@@ -747,44 +1002,66 @@
                             }
                         } else {
                             console.error('Error fetching courier location:', data.message);
+                            if (trackingInfoEl) {
+                                trackingInfoEl.innerHTML = `<div class="alert alert-warning">${data.message}</div>`;
+                            }
                         }
                     })
                     .catch(error => {
                         console.error('Error fetching courier location:', error);
+                        if (trackingInfoEl) {
+                            trackingInfoEl.innerHTML = '<div class="alert alert-danger">Error fetching courier location. Please try again.</div>';
+                        }
                     });
         }
 
         // Fetch tracking data for an order
         function fetchTrackingData(orderId) {
+            console.log('Fetching tracking data for order ID:', orderId);
+
             fetch(`index.php?controller=CourierTracking&action=getTrackingData&order_id=${orderId}`)
-                    .then(response => response.json())
+                    .then(response => {
+                        console.log('Tracking data response status:', response.status);
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
                     .then(data => {
+                        console.log('Tracking data received:', data);
                         if (data.status === 'success') {
-                            // Update tracking info display
                             updateTrackingInfo(data.tracking);
-
-                            // Update map with tracking data
                             updateTrackingMap(data.tracking);
-
-                            // Fetch location history
                             fetchLocationHistory(orderId);
                         } else {
-                            trackingInfoEl.innerHTML = `<div class="alert alert-warning">${data.message}</div>`;
+                            console.error('Tracking data error:', data.message);
+                            if (trackingInfoEl) {
+                                trackingInfoEl.innerHTML = `<div class="alert alert-warning">${data.message}</div>`;
+                            }
                         }
                     })
                     .catch(error => {
                         console.error('Error fetching tracking data:', error);
-                        trackingInfoEl.innerHTML = '<div class="alert alert-danger">Error fetching tracking data. Please try again.</div>';
+                        if (trackingInfoEl) {
+                            trackingInfoEl.innerHTML = '<div class="alert alert-danger">Error fetching tracking data. Please try again.</div>';
+                        }
                     });
         }
 
         // Fetch location history
         function fetchLocationHistory(orderId) {
+            console.log('Fetching location history for order ID:', orderId);
+
             fetch(`index.php?controller=CourierTracking&action=getLocationHistory&order_id=${orderId}`)
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
                     .then(data => {
+                        console.log('Location history data:', data);
                         if (data.status === 'success') {
-                            // Draw the path on the map
                             drawLocationHistory(data.history);
                         }
                     })
@@ -798,105 +1075,169 @@
             if (!trackingInfoEl)
                 return;
 
-            const lastUpdated = new Date(tracking.last_updated).toLocaleString();
-            const estimatedArrival = new Date(tracking.estimated_arrival).toLocaleString();
+            try {
+                const lastUpdated = tracking.last_updated ? new Date(tracking.last_updated).toLocaleString() : 'N/A';
+                const estimatedArrival = tracking.estimated_arrival ?
+                        new Date(tracking.estimated_arrival).toLocaleString() : 'Not available';
 
-            trackingInfoEl.innerHTML = `
+                // Handle nulls for distances and percentage
+                const distanceRemainingText = tracking.distance_remaining !== null ? `${tracking.distance_remaining} km` : 'N/A';
+                const totalDistanceText = tracking.total_distance !== null ? `${tracking.total_distance} km` : 'N/A';
+                const percentCompleteValue = tracking.percent_complete !== null ? tracking.percent_complete : 0;
+                const percentCompleteText = tracking.percent_complete !== null ? `${Math.round(percentCompleteValue)}% Complete` : 'N/A';
+
+
+                trackingInfoEl.innerHTML = `
             <div class="mb-3">
-                <strong>Courier:</strong> ${tracking.courier_name}
+                <strong>Courier:</strong> ${tracking.courier_name || 'Unknown'}
             </div>
             <div class="mb-3">
-                <strong>Order Number:</strong> ${tracking.order_tracking_number}
+                <strong>Order Number:</strong> ${tracking.order_tracking_number || 'Unknown'}
             </div>
             <div class="mb-3">
                 <strong>Last Updated:</strong> ${lastUpdated}
             </div>
-            <div class="mb-3">
-                <strong>Estimated Arrival:</strong> ${estimatedArrival}
-            </div>
-            <div class="mb-3">
-                <strong>Distance Remaining:</strong> ${tracking.distance_remaining} km
-            </div>
-            <div class="mb-3">
-                <strong>Total Distance:</strong> ${tracking.total_distance} km
-            </div>
             <div class="progress mb-3">
-                <div class="progress-bar bg-success" role="progressbar" style="width: ${tracking.percent_complete}%" 
-                    aria-valuenow="${tracking.percent_complete}" aria-valuemin="0" aria-valuemax="100">
-                    ${Math.round(tracking.percent_complete)}% Complete
+                <div class="progress-bar bg-success" role="progressbar"
+                     style="width: ${percentCompleteValue}%"
+                     aria-valuenow="${percentCompleteValue}"
+                     aria-valuemin="0" aria-valuemax="100">
+                    ${percentCompleteText}
                 </div>
             </div>
         `;
+            } catch (e) {
+                console.error('Error updating tracking info:', e);
+                trackingInfoEl.innerHTML = '<div class="alert alert-danger">Error displaying tracking information</div>';
+            }
         }
 
         // Update tracking map with data
         function updateTrackingMap(tracking) {
-            if (!trackingMap)
+            if (!trackingMap) {
+                console.log('Tracking map not initialized, cannot update.');
                 return;
+            }
 
-            // Clear previous layers
-            if (courierMarker)
+            // It's good practice to ensure the map is "aware" of its size before fitting bounds
+            // This can be a bit redundant if invalidateSize is handled well elsewhere,
+            // but can catch edge cases.
+            trackingMap.invalidateSize(true); // Call it here too, just before fitting.
+
+            try {
+                clearMapLayers();
+
+                if (!tracking.current_location || !tracking.current_location.lat || !tracking.current_location.lng) {
+                    console.error('Invalid current location data in updateTrackingMap');
+                    // You might want to show a message on the map or clear it
+                    // For now, we'll just return to prevent errors with bounds
+                    return;
+                }
+
+                courierMarker = L.marker([tracking.current_location.lat, tracking.current_location.lng], {
+                    icon: createCourierIcon()
+                }).addTo(trackingMap)
+                        .bindPopup(`<strong>Courier:</strong> ${tracking.courier_name}<br><strong>Last updated:</strong> ${new Date(tracking.last_updated).toLocaleTimeString()}`);
+
+                const bounds = L.latLngBounds([]);
+                bounds.extend([tracking.current_location.lat, tracking.current_location.lng]);
+
+                if (tracking.start_point && tracking.start_point.lat && tracking.start_point.lng) {
+                    startMarker = L.marker([tracking.start_point.lat, tracking.start_point.lng], {
+                        icon: createDefaultIcon('green')
+                    }).addTo(trackingMap)
+                            .bindPopup('Start Location');
+                    bounds.extend([tracking.start_point.lat, tracking.start_point.lng]);
+                }
+
+                if (tracking.end_destination && tracking.end_destination.lat && tracking.end_destination.lng) {
+                    endMarker = L.marker([tracking.end_destination.lat, tracking.end_destination.lng], {
+                        icon: createDefaultIcon('red')
+                    }).addTo(trackingMap)
+                            .bindPopup('Destination');
+                    bounds.extend([tracking.end_destination.lat, tracking.end_destination.lng]);
+
+                    if (tracking.start_point && tracking.start_point.lat && tracking.start_point.lng) {
+                        getDeliveryRoute(
+                                tracking.start_point.lat,
+                                tracking.start_point.lng,
+                                tracking.end_destination.lat,
+                                tracking.end_destination.lng
+                                );
+                    }
+                }
+
+                // CRITICAL: Check if bounds are valid before trying to fit
+                if (bounds.isValid() && bounds.getSouthWest().equals(bounds.getNorthEast()) === false) {
+                    console.log('Fitting map to valid bounds:', bounds.toBBoxString());
+                    // Adding maxZoom prevents over-zooming if points are very close
+                    trackingMap.fitBounds(bounds, {padding: [50, 50], maxZoom: 16});
+                } else if (tracking.current_location && tracking.current_location.lat) {
+                    // Fallback if bounds are not valid (e.g., only one point, or all points are the same)
+                    console.log('Bounds not valid or only one point, setting view to current location.');
+                    trackingMap.setView([tracking.current_location.lat, tracking.current_location.lng], 15); // Default zoom
+                } else {
+                    console.warn('Cannot fit bounds or set view, insufficient or invalid location data.');
+                    // Optionally set to a default broad view if all else fails
+                    // trackingMap.setView([42.7339, 25.4858], 7);
+                }
+                initialDataSet = true; // Mark that data has been applied
+
+            } catch (e) {
+                console.error('Error updating tracking map:', e);
+            }
+        }
+        // Clear map layers
+        function clearMapLayers() {
+            if (courierMarker) {
                 trackingMap.removeLayer(courierMarker);
-            if (startMarker)
+                courierMarker = null;
+            }
+            if (startMarker) {
                 trackingMap.removeLayer(startMarker);
-            if (endMarker)
+                startMarker = null;
+            }
+            if (endMarker) {
                 trackingMap.removeLayer(endMarker);
-            if (routeLayer)
+                endMarker = null;
+            }
+            if (routeLayer) {
                 trackingMap.removeLayer(routeLayer);
+                routeLayer = null;
+            }
+            // Clear path history
+            if (pathHistory.length > 0) {
+                pathHistory.forEach(path => trackingMap.removeLayer(path));
+                pathHistory = [];
+            }
+        }
 
-            // Add courier marker with custom icon
-            // Add courier marker with custom icon
-            courierMarker = L.marker([tracking.current_location.lat, tracking.current_location.lng], {
-                icon: L.divIcon({
-                    className: 'courier-tracker-icon',
-                    html: '<div class="courier-marker"><span class="pulse"></span><i class="fa fa-truck"></i></div>',
-                    iconSize: [32, 32],
-                    iconAnchor: [16, 24],
-                    popupAnchor: [0, -16]
-                })
-            }).addTo(trackingMap)
-                    .bindPopup(`<strong>Courier:</strong> ${tracking.courier_name}<br><strong>Last updated:</strong> ${new Date(tracking.last_updated).toLocaleTimeString()}`);
+        // Create courier icon
+        function createCourierIcon() {
+            return L.divIcon({
+                className: 'courier-location-icon',
+                html: '<div style="background-color: #007bff; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>',
+                iconSize: [20, 20],
+                iconAnchor: [10, 10],
+                popupAnchor: [0, -10]
+            });
+        }
 
-            // Add start and end markers
-            startMarker = L.marker([tracking.start_point.lat, tracking.start_point.lng], {
-                icon: L.icon({
-                    iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
-                    iconSize: [25, 41],
-                    iconAnchor: [12, 41],
-                    popupAnchor: [1, -34],
-                    shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
-                    shadowSize: [41, 41]
-                })
-            }).addTo(trackingMap)
-                    .bindPopup('Start Location');
+        // Create default marker icon
+        function createDefaultIcon(color = 'blue') {
+            const colors = {
+                'green': '#28a745',
+                'red': '#dc3545',
+                'blue': '#007bff'
+            };
 
-            endMarker = L.marker([tracking.end_destination.lat, tracking.end_destination.lng], {
-                icon: L.icon({
-                    iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
-                    iconSize: [25, 41],
-                    iconAnchor: [12, 41],
-                    popupAnchor: [1, -34],
-                    shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
-                    shadowSize: [41, 41]
-                })
-            }).addTo(trackingMap)
-                    .bindPopup('Destination');
-
-            // Get route between points
-            getDeliveryRoute(
-                    tracking.start_point.lat,
-                    tracking.start_point.lng,
-                    tracking.end_destination.lat,
-                    tracking.end_destination.lng
-                    );
-
-            // Fit map to show all markers
-            const bounds = L.latLngBounds(
-                    [tracking.start_point.lat, tracking.start_point.lng],
-                    [tracking.end_destination.lat, tracking.end_destination.lng],
-                    [tracking.current_location.lat, tracking.current_location.lng]
-                    );
-            trackingMap.fitBounds(bounds, {padding: [50, 50]});
+            return L.divIcon({
+                className: 'custom-marker-icon',
+                html: `<div style="background-color: ${colors[color] || colors.blue}; width: 15px; height: 15px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`,
+                iconSize: [15, 15],
+                iconAnchor: [7, 7],
+                popupAnchor: [0, -7]
+            });
         }
 
         // Draw location history path on map
@@ -904,10 +1245,8 @@
             if (!trackingMap || !history || history.length < 2)
                 return;
 
-            // Create line points
             const points = history.map(point => [point.lat, point.lng]);
 
-            // Create and add polyline for the travel history
             const historyPath = L.polyline(points, {
                 color: 'blue',
                 weight: 3,
@@ -915,7 +1254,6 @@
                 dashArray: '5, 10'
             }).addTo(trackingMap);
 
-            // Store path for later removal
             pathHistory.push(historyPath);
         }
 
@@ -930,7 +1268,6 @@
                             const route = data.routes[0];
                             const routeGeoJSON = route.geometry;
 
-                            // Add route to map
                             routeLayer = L.geoJSON(routeGeoJSON, {
                                 style: {
                                     color: "green",
@@ -939,7 +1276,6 @@
                                 }
                             }).addTo(trackingMap);
 
-                            // Make sure route is in the background
                             if (routeLayer && routeLayer.bringToBack) {
                                 routeLayer.bringToBack();
                             }
@@ -950,22 +1286,75 @@
                     });
         }
 
+        // Update courier marker position
+        function updateCourierMarker(lat, lng) {
+            if (!trackingMap)
+                return;
+
+            if (courierMarker) {
+                courierMarker.setLatLng([lat, lng]);
+            } else {
+                courierMarker = L.marker([lat, lng], {
+                    icon: createCourierIcon()
+                }).addTo(trackingMap)
+                        .bindPopup('Current Location');
+            }
+
+            trackingMap.setView([lat, lng], 15);
+            console.log("Updated courier marker position:", lat, lng);
+        }
+
         // Initialize tracking functionality
         function initTracking() {
-            // Update UI based on initial tracking state
             updateTrackingUI();
 
-            // If tracking is already enabled (for couriers), start the location updates
-            if (isTrackingEnabled && selectedOrderId && navigator.geolocation) {
-                startLocationTracking();
+            if ('<?= $_SESSION['user']['role'] ?>' === 'courier') {
+                setTimeout(() => {
+                    if (!trackingMap) {
+                        initTrackingMap();
+                    }
+                    loadCourierCurrentLocation();
+
+                    if (isTrackingEnabled && navigator.geolocation) {
+                        startLocationTracking();
+                    }
+                }, 500);
             }
+        }
+
+        // Load courier's current location
+        function loadCourierCurrentLocation() {
+            if (!trackingMap)
+                return;
+
+            fetch('index.php?controller=CourierTracking&action=getCurrentLocation')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Current location data:', data);
+                        if (data.status === 'success') {
+                            updateCourierMarker(data.location.lat, data.location.lng);
+                            trackingMap.setView([data.location.lat, data.location.lng], 12);
+
+                            if (data.tracking_enabled !== isTrackingEnabled) {
+                                isTrackingEnabled = data.tracking_enabled;
+                                updateTrackingUI();
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading courier location:', error);
+                    });
         }
 
         // Toggle tracking state
         function toggleTracking() {
             isTrackingEnabled = !isTrackingEnabled;
 
-            // Call API to update tracking permission in the database
             fetch('index.php?controller=CourierTracking&action=toggleTracking', {
                 method: 'POST',
                 headers: {
@@ -986,14 +1375,12 @@
                             }
                         } else {
                             console.error('Error toggling tracking:', data.message);
-                            // Revert UI change if there was an error
                             isTrackingEnabled = !isTrackingEnabled;
                             updateTrackingUI();
                         }
                     })
                     .catch(error => {
                         console.error('Error toggling tracking:', error);
-                        // Revert UI change if there was an error
                         isTrackingEnabled = !isTrackingEnabled;
                         updateTrackingUI();
                     });
@@ -1014,281 +1401,130 @@
             }
         }
 
-        // Start tracking location using geolocation API
+        // Start location tracking
         function startLocationTracking() {
             if (!navigator.geolocation) {
                 console.error('Geolocation is not supported by this browser.');
                 return;
             }
 
-            // Get the currently selected order
-            if (!selectedOrderId && orderSelect) {
-                selectedOrderId = orderSelect.value;
+            if (orderSelect) {
+                selectedOrderId = orderSelect.value || null;
             }
 
-            if (!selectedOrderId) {
-                console.error('No order selected for tracking');
-                return;
-            }
-
-            // Start watching position
             watchPositionId = navigator.geolocation.watchPosition(
-                    // Success callback
-                            function (position) {
-                                const {latitude, longitude} = position.coords;
+                    function (position) {
+                        const {latitude, longitude} = position.coords;
+                        updateCourierMarker(latitude, longitude);
+                        updateLocationOnServer(latitude, longitude, selectedOrderId);
+                    },
+                    function (error) {
+                        console.error('Geolocation error:', error);
+                        stopLocationTracking();
 
-                                // Update UI with position
-                                updateCourierMarker(latitude, longitude);
-
-                                // Send position to server
-                                updateLocationOnServer(latitude, longitude, selectedOrderId);
-                            },
-                            // Error callback
-                                    function (error) {
-                                        console.error('Geolocation error:', error);
-                                        stopLocationTracking();
-
-                                        // Show error to user
-                                        if (trackingIndicator) {
-                                            trackingIndicator.className = 'badge bg-danger';
-                                            trackingIndicator.textContent = 'Tracking Failed';
-                                        }
-                                    },
-                                    // Options
-                                            {
-                                                enableHighAccuracy: true,
-                                                timeout: 10000,
-                                                maximumAge: 0
-                                            }
-                                    );
-                                }
-
-                        // Stop tracking location
-                        function stopLocationTracking() {
-                            if (watchPositionId !== null) {
-                                navigator.geolocation.clearWatch(watchPositionId);
-                                watchPositionId = null;
-                            }
+                        if (trackingIndicator) {
+                            trackingIndicator.className = 'badge bg-danger';
+                            trackingIndicator.textContent = 'Tracking Failed';
                         }
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0
+                    }
+            );
+        }
 
-                        // Add this function to your JavaScript to create a default courier icon
-                        function createCourierIcon() {
-                            return L.divIcon({
-                                className: 'courier-location-icon',
-                                html: '<div style="background-color: #007bff; width: 15px; height: 15px; border-radius: 50%; border: 2px solid white;"></div>',
-                                iconSize: [15, 15],
-                                iconAnchor: [7, 7],
-                                popupAnchor: [0, -7]
-                            });
-                        }
+        // Stop location tracking
+        function stopLocationTracking() {
+            if (watchPositionId !== null) {
+                navigator.geolocation.clearWatch(watchPositionId);
+                watchPositionId = null;
+            }
+        }
 
-// Then update the updateCourierMarker function:
-                        function updateCourierMarker(lat, lng) {
-                            if (!trackingMap)
-                                return;
+        // Update location on server
+        function updateLocationOnServer(latitude, longitude, orderId) {
+            const endpoint = orderId ?
+                    'index.php?controller=CourierTracking&action=updateLocation' :
+                    'index.php?controller=CourierTracking&action=updateCurrentLocation';
 
-                            // If marker exists, update its position
-                            if (courierMarker) {
-                                courierMarker.setLatLng([lat, lng]);
-                            } else {
-                                // Create new marker with a div icon (no image required)
-                                courierMarker = L.marker([lat, lng], {
-                                    icon: createCourierIcon()
-                                }).addTo(trackingMap)
-                                        .bindPopup('Current Location');
+            const formData = orderId ?
+                    `latitude=${latitude}&longitude=${longitude}&order_id=${orderId}` :
+                    `latitude=${latitude}&longitude=${longitude}`;
+
+            fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: formData
+            })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            console.log('Location updated successfully');
+
+                            if (data.destination_reached) {
+                                showDestinationReachedNotification();
+                                stopLocationTracking();
+                                isTrackingEnabled = false;
+                                updateTrackingUI();
                             }
-
-                            // Open popup to make it more visible
-                            courierMarker.openPopup();
-
-                            // Center map on courier with zoom
-                            trackingMap.setView([lat, lng], 15);
-
-                            console.log("Updated courier marker position:", lat, lng);
+                        } else {
+                            console.error('Error updating location:', data.message);
                         }
+                    })
+                    .catch(error => {
+                        console.error('Error updating location:', error);
+                    });
+        }
 
-                        // Send location update to server
-                        // Replace the updateLocationOnServer function with this version
-                        function updateLocationOnServer(latitude, longitude, orderId) {
-                            // If no order ID, use the updateCurrentLocation endpoint
-                            const endpoint = orderId ?
-                                    'index.php?controller=CourierTracking&action=updateLocation' :
-                                    'index.php?controller=CourierTracking&action=updateCurrentLocation';
+        // Start tracking interval for viewers
+        function startTrackingInterval() {
+            stopTracking();
 
-                            const formData = orderId ?
-                                    `latitude=${latitude}&longitude=${longitude}&order_id=${orderId}` :
-                                    `latitude=${latitude}&longitude=${longitude}`;
+            trackingInterval = setInterval(() => {
+                if (selectedOrderId) {
+                    fetchTrackingData(selectedOrderId);
+                }
+            }, 10000);
+        }
 
-                            fetch(endpoint, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/x-www-form-urlencoded',
-                                },
-                                body: formData
-                            })
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        if (data.status === 'success') {
-                                            console.log('Location updated successfully');
+        // Stop tracking interval
+        function stopTracking() {
+            if (trackingInterval) {
+                clearInterval(trackingInterval);
+                trackingInterval = null;
+            }
 
-                                            // If destination reached (only applies when tracking an order)
-                                            if (data.destination_reached) {
-                                                showDestinationReachedNotification();
-                                                stopLocationTracking();
-                                                isTrackingEnabled = false;
-                                                updateTrackingUI();
-                                            }
-                                        } else {
-                                            console.error('Error updating location:', data.message);
-                                        }
-                                    })
-                                    .catch(error => {
-                                        console.error('Error updating location:', error);
-                                    });
-                        }
+            if (trackingMap) {
+                clearMapLayers();
+            }
+        }
 
-// Modify startLocationTracking function to work without an order
-                        function startLocationTracking() {
-                            if (!navigator.geolocation) {
-                                console.error('Geolocation is not supported by this browser.');
-                                return;
-                            }
+        // Show destination reached notification
+        function showDestinationReachedNotification() {
+            const notification = document.createElement('div');
+            notification.className = 'alert alert-success alert-dismissible fade show';
+            notification.setAttribute('role', 'alert');
+            notification.innerHTML = `
+                <strong>Destination Reached!</strong> Order has been marked as delivered.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
 
-                            // Get the currently selected order if available
-                            if (orderSelect) {
-                                selectedOrderId = orderSelect.value || null;
-                            }
+            document.querySelector('.container-fluid').prepend(notification);
 
-                            // Start watching position
-                            watchPositionId = navigator.geolocation.watchPosition(
-                                    // Success callback
-                                            function (position) {
-                                                const {latitude, longitude} = position.coords;
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 500);
+            }, 10000);
+        }
 
-                                                // Update UI with position
-                                                updateCourierMarker(latitude, longitude);
-
-                                                // Send position to server (with or without order ID)
-                                                updateLocationOnServer(latitude, longitude, selectedOrderId);
-                                            },
-                                            // Error callback
-                                                    function (error) {
-                                                        console.error('Geolocation error:', error);
-                                                        stopLocationTracking();
-
-                                                        // Show error to user
-                                                        if (trackingIndicator) {
-                                                            trackingIndicator.className = 'badge bg-danger';
-                                                            trackingIndicator.textContent = 'Tracking Failed';
-                                                        }
-                                                    },
-                                                    // Options
-                                                            {
-                                                                enableHighAccuracy: true,
-                                                                timeout: 10000,
-                                                                maximumAge: 0
-                                                            }
-                                                    );
-                                                }
-
-// Add this function to load the courier's current location
-                                        function loadCourierCurrentLocation() {
-                                            if (!trackingMap)
-                                                return;
-
-                                            fetch('index.php?controller=CourierTracking&action=getCurrentLocation')
-                                                    .then(response => response.json())
-                                                    .then(data => {
-                                                        if (data.status === 'success') {
-                                                            updateCourierMarker(data.location.lat, data.location.lng);
-
-                                                            // Center map on courier's location
-                                                            trackingMap.setView([data.location.lat, data.location.lng], 12);
-
-                                                            // Update tracking status if needed
-                                                            if (data.tracking_enabled !== isTrackingEnabled) {
-                                                                isTrackingEnabled = data.tracking_enabled;
-                                                                updateTrackingUI();
-                                                            }
-                                                        }
-                                                    })
-                                                    .catch(error => {
-                                                        console.error('Error loading courier location:', error);
-                                                    });
-                                        }
-
-// Modify initTracking to always load current location for couriers
-                                        function initTracking() {
-                                            // Update UI based on initial tracking state
-                                            updateTrackingUI();
-
-                                            // For couriers, always try to load their current location
-                                            if ('<?= $_SESSION['user']['role'] ?>' === 'courier') {
-                                                // Initialize tracking map
-                                                initTrackingMap();
-
-                                                // Load current location
-                                                setTimeout(loadCourierCurrentLocation, 1000);
-
-                                                // If tracking is already enabled, start the location updates
-                                                if (isTrackingEnabled && navigator.geolocation) {
-                                                    startLocationTracking();
-                                                }
-                                            }
-                                        }
-
-                                        // Start interval for tracking updates (for viewers)
-                                        function startTrackingInterval() {
-                                            // Stop any existing interval
-                                            stopTracking();
-
-                                            // Start new interval to update tracking data every 10 seconds
-                                            trackingInterval = setInterval(() => {
-                                                if (selectedOrderId) {
-                                                    fetchTrackingData(selectedOrderId);
-                                                }
-                                            }, 10000); // 10 seconds
-                                        }
-
-                                        // Stop tracking interval
-                                        function stopTracking() {
-                                            if (trackingInterval) {
-                                                clearInterval(trackingInterval);
-                                                trackingInterval = null;
-                                            }
-
-                                            // Clear path history
-                                            if (pathHistory.length > 0 && trackingMap) {
-                                                pathHistory.forEach(path => trackingMap.removeLayer(path));
-                                                pathHistory = [];
-                                            }
-                                        }
-
-                                        // Show notification when destination is reached
-                                        function showDestinationReachedNotification() {
-                                            // Create notification element
-                                            const notification = document.createElement('div');
-                                            notification.className = 'alert alert-success alert-dismissible fade show';
-                                            notification.setAttribute('role', 'alert');
-                                            notification.innerHTML = `
-            <strong>Destination Reached!</strong> Order has been marked as delivered.
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        `;
-
-                                            // Add to page
-                                            document.querySelector('.container-fluid').prepend(notification);
-
-                                            // Auto-close after 10 seconds
-                                            setTimeout(() => {
-                                                notification.classList.remove('show');
-                                                setTimeout(() => notification.remove(), 500);
-                                            }, 10000);
-                                        }
-
-                                        // Handle page unload - cleanup resources
-                                        window.addEventListener('beforeunload', function () {
-                                            stopTracking();
-                                            stopLocationTracking();
-                                        });
-                                    })();
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', function () {
+            stopTracking();
+            stopLocationTracking();
+        });
+    })();
 </script>
