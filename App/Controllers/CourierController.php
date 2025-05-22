@@ -7,14 +7,12 @@ use Core;
 use Core\View;
 use Core\Controller;
 
-class CourierController extends Controller
-{
+class CourierController extends Controller {
 
     var $layout = 'admin';
     var $settings;
 
-    public function __construct()
-    {
+    public function __construct() {
         if (empty($_SESSION['user'])) {
             header("Location: " . INSTALL_URL . "?controller=Auth&action=login", true, 301);
             exit;
@@ -25,8 +23,8 @@ class CourierController extends Controller
         }
         $this->settings = $this->loadSettings();
     }
-    function loadSettings()
-    {
+
+    function loadSettings() {
         $settingModel = new \App\Models\Setting();
         $settings = $settingModel->getAll();
         $app_settings = [];
@@ -36,8 +34,7 @@ class CourierController extends Controller
         return $app_settings;
     }
 
-    public function index()
-    {
+    public function index() {
         if ($_SESSION['user']['role'] !== 'courier') {
             header("Location: " . INSTALL_URL, true, 301);
             exit;
@@ -60,9 +57,7 @@ class CourierController extends Controller
         ]);
     }
 
-
-    function list($layout = 'admin')
-    {
+    function list($layout = 'admin') {
         $userModel = new \App\Models\User();
 
         $opts = array();
@@ -92,13 +87,11 @@ class CourierController extends Controller
         $this->view($layout, ['couriers' => $couriers]);
     }
 
-    function filter()
-    {
+    function filter() {
         $this->list('ajax');
     }
 
-    function print()
-    {
+    function print() {
         // Check if courierData is provided
         if (isset($_POST['courierData'])) {
             // Decode the JSON data
@@ -113,8 +106,7 @@ class CourierController extends Controller
         $this->view('ajax', ['couriers' => $couriers]);
     }
 
-    function create()
-    {
+    function create() {
         // Create an instance of the User model
         $userModel = new \App\Models\User();
         // Create an instance of the Courier model
@@ -181,8 +173,7 @@ class CourierController extends Controller
         $this->view($this->layout, $arr);
     }
 
-    function delete()
-    {
+    function delete() {
         $userModel = new \App\Models\User();
 
         if (!empty($_POST['id'])) {
@@ -196,8 +187,7 @@ class CourierController extends Controller
         $this->view('ajax', ['couriers' => $couriers]);
     }
 
-    function bulkDelete()
-    {
+    function bulkDelete() {
         $userModel = new \App\Models\User();
 
         if (!empty($_POST['ids']) && is_array($_POST['ids'])) {
@@ -209,106 +199,9 @@ class CourierController extends Controller
         $this->view('ajax', ['couriers' => $couriers]);
     }
 
-
-    function edit()
-    {
-        $userModel = new \App\Models\User();
-        $courierModel = new \App\Models\Courier();
-
-        // Get user data
-        $userData = $userModel->get($_GET['id']);
-        if (!$userData) {
-            header("Location: " . INSTALL_URL . "?controller=Courier&action=list", true, 301);
-            exit;
-        }
-
-        // Get courier data - this looks for the courier with user_id matching the current user
-        $courierData = null;
-        $couriers = $courierModel->getAll(['user_id' => $_GET['id']]);
-        if (!empty($couriers)) {
-            $courierData = $couriers[0];
-        }
-
-        if (!$courierData) {
-            // Handle case where courier doesn't exist for this user
-            $arr = $userData;
-            $arr['error_message'] = "Courier data not found for this user.";
-        } else {
-            // Merge user and courier data for the form
-            $arr = array_merge($userData, $courierData);
-        }
-
-        // Debug - log what data we found
-        error_log("User data: " . print_r($userData, true));
-        error_log("Courier data: " . print_r($courierData, true));
-
-        // Check if the form has been submitted
-        if (!empty($_POST['id'])) {
-            // Form validation
-            $hasError = false;
-            if (!empty($_POST['email']) && $_POST['email'] !== $userData['email']) {
-                if ($userModel->existsBy(['email' => $_POST['email']])) {
-                    $arr['error_message'] = "User with this email already exists.";
-                    $hasError = true;
-                }
-            }
-
-            if (!empty($_POST['password']) && $_POST['password'] !== $_POST['repeat_password']) {
-                $arr['error_message'] = "Passwords do not match.";
-                $hasError = true;
-            }
-
-            if (!$hasError) {
-                // Prepare user data for update
-                $userUpdateData = [
-                    'id' => $_POST['id'],
-                    'name' => $_POST['name'],
-                    'email' => $_POST['email']
-                ];
-
-                // Handle password update if provided
-                if (!empty($_POST['password'])) {
-                    $userUpdateData['password_hash'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
-                }
-
-                // Prepare courier data for update - with the correct courier ID!
-                $courierUpdateData = [
-                    'id' => $courierData['id'], // This is critical!
-                    'name' => $_POST['name'],
-                    'phone_number' => $_POST['phone_number'],
-                    'email' => $_POST['email'],
-                    'user_id' => $_POST['id'],
-                    'is_busy' => isset($_POST['is_busy']) ? (int) $_POST['is_busy'] : $courierData['is_busy'],
-                    'allowed_tracking' => isset($_POST['allowed_tracking']) ? (int) $_POST['allowed_tracking'] : $courierData['allowed_tracking']
-                ];
-
-                // Debug - log what we're trying to update
-                error_log("Updating user with: " . print_r($userUpdateData, true));
-                error_log("Updating courier with: " . print_r($courierUpdateData, true));
-
-                // Update both user and courier
-                $userUpdateSuccess = $userModel->update($userUpdateData);
-                $courierUpdateSuccess = $courierModel->update($courierUpdateData);
-
-                if ($userUpdateSuccess && $courierUpdateSuccess) {
-                    header("Location: " . INSTALL_URL . "?controller=Courier&action=list", true, 301);
-                    exit;
-                } else {
-                    // Log errors for debugging
-                    if (!$userUpdateSuccess) {
-                        error_log("User update failed for ID: " . $_POST['id']);
-                    }
-                    if (!$courierUpdateSuccess) {
-                        error_log("Courier update failed for ID: " . $courierData['id']);
-                    }
-
-                    $arr['error_message'] = "Failed to update the courier. Please try again.";
-                }
-            }
-        }
-
-        // Load the view and pass the data to it
-        $this->view($this->layout, $arr);
+    function edit() {
+        $userController = new \App\Controllers\UserController();
+        $userController->edit();
     }
 
     // Broken function, help. This is the one you can edit here. I commented it out, so it gets your focus.
@@ -316,12 +209,10 @@ class CourierController extends Controller
     // {
     //     $userModel = new \App\Models\User();
     //     $courierModel = new \App\Models\Courier();
-
     //     // Get user data
     //     $userData = $userModel->get($_GET['id']);
     //     // echo $userData['id'];
     //     // echo $userData['name']; /* Works */
-
     //     // Try to find the corresponding courier by name and/or email (FIX GETTER)
     //     if (isset($userData['name'])) {
     //         // Try to find courier by name
@@ -331,7 +222,6 @@ class CourierController extends Controller
     //             $courierId = $courierByName['id'];
     //         }
     //     }
-
     //     // If we couldn't find by name, try email as fallback
     //     if (!$courierId && isset($userData['email'])) {
     //         $courierByEmail = $courierModel->get(['email' => $userData['email']]);
@@ -339,7 +229,6 @@ class CourierController extends Controller
     //             $courierId = $courierByEmail['id'];
     //         }
     //     }
-
     //     // Now get the courier data if we found an ID
     //     $courierData = null;
     //     if ($courierId) {
@@ -350,7 +239,6 @@ class CourierController extends Controller
     //         $arr = $userData;
     //         $arr['error_message'] = "Courier data not found. It will be created when you save.";
     //     }
-
     //     // Check if the form has been submitted
     //     if (!empty($_POST['id'])) {
     //         // Handle password update
@@ -363,21 +251,17 @@ class CourierController extends Controller
     //                 $_POST['password_hash'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
     //             }
     //         }
-
     //         // Remove password fields from POST data before saving
     //         unset($_POST['password']);
     //         unset($_POST['repeat_password']);
-
     //         // Update user record
     //         $userUpdateSuccess = $userModel->update($_POST);
-
     //         // Prepare courier data
     //         $courierUpdateData = [
     //             'name' => $_POST['name'],
     //             'phone_number' => $_POST['phone_number'],
     //             'email' => $_POST['email']
     //         ];
-
     //         // If we found an existing courier, update it with its own ID
     //         $courierUpdateSuccess = false;
     //         if ($courierId) {
@@ -387,7 +271,6 @@ class CourierController extends Controller
     //             // Otherwise, create a new courier record
     //             $courierUpdateSuccess = $courierModel->save($courierUpdateData);
     //         }
-
     //         if ($userUpdateSuccess && $courierUpdateSuccess) {
     //             // Redirect to the list of couriers on successful update
     //             header("Location: " . INSTALL_URL . "?controller=Courier&action=list", true, 301);
@@ -397,13 +280,11 @@ class CourierController extends Controller
     //             $arr['error_message'] = "Failed to update the courier. Please try again.";
     //         }
     //     }
-
     //     // Load the view and pass the data to it
     //     $this->view($this->layout, $arr);
     // }
 
-    function export()
-    {
+    function export() {
         // Check if courierData is provided
         if (isset($_POST['courierData'])) {
             // Decode the JSON data
@@ -434,8 +315,7 @@ class CourierController extends Controller
         }
     }
 
-    private function exportAsPDF($couriers)
-    {
+    private function exportAsPDF($couriers) {
         if (ob_get_level()) {
             ob_end_clean();
         }
@@ -462,8 +342,7 @@ class CourierController extends Controller
         exit;
     }
 
-    private function generateDynamicCourierTable($couriers)
-    {
+    private function generateDynamicCourierTable($couriers) {
         // Start HTML table
         $html = '<table border="1" cellpadding="5">
 <thead>
@@ -506,8 +385,7 @@ class CourierController extends Controller
         return $html;
     }
 
-    private function exportAsExcel($couriers)
-    {
+    private function exportAsExcel($couriers) {
         // Include SimpleXLSXGen
         require(__DIR__ . '/../Helpers/export/simplexlsxgen/src/SimpleXLSXGen.php');
 
@@ -547,8 +425,7 @@ class CourierController extends Controller
         exit;
     }
 
-    private function exportAsCSV($couriers)
-    {
+    private function exportAsCSV($couriers) {
         // Set headers for CSV download
         header('Content-Type: text/csv');
         header('Content-Disposition: attachment; filename="couriers_export.csv"');
@@ -585,8 +462,7 @@ class CourierController extends Controller
         exit;
     }
 
-    public function updateLocation()
-    {
+    public function updateLocation() {
         header('Content-Type: application/json');
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST' || empty($_SESSION['user']) || $_SESSION['user']['role'] !== 'courier') {
@@ -678,8 +554,7 @@ class CourierController extends Controller
         exit;
     }
 
-    private function hasReachedDestination($currentLat, $currentLng, $destinationString)
-    {
+    private function hasReachedDestination($currentLat, $currentLng, $destinationString) {
         // Parse destination string to get coordinates
         // Format could be something like "42.6977,23.3219" or a city name
         // For city names, you would need geocoding - this is simplified
@@ -699,8 +574,7 @@ class CourierController extends Controller
         return false;
     }
 
-    private function calculateDistance($lat1, $lon1, $lat2, $lon2)
-    {
+    private function calculateDistance($lat1, $lon1, $lat2, $lon2) {
         // Haversine formula to calculate distance between two points
         $earthRadius = 6371; // Radius of the earth in km
 
@@ -708,8 +582,8 @@ class CourierController extends Controller
         $dLon = deg2rad($lon2 - $lon1);
 
         $a = sin($dLat / 2) * sin($dLat / 2) +
-            cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
-            sin($dLon / 2) * sin($dLon / 2);
+                cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+                sin($dLon / 2) * sin($dLon / 2);
 
         $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
         $distance = $earthRadius * $c; // Distance in km
@@ -717,8 +591,7 @@ class CourierController extends Controller
         return $distance;
     }
 
-    public function getLocation()
-    {
+    public function getLocation() {
         header('Content-Type: application/json');
 
         if (!empty($_GET['courier_id'])) {
@@ -750,15 +623,14 @@ class CourierController extends Controller
         exit;
     }
 
-    public function toggleTracking()
-    {
+    public function toggleTracking() {
         $settingsModel = new \App\Models\Setting();
         header('Content-Type: application/json');
 
         if (
-            $_SERVER['REQUEST_METHOD'] !== 'POST' ||
-            empty($_SESSION['user']) ||
-            $_SESSION['user']['role'] !== 'courier'
+                $_SERVER['REQUEST_METHOD'] !== 'POST' ||
+                empty($_SESSION['user']) ||
+                $_SESSION['user']['role'] !== 'courier'
         ) {
             echo json_encode(['status' => 'error', 'message' => 'Unauthorized']);
             exit;
@@ -804,8 +676,7 @@ class CourierController extends Controller
         exit;
     }
 
-    public function startTracking()
-    {
+    public function startTracking() {
         if ($_SESSION['user']['role'] !== 'courier') {
             header("Location: " . INSTALL_URL, true, 301);
             exit;
@@ -821,8 +692,7 @@ class CourierController extends Controller
         ]);
     }
 
-    private function getActiveOrders($courierId)
-    {
+    private function getActiveOrders($courierId) {
         $orderModel = new \App\Models\Order();
         $orders = $orderModel->getAll([
             'courier_id' => $courierId,
@@ -834,7 +704,6 @@ class CourierController extends Controller
         //     $userModel = new \App\Models\User();
         //     $customer = $userModel->getById($order['user_id']);
         //     $order['customer_name'] = $customer ? $customer['name'] : 'Unknown Customer';
-
         //     // Add courier name
         //     $courier = $userModel->getById($order['courier_id']);
         //     $order['courier_name'] = $courier ? $courier['name'] : 'Unknown Courier';
@@ -843,8 +712,7 @@ class CourierController extends Controller
         return $orders;
     }
 
-    private function getCompletedOrders($courierId)
-    {
+    private function getCompletedOrders($courierId) {
         $orderModel = new \App\Models\Order();
         $orders = $orderModel->getAll([
             'courier_id' => $courierId,

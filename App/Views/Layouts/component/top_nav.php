@@ -110,12 +110,12 @@ if (!empty($tpl['messages'])) {
                     </style>
                 </li>
                 <!-- Search (TO-DO) -->
-                <!-- <li class="nav-item d-lg-block">
+                <li class="nav-item d-lg-block">
                     <form class="search-form d-flex" action="#">
                         <i class="icon-search"></i>
                         <input type="search" class="form-control" placeholder="Search" title="Search">
                     </form>
-                </li> -->
+                </li>
 
                 <!-- Messages -->
                 <!-- <li class="nav-item dropdown">

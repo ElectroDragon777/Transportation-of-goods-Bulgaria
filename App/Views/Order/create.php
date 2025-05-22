@@ -27,9 +27,9 @@
                         action="<?php echo INSTALL_URL; ?>?controller=Order&action=create">
                         <input type="hidden" name="send" value="1" />
                         <div class="row" style="background: linear-gradient(rgba(255, 255, 255, 0.47), rgba(85, 85, 85, 0.23)), url('Extras/Controllers/bluebackground_order_creation.jpg');
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-size: cover; border-radius: 25px;">
+                             background-repeat: no-repeat;
+                             background-attachment: fixed;
+                             background-size: cover; border-radius: 25px;">
                             <div class="col-md-6">
                                 <!-- Replace Customer Dropdown with Current User Info -->
                                 <div class="mb-3">
@@ -46,19 +46,13 @@
                                         <option value=''>---</option>
                                         <?php
                                         foreach ($tpl['couriers'] as $courier) {
-                                            echo "<option value=\"{$courier['id']}\">{$courier['name']}</option>";
+                                            $disabledAttribute = '';
+                                            if (isset($courier['is_busy']) && $courier['is_busy'] == 1) {
+                                                $disabledAttribute = 'disabled';
+                                            }
+                                            echo "<option value=\"" . htmlspecialchars($courier['user_id']) . "\" " . $disabledAttribute . ">" . htmlspecialchars($courier['name']) . "</option>";
                                         }
                                         ?>
-                                        <?/*php foreach ($tpl['couriers'] as $courier) {
-    // Debug output to check values (remove in production)
-    echo "<!-- Courier ID: {$courier['id']}, Name: {$courier['name']}, is_busy: {$courier['is_busy']} -->";
-
-    // This check is only needed if you aren't already filtering in the controller
-    if (isset($courier['is_busy']) && $courier['is_busy'] == 0) {
-        echo "<option value=\"{$courier['id']}\">{$courier['name']}</option>";
-    }
-}
-*/ ?>
                                     </select>
                                 </div>
                             </div>
@@ -144,9 +138,9 @@
 
                         <!-- Start Destination Section -->
                         <div class="card mb-4" style="background: linear-gradient(rgba(255, 255, 255, 0.58), rgba(85, 85, 85, 0.58)), url('Extras/Controllers/BulgarianMap.png');
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-size: cover; border-radius: 25px; color: white;">
+                             background-repeat: no-repeat;
+                             background-attachment: fixed;
+                             background-size: cover; border-radius: 25px; color: white;">
                             <div class="card-header bg-primary text-white">
                                 <h5>Start Destination</h5>
                             </div>
@@ -197,9 +191,9 @@
 
                         <!-- End Destination Section -->
                         <div class="card mb-4" style="background: linear-gradient(rgba(255, 255, 255, 0.58), rgba(85, 85, 85, 0.58)), url('Extras/Controllers/BulgarianMap.png');
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-size: cover; border-radius: 25px; color: white;">
+                             background-repeat: no-repeat;
+                             background-attachment: fixed;
+                             background-size: cover; border-radius: 25px; color: white;">
                             <div class="card-header bg-success text-white">
                                 <h5>End Destination</h5>
                             </div>
@@ -770,12 +764,16 @@
 
     // Update the map with current selections
     function updateMap() {
-        if (!orderMap) return;
+        if (!orderMap)
+            return;
 
         // Clear existing markers and route
-        if (startMarker) orderMap.removeLayer(startMarker);
-        if (endMarker) orderMap.removeLayer(endMarker);
-        if (routeLayer) orderMap.removeLayer(routeLayer);
+        if (startMarker)
+            orderMap.removeLayer(startMarker);
+        if (endMarker)
+            orderMap.removeLayer(endMarker);
+        if (routeLayer)
+            orderMap.removeLayer(routeLayer);
 
         let startCoords = null;
         let endCoords = null;
@@ -1730,7 +1728,9 @@
         // Add validation to the form submission
         const orderForm = document.getElementById('booking-frm-id');
         if (orderForm) {
-            const originalValidateOrderForm = validateOrderForm || function () { return true; };
+            const originalValidateOrderForm = validateOrderForm || function () {
+                return true;
+            };
 
             validateOrderForm = function () {
                 let isValid = originalValidateOrderForm();
@@ -1826,13 +1826,13 @@
         function convertPhpToDatepickerFormat(phpFormat) {
             // Map of PHP date format to Bootstrap datepicker format
             const formatMap = {
-                'd': 'dd',    // Day of the month, 2 digits with leading zeros
-                'j': 'd',     // Day of the month without leading zeros
-                'm': 'mm',    // Month, 2 digits with leading zeros
-                'n': 'm',     // Month without leading zeros
-                'Y': 'yyyy',   // Year, 4 digits
-                'y': 'yy',    // Year, 2 digits
-                'F': 'MM',    // Month name, long
+                'd': 'dd', // Day of the month, 2 digits with leading zeros
+                'j': 'd', // Day of the month without leading zeros
+                'm': 'mm', // Month, 2 digits with leading zeros
+                'n': 'm', // Month without leading zeros
+                'Y': 'yyyy', // Year, 4 digits
+                'y': 'yy', // Year, 2 digits
+                'F': 'MM', // Month name, long
                 'M': 'M'      // Month name, short
             };
 
@@ -1877,7 +1877,8 @@
         }
 
         function updateTimeOfDelivery() {
-            if (!settings) return; // Ensure settings are loaded
+            if (!settings)
+                return; // Ensure settings are loaded
 
             let deliveryHours = parseInt(document.getElementById('deliveryTimeHours').value) || 0;
             let deliveryMinutes = parseInt(document.getElementById('deliveryTimeRemMins').value) || 0;
@@ -2071,10 +2072,21 @@
             }
 
             function formatDate(date, format) {
+                // Get date components
                 const year = date.getFullYear();
                 const month = String(date.getMonth() + 1).padStart(2, '0');
                 const day = String(date.getDate()).padStart(2, '0');
-                return format.replace('Y', year).replace('m', month).replace('d', day);
+
+                // Create a copy of the format string to avoid modifying the original
+                let formattedDate = format;
+
+                // Replace format tokens with actual values
+                // Use specific replacement approach to avoid multiple replacements
+                formattedDate = formattedDate.replace(/Y+/g, year);
+                formattedDate = formattedDate.replace(/m+/g, month);
+                formattedDate = formattedDate.replace(/d+/g, day);
+
+                return formattedDate;
             }
 
             function formatTime(date) {
