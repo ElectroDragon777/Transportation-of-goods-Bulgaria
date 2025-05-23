@@ -19,5 +19,4 @@ class Message extends Model
         array('name' => 'created_at', 'type' => 'varchar', 'default' => '')
     );
 }
-
 ?>
